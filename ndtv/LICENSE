@@ -1,0 +1,41 @@
+This R code in this packaage is distributed under the GPL-3 license.  It is free,
+open source, and has the following attribution requirements
+(GPL Section 7):
+
+(a) you agree to retain in 'ndtv' and any modifications to 'ndtv'
+    the copyright, author attribution and URL information as
+    provided at http://statnet.org/attribution
+(b) you agree that 'ndtv' and any modifications to 'ndtv' will,
+    when used, display the attribution:
+     Based on 'statnet' project software (http://statnet.org).
+     For license and citation information see http://statnet.org/attribution
+
+This package also includes, with permission from the author, a non-GPL Java binary of MDSJ, MDSJ is a free Java library for Multidimensional Scaling (MDS) from
+
+http://www.inf.uni-konstanz.de/algo/software/mdsj/
+
+MDSJ is not not needed to use or compile the package. Use the MDSJ layout is subject to the following restrictions:
+
+MDSJ CONDITIONS OF USE
+
+License Conditions: MDSJ is available under the terms and conditions of the Creative Commons License "by-nc-sa" 3.0. 
+http://creativecommons.org/licenses/by-nc-sa/3.0/
+
+This means that you can
+
+    freely copy, share, and distribute the library at no cost and
+    re-use the library as a component in your software,
+
+as long as you
+
+    include the citation below (by),
+    do not use MDSJ for any commercial purposes (nc), and
+    apply these conditions to all your pieces of software that make use of MDSJ (sa). 
+
+Please feel free to contact us for any questions regarding these conditions.
+
+Citation: "Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at http://www.inf.uni-konstanz.de/algo/software/mdsj/. University of Konstanz, 2009."
+
+Disclaimer: The MDSJ Java library ("software") is developed and maintained in the Algorithmics Group, Department of Computer & Information Science, University of Konstanz, Germany ("author"). Some rights reserved. The software is provided "AS IS", with no warranty, express or implied, including but not limited to the implied warranties of merchantability and fitness for a particular use. In no event shall the author be liable for any damages, direct or indirect, even if advised of the possibility of such damages. If you do not accept these restrictions, you do not have permission to download or use MDSJ.
+
+Corresponding author: Christian Pich. christian.pich@gmx.de

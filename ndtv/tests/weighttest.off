@@ -1,0 +1,53 @@
+#  part of the Statnet suite
+#  of packages for network analysis, http://statnet.org .
+#
+#  This software is distributed under the GPL-3 license.  It is free,
+#  open source, and has the attribution requirements (GPL Section 7) at
+#  http://statnet.org/attribution
+#
+#  Copyright 2012-2013 Statnet Commons
+#######################################################################
+
+#test drawing networks with weighted edges
+
+require(ndtv)
+test <- network.initialize(5,directed=F)
+test[1,2]<-1
+test[3,2]<-1
+test[1,3]<-1
+test[1,4]<-1
+test[5,1]<-1
+test[4,5]<-1
+activate.edge.attribute(test,'weight',value=1,onset=0,terminus=1)
+activate.edge.attribute(test,'weight',value=2,onset=1,terminus=2)
+activate.edge.attribute(test,'weight',value=3,onset=2,terminus=3)
+activate.edge.attribute(test,'weight',value=4,onset=3,terminus=4)
+
+
+# test drawing them with different widths
+slice.par<-list(start=0,end=3,interval=1, aggregate.dur=1,rule="any")
+test <-compute.animation(test,slice.par=slice.par,animation.mode="kamadakawai")
+render.animation(test,render.par=list(tween.frames=10,show.time=T),edge.lwd='weight')
+
+
+#test a network with edge weights as distances
+test <- network.initialize(5,directed=F)
+test[1,2]<-1
+test[3,2]<-1
+test[1,3]<-1
+test[1,4]<-1
+test[5,1]<-1
+test[4,5]<-1
+test <-activate.edge.attribute(test,'weight',value=1,onset=0,terminus=1,e=c(1,2,3)) 
+test <- activate.edge.attribute(test,'weight',value=3,onset=0,terminus=1,e=c(4,5,6))
+test <- activate.edge.attribute(test,'weight',value=3,onset=1,terminus=2,e=c(1,2,3))
+test <- activate.edge.attribute(test,'weight',value=1,onset=1,terminus=2,e=c(4,5,6))
+
+#test a network with edge weights as similarities
+
+#test a network with edge weights as a variable
+
+#test symetrizing an asymetric network
+
+
+

@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Get the package directory (defaulting to working directory).
+pkg=${1:-.}
+
+# Use svnversion to get the revision number, but ignore changes to
+# DESCRIPTION, since there is a good change that was done by the
+# previous run of the script.
+mv $pkg/DESCRIPTION $pkg/DESCRIPTION.tmp
+svn revert $pkg/DESCRIPTION 2>&1 > /dev/null
+rev=`svnversion -n $pkg | sed -e s/M/.1/g -e s/S/.2/g -e s/:/-/g -e s/exported/0/g`
+mv $pkg/DESCRIPTION.tmp $pkg/DESCRIPTION
+
+# Extract the user specified part of the package version (the part
+# before the dash).
+vnum=`grep -x '^Version:.*' $pkg/DESCRIPTION | sed -e s/Version:// -e s/-.*$// -e s/\ //g`
+
+# Put together the new version number.
+vrev=$vnum-$rev-`date +%Y.%m.%d-%H.%M.%S`
+
+# Back up DECRIPTION.
+cp $pkg/DESCRIPTION $pkg/DESCRIPTION.bak
+# Construct new DESCRIPTION.
+cat $pkg/DESCRIPTION.bak | \
+    sed -e s/'^Version:.*$'/"Version: $vrev"/ \
+        -e s/'^Date:.*$'/"Date: `date +%F`"/ > $pkg/DESCRIPTION
+
+# Update the timestamp on the DESCRIPTION file. Subversion seems to
+# get confused, otherwise.
+sleep 2
+touch $pkg/DESCRIPTION
+ 

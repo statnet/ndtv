@@ -1,0 +1,92 @@
+#  part of the Statnet suite
+#  of packages for network analysis, http://statnet.org .
+#
+#  This software is distributed under the GPL-3 license.  It is free,
+#  open source, and has the attribution requirements (GPL Section 7) at
+#  http://statnet.org/attribution
+#
+#  Copyright 2012-2013 Statnet Commons
+#######################################################################
+
+require(ndtv)
+data(windsurfers)
+
+
+
+
+#daily
+slice.par<-list(start=0,end=31,interval=1, aggregate.dur=1,rule="any")
+windsurfers <-compute.animation(windsurfers,slice.par=slice.par,animation.mode="MDSJ",default.dist=3)
+render.animation(windsurfers,render.par=list(tween.frames=25,show.time=T),vertex.col="group1",edge.col="darkgray",displaylabels=T,label.cex=.6,label.col="blue")
+saveVideo(ani.replay(),video.name="windsurfers_dailyDraft.mp4", other.opts="-b 1000k")
+
+
+#wekly
+slice.par<-list(start=0,end=31,interval=1, aggregate.dur=7,rule="any")
+windsurfers <-compute.animation(windsurfers,slice.par=slice.par,animation.mode="MDSJ",default.dist=3)
+render.animation(windsurfers,render.par=list(tween.frames=25,show.time=T),vertex.col="group1",edge.col="darkgray",displaylabels=T,label.cex=.6,label.col="blue")
+saveVideo(ani.replay(),video.name="windsurfers_weeklyDraft.mp4", other.opts="-b 1000k")
+
+
+#make a version of the windsurfers where the nodes stay around
+deactivate.vertices(windsurfers)
+activate.vertices(windsurfers,onset=0,terminus=24)
+activate.vertices(windsurfers,onset=25,terminus=31)
+
+#daily
+slice.par<-list(start=0,end=31,interval=1, aggregate.dur=1,rule="any")
+windsurfers <-compute.animation(windsurfers,slice.par=slice.par,animation.mode="MDSJ",default.dist=3)
+render.animation(windsurfers,render.par=list(tween.frames=25,show.time=T),vertex.col="group1",edge.col="darkgray",displaylabels=T,label.cex=.6,label.col="blue")
+saveVideo(ani.replay(),video.name="windsurfers_dailyAllNodes.mp4", other.opts="-b 1000k")
+
+
+
+# windsurfer simulation test from nD
+require(ndtv)
+runSim <-function(net,timeStep,transProb){
+  # loop through time, updating states
+  times<-seq(from=0,to=max(get.change.times(net)),by=timeStep)
+  for(t in times){
+    # find all the people who know and are active
+    knowers <- which(!is.na(get.vertex.attribute.active(net,'knowsRumor',at=t,require.active=TRUE)))
+    # get the edge ids of active friendships of people who knew
+    for (knower in knowers){
+      conversations<-get.edgeIDs.active(net,v=knower,at=t)
+        for (conversation in conversations){
+        # select conversation for transmission with appropriate prob
+        if (runif(1)<=transProb){
+          # update state of people at other end of conversations
+          # but we don't know which way the edge points so..
+          v<-c(net$mel[[conversation]]$inl, net$mel[[conversation]]$outl)
+          # ignore the v we already know
+          v<-v[v!=knower]
+          activate.vertex.attribute(net,"knowsRumor",TRUE,v=v,onset=t,terminus=Inf)
+          # record who spread the rumor
+          activate.vertex.attribute(net,"heardRumorFrom",knower, v=v,onset=t,length=timeStep)
+          # record which friendships the rumor spread across
+          activate.edge.attribute(net,'passedRumor',value=TRUE,e=conversation,onset=t,terminus=Inf)
+        }
+      }
+    }
+  }
+  return(net)
+}
+
+# setup and run sim
+
+data(windsurfers)
+
+  timeStep <- 1 # units are in days
+  transProb <- 0.2 # how likely to tell in each conversation/day
+  # start the rumor out on vertex 1
+  activate.vertex.attribute(windsurfers,'knowsRumor',FALSE,onset=-Inf,terminus=Inf)
+  activate.vertex.attribute(windsurfers,"knowsRumor",TRUE,v=1, onset=0-timeStep,terminus=Inf)
+  activate.vertex.attribute(windsurfers,"heardRumorFrom",1,v=1, onset=0-timeStep,length=timeStep)
+  windsurfers<-runSim(windsurfers,timeStep,transProb) # run it!
+ 
+  # compute colors
+  
+
+  compute.animation(windsurfers)
+  render.animation(windsurfers)
+
