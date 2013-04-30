@@ -59,7 +59,7 @@ The name of the network animation layout to be used. These layouts are name netw
   A list of parameters to be passed to the layout algorithm.
 }
   \item{default.dist}{
-  The default distance to be used to separate nodes (or disconnected network components) 
+  The default distance to be used to separate nodes (or disconnected network components). Default to \code{sqrt(network.size(net))}. See \code{\link{layout.distance}}. 
 }
   \item{verbose}{
   If true, additional information about the layout process and progress will be returned to console. 
@@ -93,7 +93,7 @@ Skye Bender-deMoll, and the statnet team.
 
 
 \seealso{
- See also \code{\link{render.animation}}, \code{\link{network.layout.animate.MDSJ}},\link{ndtv}, package vignette (\code{vignette('ndtv')}) for examples.
+ See also \code{\link{layout.distance}}, \code{\link{render.animation}}, \code{\link{network.layout.animate.MDSJ}},\link{ndtv}, package vignette (\code{vignette('ndtv')}) for examples.
 }
 
 

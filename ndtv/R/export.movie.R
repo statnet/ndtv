@@ -124,10 +124,33 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
 render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),verbose=TRUE,label,displaylabels=!missing(label),xlab,...){
+  if (!is.network(net)){
+    stop("render.animation requires the first argument to be a network object")
+  }
+  
   #check if coordinates have already been computed
   if (!all(c("animation.x.active","animation.y.active") %in% list.vertex.attributes(net))){
     net <- compute.animation(net,verbose=verbose)
   }
+  
+  # temporary hard-coded param to work around plot issue in rstudio
+  externalDevice<-FALSE
+  if (!is.function(options()$device)){
+    if (options("device")$device=="RStudioGD"){
+      print("RStudio's graphics device is not well supported by ndtv, attempting to open another type of plot window")
+      # try to open a new platform-appropriate plot window
+      if (.Platform$OS.type=='windows'){
+        windows()
+      } else if(length(grep(R.version$platform,pattern='apple'))>0)  # is it mac?
+      {
+        quartz()
+      } else {  # must be unix
+        x11()
+      }
+      externalDevice<-TRUE
+    }
+  }
+  
   #figure out what the slicing parameters were
   slice.par <- get.network.attribute(net,"slice.par")
   if (is.null(slice.par)){
@@ -213,6 +236,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     
   coords2 <- coords
   oopts <- ani.options(interval = 0.1,ani.type="jpeg",ani.dev="jpeg")
+  #oopts <- ani.options(interval = 0.1,...)
   ani.record(reset=TRUE)
   #move through frames to render them out
   for(s in 1:length(starts)){
@@ -275,6 +299,11 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
         ani.record();
       }
     } # end empty network block
+  }
+  
+  # turn off external device if using one
+  if (externalDevice){
+    dev.off()
   }
   
 }
