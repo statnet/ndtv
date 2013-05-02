@@ -123,7 +123,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
-render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),verbose=TRUE,label,displaylabels=!missing(label),xlab,...){
+render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),verbose=TRUE,label,displaylabels=!missing(label),xlab,...){
   if (!is.network(net)){
     stop("render.animation requires the first argument to be a network object")
   }
@@ -133,7 +133,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     net <- compute.animation(net,verbose=verbose)
   }
   
-  # temporary hard-coded param to work around plot issue in rstudio
+  # temporary hard-coded param to work around plot issue in RStudio
+  
   externalDevice<-FALSE
   if (!is.function(options()$device)){
     if (options("device")$device=="RStudioGD"){
@@ -150,6 +151,15 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       externalDevice<-TRUE
     }
   }
+  # make sure background color is not transparent unless set that way explicitly
+  if (par("bg")=="transparent"){
+    par(bg='white')
+  }
+  # set high-level plot attributes (bg color, margins, etc)
+  par(plot.par) 
+  
+  # set animation options
+  oopts <- ani.options(ani.options)
   
   #figure out what the slicing parameters were
   slice.par <- get.network.attribute(net,"slice.par")
@@ -235,8 +245,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   }# end slice > 0 block
     
   coords2 <- coords
-  oopts <- ani.options(interval = 0.1,ani.type="jpeg",ani.dev="jpeg")
-  #oopts <- ani.options(interval = 0.1,...)
+  
   ani.record(reset=TRUE)
   #move through frames to render them out
   for(s in 1:length(starts)){

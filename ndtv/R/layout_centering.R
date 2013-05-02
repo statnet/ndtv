@@ -26,3 +26,28 @@ layout.center <- function(coords, xlim,ylim){
 
 
 # add function to center on specific vertex
+
+# function to zoom in on a region of a layout
+# accepts a scale factor and center, OR a vector of vertices that should be used to calculate a center
+layout.zoomfactor <-function(coords, factor, center=c(0,0),v=NULL){
+  
+  if (factor==0){
+    return(coords)
+  }
+  if (!is.null(v)){
+    center[1]<-mean(coords[v,1])
+    center[2]<-mean(coords[v,2])
+  }
+  # translate coordinates to center
+  coords[,1]<-coords[,1]-center[1]
+  coords[,2]<-coords[,2]-center[2]
+  
+  # scale by zoom factor
+  coords<-coords*factor
+  
+  # translate back
+  coords[,1]<-coords[,1]+center[1]
+  coords[,2]<-coords[,2]+center[2]
+  return(coords)
+}
+

@@ -54,3 +54,28 @@ expect_equal(layout.distance(test,weight.attr='weight',weight.dist=TRUE),matrix(
 # ----- test layout centering ----
 
 pos<-matrix(c(1:5,1:5),ncol=2,byrow=FALSE)
+
+# center on 0,0
+expect_equal(layout.center(pos,xlim=c(0,0),ylim=c(0,0)),pos-3)
+
+# center in 100 px square
+expect_equal(layout.center(pos,xlim=c(0,100),ylim=c(0,100)),matrix(c(48, 49, 50, 51, 52, 48, 49, 50, 51, 52),ncol=2))
+
+
+# ----- test layout zooming ------
+
+pos<-matrix(c(1:5,1:5),ncol=2,byrow=FALSE)
+
+# factor 0 does nothing
+expect_equal(ndtv:::layout.zoomfactor(pos,0),pos)
+
+# factor 10 (scale at origin)
+expect_equal(ndtv:::layout.zoomfactor(pos,10),pos*10)
+
+# factor 10, scale at 1,1
+expect_equal(ndtv:::layout.zoomfactor(pos,10),(pos*10)+1)
+
+# zoom on set of vertices
+expect_equal(ndtv:::layout.zoomfactor(pos,2,v=2:3),matrix(c(-0.5, 1.5, 3.5, 5.5, 7.5, -0.5, 1.5, 3.5, 5.5, 7.5),ncol=2))
+
+
