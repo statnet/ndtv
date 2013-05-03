@@ -73,7 +73,7 @@ expect_equal(ndtv:::layout.zoomfactor(pos,0),pos)
 expect_equal(ndtv:::layout.zoomfactor(pos,10),pos*10)
 
 # factor 10, scale at 1,1
-expect_equal(ndtv:::layout.zoomfactor(pos,10),(pos*10)+1)
+expect_equal(ndtv:::layout.zoomfactor(pos,10,center=c(1,1)),(pos*10)-9)
 
 # zoom on set of vertices
 expect_equal(ndtv:::layout.zoomfactor(pos,2,v=2:3),matrix(c(-0.5, 1.5, 3.5, 5.5, 7.5, -0.5, 1.5, 3.5, 5.5, 7.5),ncol=2))
