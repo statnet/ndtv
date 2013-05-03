@@ -329,12 +329,14 @@ The saved video output of the animation often produces very large files. These m
 \section{Reference for the main command}
 Included here are more complete explanations of the main function. You can also refer to the man pages \verb@?compute.animation@ and \verb@?render.animation@.
 \subsection{compute.animation()}
-The \verb@compute.animation()@ function computes a sequence of vertex layouts suitable for rendering a network animation. It steps through a \verb@networkDynamic@ object and applies layout algorithms at specified intervals, storing the calculated coordinates in the network for later use by the \verb@render.animation@ function. Generally the layouts are done in a sequence with each using the previously calculated positions as initial seed coordinates in order to smooth out the resulting movie. It takes several important arguments as named elements of the \verb@slice.par@ list. The parameters indicate it how ``slice up' the network when computing layouts (\verb@start@, \verb@end@, \verb@aggregate.dur@ and \verb@rule@), what type of layout algorithm to use (\verb@animation.mode@), possible parameters to control the layouts (as a list named \verb@layout.par@) and how much to try to separate nodes or disconnected components (\verb@default.dist@). The computed coordinates are stored as dynamic vertex attributes named \verb@animation.x.active@ and \verb@animation.y.active@.  The slice \verb@slice.par@ list is stored as a standard network attribute. The network argument is modified in place, and returned invisibly
+The \verb@compute.animation()@ function computes a sequence of vertex layouts suitable for rendering a network animation. It steps through a \verb@networkDynamic@ object and applies layout algorithms at specified intervals, storing the calculated coordinates in the network for later use by the \verb@render.animation@ function. Generally the layouts are done in a sequence with each using the previously calculated positions as initial seed coordinates in order to smooth out the resulting movie. 
+
+The command takes several important arguments as named elements of the \verb@slice.par@ list. The parameters indicate it how ``slice up' the network when computing layouts (\verb@start@, \verb@end@, \verb@aggregate.dur@ and \verb@rule@), what type of layout algorithm to use (\verb@animation.mode@), possible parameters to control the layouts (as a list named \verb@layout.par@) and how much to try to separate nodes or disconnected components (\verb@default.dist@). The computed coordinates are stored as dynamic vertex attributes named \verb@animation.x.active@ and \verb@animation.y.active@.  The slice \verb@slice.par@ list is stored as a standard network attribute. The network argument is modified in place, and returned invisibly
 
 For each time slice, new coordinates are only computed for the active set of vertices, so the function usually behaves appropriately for networks with changing vertex sets. 
 
 \subsection{render.animation()}
-This function is designed to step through a network object extracting slice networks according to the previously cached \verb@slice.par@ settings. It retrieves the \verb@animation.x@ and \verb@animation.y@ coordinates for each slice and passes them to \verb@plot.network@.  If no \verb@slice.par@ network attribute is found to define the time range to render it will make one up using the smallest and largest non-Inf time values and unit-length non-overlapping time steps. If no stored coordinates are found it will call \verb@compute.animation@. Any additional graphics control arguments (to set colors, line widths, etc) passed in via \verb@...@ are also passed on to \verb@plot.network@. See \verb@?plot.network@ for the full list. 
+This function is designed to step through a network object extracting slice networks according to the previously cached \verb@slice.par@ settings. It retrieves the \verb@animation.x@ and \verb@animation.y@ coordinates for each slice and passes them to \verb@plot.network@ to render the frame.  If no \verb@slice.par@ network attribute is found to define the time range to render it will make one up using the smallest and largest non-Inf time values and unit-length non-overlapping time steps. If no stored coordinates are found it will call \verb@compute.animation@. Additional \verb@plot.network@ control parameters (to set colors, line widths, etc) can be passed in via the \verb@...@ arguments. See \verb@?plot.network@ for the full list. 
 
 As mentioned earlier, a number of ``tweening'' animation frames are generated between each network slice with the positions of the vertices interpolated between the slices. This creates the illusion of smooth motion as the vertices change position, making it much easier to visually track changes in the network structure. As each slice (and tweening slice) is plotted, \verb@ani.record@ is called to store the image as a frame of the animation for later output. 
 
@@ -345,7 +347,11 @@ Parameters to control the animation are read from a list passed in via the \verb
 \item \verb@show.time@ defaults to \verb@TRUE@, in which case the x-axis of the plot will be labeled with the onset and terminus time for each slice as it is shown.
 
 \item \verb@show.stats@ does nothing with its default value of \verb@NULL@. But if it is set to a string, it is assumed to be a formula and will passed to \verb@summary.stergm@ and the results used to display the network statistics for the current slice on the plot.
+
+\item \verb@extraPlotCmds@ provides a way present additional information (such as annotations) on the plot.  The value of this argument will be passed to \verb@eval()@ after each frame has been plotted, so drawing commands can be added here.
 \end{itemize}
+
+There are also several lists of arguments that give default values that will be passed to the appropriate lower-level commands. The \verb@plot.par@ list is passed to the \verb@par()@ command and provides a way to configure some of the general plot details such as background color, margins, fonts, etc.   Similarly, the \verb@ani.options@ list is passed to the \verb@ani.options()@ command to configure settings for the animation package such as \verb@interval@ to control the time between frames in playback.  
 
 \subsection{saveVideo()}
 The \verb@animation@ package provides several neat tools for storing animations once they have been rendered.
@@ -360,16 +366,6 @@ Please see \verb@?animation@ and each function's help files for more details. Wi
 \section{Limitations}
 \subsection{Size limits}
 Like most network algorithms, the layouts tend to scale quite badly. We generally have only had enough patience to generate moves for networks of less than 1000 vertices.  There also seems to be quite a bit of overhead in the \verb@animation@ package, so the generation process seems to slow down considerably for longer duration networks or when slice or render parameters cause lots of slices to be generated. 
-
-\section{Anticipated features}
-
-\subsection{Aggregating edge weights}
-Not currently implemented. Waiting for \verb@network.collapse@ implementation in \verb@network.dynamic@.
-
-\subsection{Additional layouts}
-Also to be included in the future: A wrapper for the Graphviz external layout library.  
-
-
 
 \begin{thebibliography}{}
 
