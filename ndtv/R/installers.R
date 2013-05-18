@@ -15,23 +15,30 @@ check.java <-function(){
       #system("java -version",intern=TRUE)   somehow this always prints, so not using
       return(TRUE)
     } else {
-      stop(paste("Unable to locate Java on this machine. Please visit http://java.com for install instructions"))
+      warning(paste("Unable to locate Java on this machine. Please visit http://java.com for install instructions"))
     }
   }  else {
-    stop(paste("not sure how to check for java on ",.Platform$OS.type,"implement me"))
+    warning(paste("not sure how to check for java on ",.Platform$OS.type,"implement me"))
   }
+  warning("unable to locate Java")
+  return(FALSE)
 }
 
 check.mdsj <-function(){
   #check that java is installed and working
   java <-check.java()
   #TODO: assumes mdsj is in package, which assumes package dir is writable, need to add alternate
-  mdsj.path <- file.path(path.package('ndtv'),'exec/mdsj.jar')
-  if(!file.exists(mdsj.path)){
-    stop("The MDSJ java library is not installed, please run ndtv:::install.mdsj()")
+  if(java){
+    mdsj.path <- file.path(path.package('ndtv'),'exec/mdsj.jar')
+    if(!file.exists(mdsj.path)){
+      warning("The MDSJ java library is not installed, please run ndtv:::install.mdsj()")
+    } else {
+      return(file.path(path.package('ndtv'),'exec/'))
+    }
   } else {
-    return(file.path(path.package('ndtv'),'exec/'))
+    warning("The MDSJ library can only run if Java is installed on the system")
   }
+  return(NULL)
 }
 
 install.mdsj <-function(){
@@ -46,12 +53,13 @@ check.graphviz <-function(){
     if (Sys.which("neato")!=''){
       return(system("neato -V"))
     } else {
-      stop("The Graphviz neato utility does not appear to be installed on this system")
+      warning("The Graphviz neato utility does not appear to be installed on this system")
     }
   } else {
-    stop(paste("not sure how to check for Graphviz on ",.Platform$OS.type,"implement me"))
+    warning(paste("not sure how to check for Graphviz on ",.Platform$OS.type,"implement me"))
     
   }
+  return(FALSE)
 }
 
 install.graphviz <-function(){
@@ -64,12 +72,13 @@ check.ffmpeg <- function(){
     if (Sys.which("ffmpeg")!=''){
       return(Sys.which("ffmpeg"))
     } else {
-      stop("The ffmpeg video utility does not appear to be installed on the system, or the path is not set correctly. Please run ndtv:::install.ffmpeg() for more information ")
+      warning("The ffmpeg video utility does not appear to be installed on the system, or the path is not set correctly. Please run ndtv:::install.ffmpeg() for more information ")
     }
   } else {
-    stop(paste("not sure how to check for ffmpeg video utility on ",.Platform$OS.type,"implement me"))
+    warning(paste("not sure how to check for ffmpeg video utility on ",.Platform$OS.type,"implement me"))
     
   }
+   return(FALSE)
 }
 
 install.ffmpeg <-function(){

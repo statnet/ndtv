@@ -32,7 +32,14 @@ network.layout.animate.kamadakawai <-function(net, dist.mat=NULL, default.dist=N
 
 network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,seed.coords=NULL, layout.par=list(max_iter=50),verbose=TRUE){
   # check that mdsj library can be located
-  mdsj.path = check.mdsj()
+  mdsj.path <- check.mdsj()
+  
+  # if not, give warning, and use KK instead so examples don't break
+  if(is.null(mdsj.path)){
+    warning("Unable to locate the MDSJ library, using KamadaKawai layout instead")
+    return(network.layout.animate.kamadakawai(net, dist.mat=dist.mat, default.dist=default.dist,seed.coords=seed.coords, layout.par=list(),verbose=TRUE))
+  }
+  
   n <- network.size(net)
   max_iter <- 50 #layout.par$max_iter
   #if seed.coord already set in layoutpar, overide

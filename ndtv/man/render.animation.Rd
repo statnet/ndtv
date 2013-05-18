@@ -138,6 +138,8 @@ render.animation(wheel,edge.lwd='width',vertex.cex='mySize',vertex.col='color')
 ani.replay()
 
 # simulation based example
+# disabled to save time when testing
+\dontrun{
 require(tergm)
 # load in example data, results of a basic stergm sim
 data(stergm.sim.1)
@@ -163,6 +165,7 @@ ani.replay()
 # save the movie as mp4 compressed video (if FFMPEG installed)
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
                     other.opts="-b 5000k",clean=TRUE)
+}
 
 }
 

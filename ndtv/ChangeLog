@@ -1,0 +1,16 @@
+ChangeLog for ndtv
+v0.2 - minor features and bug fixes
+ - added work-around for RStudio plotting errors
+ - fixed jittering plots issue
+ - improved video save quality by setting default device to png instead of jpeg
+ - added crude timeline plot
+ - added plot.par and ani.options arguments to render.animation 
+ - added suggests dependency on testthat package for tests
+ - fixed to use statnetStartupMessage() instead of mkStartupMessage() in statnet.common
+ - removed internal implementations of TEA functions and corrected to use networkDynamic
+ - fixed and tested compatibility with networks of size 0. 
+ - added extraPlotCmds argument to render.animation for passing in more plotting commands for annotation
+ - fix for error rendering bipartite networks
+ - better handling of defaults for some plot.network arguments
+
+v0.1 - internal test release

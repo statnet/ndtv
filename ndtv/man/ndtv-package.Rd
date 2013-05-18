@@ -21,7 +21,7 @@ Construct visualizations such as timelines and animated movies of networkDynamic
 \tabular{ll}{
 Package: \tab ndtv\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
+Version: \tab 0.3\cr
 Date: \tab 2013-04-19\cr
 License: \tab GNU GPL 3.0\cr
 }
@@ -43,9 +43,7 @@ Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Jo
 Skye Bender-deMoll and McFarland, Daniel A. (2006)  The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{http://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
 }
 
-\note{
-Note: the the initial release of this package relies on internal implementations draft dynamic attribute code which will be replaced/updated by the implementations and specifications of package networkDynamic v0.4 when it is released. 
-}
+
 
 
 

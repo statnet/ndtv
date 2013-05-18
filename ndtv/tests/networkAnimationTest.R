@@ -111,15 +111,15 @@ ani.replay()
 # does increasing tween produce different results
 
 # does show.time crash if changed from default
-render.par<-list(tween.frames=10,show.time=FALSE)
+render.par<-list(tween.frames=2,show.time=FALSE)
 render.animation(dyn,render.par=render.par,verbose=FALSE)
 
 # does show.stats crashed if changed from default
-render.par<-list(tween.frames=10,show.time=TRUE,show.stats=FALSE)
+render.par<-list(tween.frames=2,show.time=TRUE,show.stats=FALSE)
 render.animation(dyn,render.par=render.par,verbose=FALSE)
 
 # can it render arbitrary plotting comands?
-render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=expression(text(0,0,"SOME TEXT ON THE PLOT",col='blue')))
+render.par=list(tween.frames=2,show.time=TRUE,show.stats=NULL,extraPlotCmds=expression(text(0,0,"SOME TEXT ON THE PLOT",col='blue')))
 render.animation(dyn,render.par=render.par,verbose=FALSE)
 
 # can the plotting commands refer to the coordinates and network in the render context

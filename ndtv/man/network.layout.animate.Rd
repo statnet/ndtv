@@ -55,7 +55,7 @@ See \code{\link{network.layout.kamadakawai}} for more details about the implemen
 
 The MDSJ Java library was written by Christian Pich Algorithmics Group, Department of Computer & Information Science, University of Konstanz, Germany \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}. It does Multidimensional Scaling (MDS) of the distance matrix using SMACOF optimization. 
 
-The MDSJ library requires (and checks for) a working Java installation. It is quite fast for larger networks, but reletively less efficient for smaller ones because of the overhead of \code{system()} calls and Java startup for each layout.  The \code{verbose} option prints more information on the Java process.  The \code{max_iter} parameter sets the maximum of minimization steps the algorithm can try. In cases where it seems like the layout has not completely finished, this can be set higher.
+The MDSJ library requires (and checks for) a working Java installation. If Java is not found, it will fallback to the KamadaKawai layout. It is quite fast for larger networks, but reletively less efficient for smaller ones because of the overhead of \code{system()} calls and Java startup for each layout.  The \code{verbose} option prints more information on the Java process.  The \code{max_iter} parameter sets the maximum of minimization steps the algorithm can try. In cases where it seems like the layout has not completely finished, this can be set higher.
 
 \strong{useAttribute}
 
@@ -73,7 +73,7 @@ Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2
 Skye Bender-deMoll
 }
 \note{
-The MDSJ algorithm can only be used for non-comercial projects as it is available under the terms and conditions of the Creative Commons License "by-nc-sa" 3.0. \url{http://creativecommons.org/licenses/by-nc-sa/3.0/}
+The MDSJ algorithm can only be used for non-comercial projects as it is available under the terms and conditions of the Creative Commons License "by-nc-sa" 3.0. \url{http://creativecommons.org/licenses/by-nc-sa/3.0/} If Java is not found, MDSJ will fallback to the KamadaKawai layout.
 }
 
 

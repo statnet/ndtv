@@ -105,7 +105,7 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 100)
 @
 
-Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout.
+Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming Java is installed).
 <<calc_params,eval=true, results=hide>>=
 slice.par<-list(start=75,end=100,interval=1, 
                 aggregate.dur=1,rule="any")
@@ -454,9 +454,11 @@ McFarland, Daniel A. (2001) ``Student Resistance: How the Formal and Informal Or
 Newcomb T. (1961)
 \emph{The acquaintance process} New York: Holt, Reinhard and Winston.
 
-<<echo=False, results=tex, include=True>>=
- packageAsBibitem('animation')
-@
+\bibitem[Yihui, Xie   et al.  (2013)]{animation}
+Xie Y (2013).
+``animation: An R Package for Creating Animations and Demonstrating Statistical Methods.''
+\emph{Journal of Statistical Software}, \textbf{53}(1), pp. 1--27.
+\url{http://www.jstatsoft.org/v53/i01/}.
 
 
 \end{thebibliography}
