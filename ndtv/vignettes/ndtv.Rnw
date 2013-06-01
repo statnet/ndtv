@@ -105,7 +105,7 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 100)
 @
 
-Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming Java is installed).
+Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming MDSJ and Java are installed).
 <<calc_params,eval=true, results=hide>>=
 slice.par<-list(start=75,end=100,interval=1, 
                 aggregate.dur=1,rule="any")
@@ -211,7 +211,7 @@ According to its authors:
 
 MDSJ is a very efficient implementation of MDS so \verb@network.layout.animate.MDSJ@ gives the best performance of any of the algorithms tested so far -- despite the overhead of writing matrices out to a Java program and reading coordinates back in. Like all of the MDS-variants, MDSJ will check and give errors if you try to call it with a non-symmetric distance matrix.  Currently \verb@max_iter@ is the only user argument that is passed through to the Java wrapper.  It controls the maximum number of optimization steps.  The default value is 50 which is usually sufficient.  But it can be increased for layouts that appear to be not entirely converging, or perhaps decreased to save some speed on simpler layouts. 
 
-Please note that MDSJ is included under Creative Commons License ``by-nc-sa'' 3.0.  This means using the algorithm for commercial purposes would be a violation of the license. For convenience, the MDSJ binary is distributed along with the (GPL-licensed) \verb@ndtv@ package with the permission of MDSJ's authors. The original can be downloaded from \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/} 
+Please note that the MDSJ library is released under Creative Commons License ``by-nc-sa'' 3.0.  This means using the algorithm for commercial purposes would be a violation of the license. Due to CRAN's license restrictions, the MDSJ binary is not distributed along with the (GPL-licensed) \verb@ndtv@ package. Instead, the first time the layout is called, it will ask if you want to automatically download and install the library. More information about the MDSJ library and its licensing can be found at \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}.
 
 \subsection{Use a TEA attribute}
 The \verb@useAttribute@ layout is useful if you already know exactly where each vertex should be drawn at each timestep, and you just want to render out the network.  It just needs to know the names of the dynamic attribute holding the x coordinate and the y coordinate for each time step. 

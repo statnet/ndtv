@@ -1,8 +1,9 @@
 
-The MDSJ library comes from
+The MDSJ library is not distributed with the ndtv package. It can be obtained from:
 
 http://www.inf.uni-konstanz.de/algo/software/mdsj/
 
+It can also be downloaded and installed using the ndtv:::check.mdsj() function. 
 
 MDSJ is a free Java library for Multidimensional Scaling (MDS).
 

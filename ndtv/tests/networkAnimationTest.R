@@ -122,12 +122,12 @@ render.animation(dyn,render.par=render.par,verbose=FALSE)
 render.par=list(tween.frames=2,show.time=TRUE,show.stats=NULL,extraPlotCmds=expression(text(0,0,"SOME TEXT ON THE PLOT",col='blue')))
 render.animation(dyn,render.par=render.par,verbose=FALSE)
 
-# can the plotting commands refer to the coordinates and network in the render context
-# this example would probably break if network size changes
-render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=expression( if(exists('tweenCoords')){
-  text(tweenCoords[1,1],tweenCoords[1,2],"<-- watch this one",col='blue',pos=4)
-}))
-render.animation(dyn,render.par=render.par,verbose=FALSE)
+# test workaround for 0-coord label bug #322
+test<-network.initialize(2)
+activate.vertex.attribute(test,'x',0,onset=0,terminus=2)
+activate.vertex.attribute(test,'y',0,onset=0,terminus=2)
+compute.animation(test, animation.mode='useAttribute',layout.par = list(x = "x", y = "y"),slice.par=list(start=0,end=1,interval=1,aggregate.dur=0))
+render.animation(test,displaylabels=TRUE)
 
 # try labels moving on edges, but only 5 edges
 set.edge.attribute(dyn,"eLabel",1:network.edgecount(dyn))

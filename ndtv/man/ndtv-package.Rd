@@ -22,8 +22,8 @@ Construct visualizations such as timelines and animated movies of networkDynamic
 Package: \tab ndtv\cr
 Type: \tab Package\cr
 Version: \tab 0.3\cr
-Date: \tab 2013-04-19\cr
-License: \tab GNU GPL 3.0\cr
+Date: \tab 2013-06-01\cr
+License: \tab GNU GPL 3.0 + File LICENSE\cr
 }
 Requires \link[network]{network} objects with dynamics encoded using \link[networkDynamic]{networkDynamic}.  Compute a layout using \link{compute.animation} and render it as a movie using \link{render.animation}. To view package vignette, run \code{browseVignettes(package='ndtv')}.
 }

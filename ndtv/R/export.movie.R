@@ -138,7 +138,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   externalDevice<-FALSE
   if (!is.function(options()$device)){
     if (options("device")$device=="RStudioGD"){
-      print("RStudio's graphics device is not well supported by ndtv, attempting to open another type of plot window")
+      message("RStudio's graphics device is not well supported by ndtv, attempting to open another type of plot window")
       # try to open a new platform-appropriate plot window
       if (.Platform$OS.type=='windows'){
         windows()
@@ -235,9 +235,16 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       xlab <- paste(xlab,paste(rbind(names(stats),stats),collapse=":"))
     }
     
+    # work around for label plotting bug with all-0 coords #322
+    if(!exists('label.pos')){
+      label.pos<-0
+    }
+    if (all(coords[activev,]==0)){
+      label.pos<-5
+    }
     
     plot.network(slice,coord=coords[activev,],
-                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...)
+                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,label.pos=label.pos,...)
     # check if user has passed in extra plotting commands that need to be rendered
     if (!is.null(render.par$extraPlotCmds)){
       eval(render.par$extraPlotCmds)
@@ -281,9 +288,18 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
         coords2[activev,2]<-get.vertex.attribute(slice,"animation.y")
        # tweenCoords <- coords + ((coords2-coords)*(t/render.par$tween.frames))
         tweenCoords <- interp.fun(coords,coords2,t,render.par$tween.frames)
+        
+        # work around for label plotting bug with all-0 coords #322
+        if(!exists('label.pos')){
+          label.pos<-0
+        }
+        if (all(tweenCoords[activev,]==0)){
+          label.pos<-5
+        }
+        
          #TODO:what if we want to include innactive nodes
         plot.network(slice,coord=tweenCoords[activev,],
-                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...) 
+                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,label.pos=label.pos,...) 
         # check if user has passed in extra plotting commands that need to be rendered
         if (!is.null(render.par$extraPlotCmds)){
           eval(render.par$extraPlotCmds)

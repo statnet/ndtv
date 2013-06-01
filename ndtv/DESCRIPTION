@@ -6,7 +6,7 @@ Date: 2013-05-2
 Authors@R:c(
 		person("Skye", "Bender-deMoll", role=c("cre","aut"), email="skyebend@uw.edu"),
     person("Martina", "Morris", role=c("ctb"), email="morrism@u.washington.edu"))
-Depends: R (>= 2.15), network (>= 1.7.2),networkDynamic (>= 0.4),animation,sna,statnet.common
+Depends: R (>= 2.15), network (>= 1.7.2),networkDynamic (>= 0.4.1),animation,sna,statnet.common
 Suggests:tergm (>= 3.1),testthat
 Enhances: networkDynamic
 Description: Renders dynamic network data from networkDynamic objects as animated movies or other representations of relational structure and node attributes that change over time.

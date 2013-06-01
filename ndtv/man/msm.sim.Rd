@@ -50,7 +50,8 @@ require(network)
 require(networkDynamic)
 data(msm.sim)
 # show the network, aggregating 5 timesteps
-plot(network.extract(msm.sim,onset=0,terminus=5),vertex.col=msm.sim\%v\%"race",vertex.cex=0.5,edge.col="gray")
+plot(network.extract(msm.sim,onset=0,terminus=5),
+  vertex.col=msm.sim\%v\%"race",vertex.cex=0.5,edge.col="gray")
 
 # this could take 10 minutes, so don't run in example checking
 \dontrun{
@@ -62,7 +63,8 @@ saveVideo(ani.replay(),video.name="msm.simMomentary.mp4", other.opts="-b 5000k",
 # another version, this time with more temporal aggregation
 msm.sim <- compute.animation(msm.sim,slice.par=list(start=0,end=10,interval=1,aggregate.dur=3))
 # also more render more inbetween frames
-render.animation(msm.sim,render.par = list(tween.frames = 15,show.times=TRUE),vertex.col=msm.net\%v\%'race',vertex.cex=.5)
+render.animation(msm.sim,render.par = list(tween.frames = 15,show.times=TRUE), 
+  vertex.col=msm.net\%v\%'race',vertex.cex=.5)
 saveVideo(ani.replay(),video.name="msm.sim3Aggregated.mp4", other.opts="-b 5000k",clean=TRUE)
 }
 }

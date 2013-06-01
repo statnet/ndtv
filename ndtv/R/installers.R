@@ -30,10 +30,29 @@ check.mdsj <-function(){
   #TODO: assumes mdsj is in package, which assumes package dir is writable, need to add alternate
   if(java){
     mdsj.path <- file.path(path.package('ndtv'),'exec/mdsj.jar')
+    mdsj.dir <- file.path(path.package('ndtv'),'exec/')
     if(!file.exists(mdsj.path)){
-      warning("The MDSJ java library is not installed, please run ndtv:::install.mdsj()")
+      message("The MDSJ Java library does not appear to be installed. The ndtv package can use MDSJ to provide a fast accurate layout algorithm. It can be downloaded from http://www.inf.uni-konstanz.de/algo/software/mdsj/")
+      # ask user if the want to download
+      #  how will this work during automated test?
+      # "In non-interactive use the result is as if the response was RETURN and the value is ""."
+      
+      n <- readline("Do you want to download and install the MDSJ Java library? (y/N): ")
+      if (n%in%c('y','Y',"Yes","yes")){
+        install.mdsj(mdsj.dir)
+        if(!file.exists(mdsj.path)){
+          warning('MDSJ install failed.')
+        } else {
+          return(mdsj.dir)
+        }
+      } else {
+        message("The MDSJ library was not installed.")
+        return(NULL)
+      }
+      
+      
     } else {
-      return(file.path(path.package('ndtv'),'exec/'))
+      return(mdsj.dir)
     }
   } else {
     warning("The MDSJ library can only run if Java is installed on the system")
@@ -41,11 +60,22 @@ check.mdsj <-function(){
   return(NULL)
 }
 
-install.mdsj <-function(){
-  #print non-comercial use warning
-  #TODO: assumes mdsj is in package, which assumes package dir is writable, need to add alternate
- cat("MDSJ is a free Java library for Multidimensional Scaling (MDS).\n It is a free, non-graphical, self-contained, lightweight implementation of basic MDS algorithms and intended to be used both as a standalone application and as a building block in Java based data analysis and visualization software. \n Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at http://www.inf.uni-konstanz.de/algo/software/mdsj/. University of Konstanz, 2009.  USE RESTRICTIONS: Creative Commons License 'by-nc-sa' 3.0." )
- browseURL("http://www.inf.uni-konstanz.de/algo/software/mdsj/")
+install.mdsj <-function(install.path){
+  
+ 
+ # test if install path is writeable
+ if(file.access(install.path,mode=2)!=0){
+   stop('Unable to install MDSJ because the package path ',install.path,'does not appear to have write permissions')
+ }
+ # download file
+ mdsjURL<-'http://www.inf.uni-konstanz.de/algo/software/mdsj/mdsj.jar'
+ message('installing MDSJ to directory ',install.path)
+ download.file(url=mdsjURL,destfile=file.path(install.path,'mdsj.jar'),mode='wb')
+ if (file.exists(file.path(install.path,'mdsj.jar'))){
+   #print non-comercial use warning
+   message("MDSJ is a free Java library for Multidimensional Scaling (MDS).\n It is a free, non-graphical, self-contained, lightweight implementation of basic MDS algorithms and intended to be used both as a standalone application and as a building block in Java based data analysis and visualization software. \n\n CITATION: Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at http://www.inf.uni-konstanz.de/algo/software/mdsj/. University of Konstanz, 2009. \n\n USE RESTRICTIONS: Creative Commons License 'by-nc-sa' 3.0.\n" )
+ }
+ 
 }
 
 check.graphviz <-function(){

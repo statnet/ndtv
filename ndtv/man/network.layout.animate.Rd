@@ -24,7 +24,8 @@ network.layout.animate.kamadakawai(net, dist.mat = NULL, default.dist = NULL,
 network.layout.animate.MDSJ(net, dist.mat = NULL, default.dist = NULL, 
                 seed.coords = NULL, layout.par=list(max_iter=50),verbose=TRUE)
                 
-network.layout.animate.useAttribute(net, dist.mat = NULL, default.dist = NULL, seed.coords = NULL,  layout.par = list(x = "x", y = "y"), verbose = TRUE)                
+network.layout.animate.useAttribute(net, dist.mat = NULL, default.dist = NULL,
+     seed.coords = NULL,  layout.par = list(x = "x", y = "y"), verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,17 +50,20 @@ Usually if the dist.mat is not included, one will be calculated using the \code{
 
 \strong{KamadaKawai}
 
+The KamadaKawai option provides resonably good dynamically stable layouts. It computes a symmetric geodesic distance matrix from the input network (replacing infinite values with \code{default.dist}, and seeds the initial coordinates for each slice with the results of the previous slice in an attempt to find solutions that are as close as possible to the previous positions.  However, it performs poorly on large networks and is not as stable as MDSJ. 
 See \code{\link{network.layout.kamadakawai}} for more details about the implementation and parameters
 
 \strong{MDSJ}
 
-The MDSJ Java library was written by Christian Pich Algorithmics Group, Department of Computer & Information Science, University of Konstanz, Germany \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}. It does Multidimensional Scaling (MDS) of the distance matrix using SMACOF optimization. 
+The MDSJ layout uses the MDSJ Java library written by Christian Pich, Algorithmics Group, Department of Computer & Information Science, University of Konstanz, Germany \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}, 2009. The library does Multidimensional Scaling (MDS) of the distance matrix using SMACOF optimization.  Because MDSJ is released under a creative commons by-nc-sa license it is not distributed with the ndtv package, but an installer is included.
 
-The MDSJ library requires (and checks for) a working Java installation. If Java is not found, it will fallback to the KamadaKawai layout. It is quite fast for larger networks, but reletively less efficient for smaller ones because of the overhead of \code{system()} calls and Java startup for each layout.  The \code{verbose} option prints more information on the Java process.  The \code{max_iter} parameter sets the maximum of minimization steps the algorithm can try. In cases where it seems like the layout has not completely finished, this can be set higher.
+When the MDSJ layout is called it checks for working Java installation, and then checks if MDSJ is installed. If not, it prompts the user and (optionally) downloads and installs MDSJ. If MDSJ is not installed, it falls back to calling the KamadaKawai layout instead.  
+
+MDSJ is quite fast for larger networks, but relatively less efficient for smaller ones because of the overhead of \code{system} calls and Java start up for each layout.  The \code{verbose} option prints more information on the Java process.  The \code{max_iter} parameter sets the maximum of minimization steps the algorithm can try. In cases where it seems like the layout has not completely finished, this can be set higher.
 
 \strong{useAttribute}
 
-The \code{useAttribute} layout makes it possible to define vertex positions using a dynamic vertex attributes to provide the x and y coordinates for each timestep.  The names of the attributes to be used are passed in via the \code{layout.par} argument.  For example \code{layout.par = list(x = "myX", y = "myY")} The attribute must have values defined for each time point that the network plotted. 
+The \code{useAttribute} layout makes it possible to define vertex positions using a dynamic vertex attributes to provide the x and y coordinates for each time step.  The names of the attributes to be used are passed in via the \code{layout.par} argument.  For example \code{layout.par = list(x = "myX", y = "myY")} The attribute must have values defined for each time point that the network plotted. 
 
 
 }
@@ -68,12 +72,15 @@ A two-column by n-vertex matrix of coordinates.
 }
 \references{
 Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}. University of Konstanz, 2009.
+
+Kamada, T. and Kawai, S. (1989). An Algorithm for Drawing General Undirected Graphs. Information Processing Letters, 31(1):7-15.
+
 }
 \author{
 Skye Bender-deMoll
 }
 \note{
-The MDSJ algorithm can only be used for non-comercial projects as it is available under the terms and conditions of the Creative Commons License "by-nc-sa" 3.0. \url{http://creativecommons.org/licenses/by-nc-sa/3.0/} If Java is not found, MDSJ will fallback to the KamadaKawai layout.
+The MDSJ algorithm can only be used for non-comercial projects as it is available under the terms and conditions of the Creative Commons License "by-nc-sa" 3.0. \url{http://creativecommons.org/licenses/by-nc-sa/3.0/}
 }
 
 
