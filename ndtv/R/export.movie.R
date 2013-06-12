@@ -105,7 +105,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 
     if (length(slice) > 0 & network.size(slice)>0){
       #only update those coords that were calced
-      newCoords <-coords[activev,] # maybe this assignment necessary to force a copy before passing to C?
+      newCoords <-coords[activev,,drop=FALSE] # maybe this assignment necessary to force a copy before passing to C?
       newCoords  <- layout.fun(slice,dist.mat=NULL, default.dist=default.dist, seed.coords=newCoords,layout.par=layout.par,verbose=verbose)
       # recenter the new coords
       newCoords<-center.fun(newCoords,xlim,ylim)
@@ -123,7 +123,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
-render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),verbose=TRUE,label,displaylabels=!missing(label),xlab,...){
+render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),verbose=TRUE,label,displaylabels=!missing(label),xlab,xlim,ylim,...){
   if (!is.network(net)){
     stop("render.animation requires the first argument to be a network object")
   }
@@ -204,10 +204,20 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   xmax <- aggregate.vertex.attribute.active(net,"animation.x",max)
   ymin <- aggregate.vertex.attribute.active(net,"animation.y",min)
   ymax <- aggregate.vertex.attribute.active(net,"animation.y",max)
-  if (!exists('xlim')){
+  if (missing(xlim)){
+    # deal with case of only one coord, so no range
+    if(xmin==xmax){
+      xmax<-xmin+1
+      xmin<-xmin-1
+    }
     xlim<-c(xmin,xmax)
   }
-  if(!exists('ylim')){
+  if(missing(ylim)){
+    # deal with case of only one coord, so no range
+    if(ymin==ymax){
+      ymax<-ymin+1
+      ymin<-ymin-1
+    }
     ylim<-c(ymin,ymax)
   }
   
@@ -243,7 +253,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       label.pos<-5
     }
     
-    plot.network(slice,coord=coords[activev,],
+    plot.network(slice,coord=coords[activev,,drop=FALSE],
                  label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,label.pos=label.pos,...)
     # check if user has passed in extra plotting commands that need to be rendered
     if (!is.null(render.par$extraPlotCmds)){
@@ -298,7 +308,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
         }
         
          #TODO:what if we want to include innactive nodes
-        plot.network(slice,coord=tweenCoords[activev,],
+        plot.network(slice,coord=tweenCoords[activev,,drop=FALSE],
                  label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,label.pos=label.pos,...) 
         # check if user has passed in extra plotting commands that need to be rendered
         if (!is.null(render.par$extraPlotCmds)){

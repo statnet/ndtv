@@ -136,6 +136,19 @@ render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=exp
 }))
 render.animation(dyn,render.par=render.par,verbose=FALSE,edge.col='gray')
 
+# single vertex matrix collapse bug #332
+compute.animation(as.networkDynamic(network.initialize(1)))
+
+# test animation of single vertex
+test<-network.initialize(3)
+deactivate.vertices(test)
+activate.vertices(test,v=2,onset=0,terminus=3)
+compute.animation(test)
+render.animation(test)
+
+# test specifying xlim and ylim
+render.animation(test,xlim=c(-1,1),ylim=c(-1,1))
+
 # ----- java tests ----
 
 # does the check for java crash?
@@ -159,6 +172,8 @@ symat <-as.sociomatrix(layout.distance(net,default.dist=20))
 if (!all(symat == matrix(c(0,1,2,20, 1,0,1,20, 2,1,0,20, 20,20,20,0),ncol=4,byrow=TRUE))){
   stop("layout.distance did not return symetric geodedesic distance with default.dist as expected")
 }
+
+
 
 # ----- kk layout ------
 
