@@ -18,7 +18,7 @@ Simulation from a crude stergm model based on the flobusiness network. Mostly go
 }
 \usage{data(stergm.sim.1)}
 \format{
-  A \code{networkDynamic} object containing the output of 100 steps the simulation
+  A \code{networkDynamic} object containing the output of 100 steps of the simulation
 }
 \details{
 The model used to generate the sim was:
@@ -33,9 +33,9 @@ stergm.fit.1 <- stergm(flobusiness,
 	offset.coef.diss = theta.diss,
 	estimate = "EGMME"	)
 stergm.sim.1 <- simulate.stergm(stergm.fit.1,
-                    nsim=1, time.slices = 100)}
-                    
-NOTE: this is outdated syntax from old versions of statnet. 
+                    nsim=1, time.slices = 100)
+}
+
 
 }
 \source{

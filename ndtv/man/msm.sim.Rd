@@ -20,7 +20,7 @@ A 1000 vertex networkDynamic object that contains the output of 10 timesteps of 
 The model was built with the following stergm:
 \preformatted{
 msm.net <- network.initialize(1000, directed=F)  
-msm.net %v% 'race' <- rep(c(1,2),500)
+msm.net \%v\% 'race' <- rep(c(1,2),500)
 sm.form.constraints <- ~bd(maxout=2)
 msm.form.formula <- ~edges+nodematch('race')+
 	degree(2)
@@ -30,7 +30,7 @@ msm.theta.diss <- c(2.944, -0.747)
 msm.fit <- stergm(msm.net,
 	formation= msm.form.formula,
 	dissolution= msm.diss.formula,
-	targets="formation",``
+	targets="formation",
 	target.stats= msm.target.stats,
 	offset.coef.diss = msm.theta.diss,
 	form.constraints=msm.form.constraints,
