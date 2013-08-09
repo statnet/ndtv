@@ -39,6 +39,7 @@ msm.fit <- stergm(msm.net,
 )																				
 msm.sim <- simulate(msm.fit,nsim=1,time.slices=100)
 }
+However, the tergm-related output that would normally be attached to the network (toggles, etc) has been removed.
 }
 
 \source{

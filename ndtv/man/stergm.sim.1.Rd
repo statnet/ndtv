@@ -36,6 +36,7 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 100)
 }
 
+However, the ergm-related output that would normally be attached to the network (toggles, etc) has been removed.
 
 }
 \source{
