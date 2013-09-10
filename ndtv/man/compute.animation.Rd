@@ -30,7 +30,7 @@ compute.animation(net, slice.par = NULL, animation.mode = "kamadakawai",
   \item{slice.par}{
   A list of parameters which specify the time steps and aggregation that should be used when moving through the network. Example: 
   \code{slice.par=list(start=0,end=100,interval=1,
-  aggregate.dur=1,rule='any')}
+  aggregate.dur=1,rule='latest')}
   
   The parameters are:
   \itemize{

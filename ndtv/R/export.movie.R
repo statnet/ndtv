@@ -58,6 +58,9 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
     if(is.null(slice.par$aggregate.dur)){
       stop("the 'slice.par' argument to compute.animation must include an 'aggregate.dur' value")
     }
+    if(is.null(slice.par$rule)){
+      stop("the 'slice.par' argument to compute.animation must include a 'rule' value")
+    }
   }
   #if that doesn't work, guess
   if (is.null(slice.par)){
@@ -99,7 +102,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
       print(paste("Calculating layout for network slice from time ",starts[s],"to",ends[s]))
     }
     #only compute the layout involving active nodes and edges
-    activev <- is.active(net,starts[s],ends[s], rule=slice.par$rule,v=seq_len(network.size(net)))
+    activev <- is.active(net,starts[s],ends[s], rule=if(slice.par$rule!='all'){'any'},v=seq_len(network.size(net)))
     slice <- network.collapse(net,starts[s],ends[s], rule=slice.par$rule)
     
 
@@ -195,7 +198,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   #print some summary info as a starting frame?
   #compute some starting coords  
   slice <- network.collapse(net,starts[1],ends[1]) 
-  activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)))
+  activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
   
   #compute coordinate ranges to know how to scale plots
   xmin <- aggregate.vertex.attribute.active(net,"animation.x",min)
@@ -257,8 +260,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   #move through frames to render them out
   for(s in 1:length(starts)){
     if (verbose){print(paste("rendering",render.par$tween.frames,"frames for slice",s-1))}
-    slice <- network.collapse(net,starts[s],ends[s])
-    activev <- is.active(net,starts[s],ends[s],v=seq_len(network.size(net)))
+    slice <- network.collapse(net,starts[s],ends[s],rule=slice.par$rule)
+    activev <- is.active(net,starts[s],ends[s],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
    
     #TODO: draw new slices for intermediate tween frames?
     #skip any empty networks
@@ -360,7 +363,7 @@ guessSlicePar <- function(nd){
   times <- get.change.times(nd)
   if (length(times)==0){
     warning("network does not appear to have any dynamic information. Using start=0 end=1")
-    slice.par<-list(start=0,end=0,interval=1, aggregate.dur=1,rule="any")
+    slice.par<-list(start=0,end=0,interval=1, aggregate.dur=1,rule="latest")
     return(slice.par)
   }
   # ignore inf values
@@ -369,7 +372,7 @@ guessSlicePar <- function(nd){
   
   # TODO: should try to guess if it is discrete or cont
   # TODO: should try to pick no more than 100 samples
-  slice.par<-list(start=min(times,na.rm=T),end=max(times,na.rm=T),interval=1, aggregate.dur=1,rule="any")
+  slice.par<-list(start=min(times,na.rm=T),end=max(times,na.rm=T),interval=1, aggregate.dur=1,rule="latest")
   return(slice.par)
 }
 

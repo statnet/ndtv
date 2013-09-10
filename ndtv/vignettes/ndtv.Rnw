@@ -108,7 +108,7 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
 Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming MDSJ and Java are installed).
 <<calc_params,eval=true, results=hide>>=
 slice.par<-list(start=75,end=100,interval=1, 
-                aggregate.dur=1,rule="any")
+                aggregate.dur=1,rule="latest")
 compute.animation(stergm.sim.1,slice.par=slice.par,
                                 animation.mode='MDSJ')
 @
@@ -153,7 +153,7 @@ As an example, lets look at the McFarland \citep{mcfarland} data-set of streamin
 <<results=hide>>=
 data(McFarland_cls33_10_16_96)
 slice.par<-list(start=0,end=30,interval=2.5, 
-                aggregate.dur=0,rule="any")
+                aggregate.dur=0,rule="latest")
 compute.animation(cls33_10_16_96,
                 slice.par=slice.par,animation.mode='MDSJ')
 render.animation(cls33_10_16_96,
@@ -161,7 +161,7 @@ render.animation(cls33_10_16_96,
 ani.replay()
 @
 
-We can also get an idea of how we are slicing up the network by using the \verb@timeline()@ function to plot the \verb@slice.par@ parameters against the vertex and edge spells. Our very thin slices (gray virtical lines) (\verb@aggregate.dur=0@) are not intersecting may edge events (purple numbers) at once. 
+We can also get an idea of how we are slicing up the network by using the \verb@timeline()@ function to plot the \verb@slice.par@ parameters against the vertex and edge spells. Our very thin slices (gray virtical lines) (\verb@aggregate.dur=0@) are not intersecting many edge events (purple numbers) at once. 
 
 <<mcfarla_timeline1,fig=TRUE>>=
 timeline(cls33_10_16_96,slice.par=slice.par)
@@ -171,7 +171,7 @@ Notice that in the animation most of the vertices are isolates, occasionally lin
 
 <<results=hide>>=
 slice.par<-list(start=0,end=30,interval=2.5, 
-                aggregate.dur=2.5,rule="any")
+                aggregate.dur=2.5,rule="latest")
 compute.animation(cls33_10_16_96,
                 slice.par=slice.par,animation.mode='MDSJ')
 render.animation(cls33_10_16_96,
@@ -183,7 +183,7 @@ To reveal slower structural patterns we can make the aggregation period even lon
 
 <<results=hide,fig=TRUE>>=
 slice.par<-list(start=0,end=30,interval=1, 
-                aggregate.dur=5,rule="any")
+                aggregate.dur=5,rule="latest")
 timeline(cls33_10_16_96,slice.par=slice.par)
 compute.animation(cls33_10_16_96,
                 slice.par=slice.par,animation.mode='MDSJ')
@@ -192,7 +192,7 @@ render.animation(cls33_10_16_96,
 ani.replay()
 @
 
-Note that when we use a long duration slice, it is quite likely that there is more than one edge between a pair of vertices. How should this condition be handled? Ideally we might want to aggregate the two edges in some way, perhaps adding the weights together or drawing them in some overlapping way. Although we anticipate adding these features soon, currently it is handled in the kludgy way of only considering the first (earliest) edge when multiple edges are encountered. 
+Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the \verb@rule@ element of the \verb@slice.par@ argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally \verb@rule='latest'@ gives resonable results, returning the most recent value found within the query spell. 
 
 \section{Layout algorithms}
 Producing ``good' (for an admittedly ambiguous definition of `good') layouts of networks is generally a computationally difficult problem. There are a wide variety of algorithms and approaches being developed. Doing layouts for animations adds additional challenges because it is usually desirable that the layouts remain stable over time. Ideally this means that the layouts don't change much unless the network structure changes, and that small changes in the network structure should lead to small changes in the layouts.  Many otherwise excellent static layout algorithms are not stable in this sense, or they may require very specific parameter settings to improve their results for animation applications. 
@@ -249,7 +249,7 @@ Edges are not the only things that can change in networks. In some dynamic netwo
 <<windsurfers,eval=true,include=TRUE>>=
 data(windsurfers)
 slice.par<-list(start=1,end=31,interval=1, 
-                aggregate.dur=1,rule="any")
+                aggregate.dur=1,rule="latest")
 windsurfers<-compute.animation(windsurfers,slice.par=slice.par,
                                default.dist=3,
                                animation.mode='MDSJ',
@@ -265,7 +265,7 @@ In this example\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vig
 
 <<windsurfers,eval=true,include=TRUE>>=
 slice.par<-list(start=0,end=24,interval=1, 
-                aggregate.dur=7,rule="any")
+                aggregate.dur=7,rule="latest")
 windsurfers<-compute.animation(windsurfers,slice.par=slice.par,
                                default.dist=3,
                                animation.mode='MDSJ',

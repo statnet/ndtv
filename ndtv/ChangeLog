@@ -7,6 +7,7 @@ v0.3 - minor features and bug fixes
  - added parameters to export.dot to make possible exporting vertex and edge attributes to Graphviz
  - removed some workarounds for fixed bugs in network
  - removed edge label plotting code (now supported in network)
+ - the attribute aggregation rule element of slice.par now defaults to 'latest', where previously it defaulted to 'any', which gave the behavior of 'earliest' and produced a warning. 
  
 v0.2 - minor features and bug fixes
  - added work-around for RStudio plotting errors

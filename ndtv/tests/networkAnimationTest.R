@@ -20,9 +20,9 @@ require(testthat)
 
 # does it crash on basic example
 data(newcomb)
-dynNew <- networkDynamic(network.list=newcomb)
+dynNew <- networkDynamic(network.list=newcomb[1:5])
 dyn<-dynNew
-slice.par<-list(start=0,end=5,interval=1, aggregate.dur=1,rule=NULL)
+slice.par<-list(start=0,end=5,interval=1, aggregate.dur=1,rule='any')
 set.seed(123)
 compute.animation(dyn,slice.par=slice.par,verbose=FALSE)
 
@@ -83,7 +83,7 @@ if (any(x1==x2)){
 # does default.dist change results
 data(stergm.sim.1)
 set.seed(123)
-slice.par<-list(start=0,end=2,interval=1, aggregate.dur=1)
+slice.par<-list(start=0,end=2,interval=1, aggregate.dur=1,rule='latest')
 stergm.sim.1 <-compute.animation(stergm.sim.1,slice.par=slice.par,verbose=FALSE)
 x1 <-get.vertex.attribute.active(stergm.sim.1,"animation.x",at=1)
 set.seed(123)
@@ -126,7 +126,7 @@ render.animation(dyn,render.par=render.par,verbose=FALSE)
 test<-network.initialize(2)
 activate.vertex.attribute(test,'x',0,onset=0,terminus=2)
 activate.vertex.attribute(test,'y',0,onset=0,terminus=2)
-compute.animation(test, animation.mode='useAttribute',layout.par = list(x = "x", y = "y"),slice.par=list(start=0,end=1,interval=1,aggregate.dur=0))
+compute.animation(test, animation.mode='useAttribute',layout.par = list(x = "x", y = "y"),slice.par=list(start=0,end=1,interval=1,aggregate.dur=0,rule='latest'))
 render.animation(test,displaylabels=TRUE)
 
 # try labels moving on edges, but only 5 edges

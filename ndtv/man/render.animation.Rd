@@ -66,7 +66,7 @@ Named list of parameters to specify the behavior of the animation.
 
 Most of the network plotting arguments are passed directly to \code{\link{plot.network.default}}.  
 
-If no \code{slice.par} network attribute is found to define the time range to render,  it will make one up using the smallest and largest non-Inf time values and unit-length non-overlapping time steps. 
+If no \code{slice.par} network attribute is found to define the time range to render,  it will make one up using the smallest and largest non-Inf time values, unit-length non-overlapping time steps and an aggregation rule of 'latest'. 
 
 If no dynamic coordinate information has been stored, \code{\link{compute.animation}} will be called with default values to try to do the layout before giving up. 
 
@@ -148,7 +148,7 @@ data(stergm.sim.1)
 
 # (optional) pre-compute coordinates for set time range
 # (optional) limit time range to a few steps to speek example
-slice.par=list(start=0,end=3,interval=1, aggregate.dur=1,rule='any')
+slice.par=list(start=0,end=3,interval=1, aggregate.dur=1,rule='latest')
 compute.animation(stergm.sim.1,slice.par=slice.par)
 
 
