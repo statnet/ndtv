@@ -197,8 +197,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   slice <- network.collapse(net,starts[1],ends[1]) 
   activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)))
   
-  
-  
   #compute coordinate ranges to know how to scale plots
   xmin <- aggregate.vertex.attribute.active(net,"animation.x",min)
   xmax <- aggregate.vertex.attribute.active(net,"animation.x",max)
@@ -245,16 +243,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       xlab <- paste(xlab,paste(rbind(names(stats),stats),collapse=":"))
     }
     
-    # work around for label plotting bug with all-0 coords #322
-    if(!exists('label.pos')){
-      label.pos<-0
-    }
-    if (all(coords[activev,]==0)){
-      label.pos<-5
-    }
-    
     plot.network(slice,coord=coords[activev,,drop=FALSE],
-                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,label.pos=label.pos,...)
+                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...)
     # check if user has passed in extra plotting commands that need to be rendered
     if (!is.null(render.par$extraPlotCmds)){
       eval(render.par$extraPlotCmds)
@@ -299,17 +289,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
        # tweenCoords <- coords + ((coords2-coords)*(t/render.par$tween.frames))
         tweenCoords <- interp.fun(coords,coords2,t,render.par$tween.frames)
         
-        # work around for label plotting bug with all-0 coords #322
-        if(!exists('label.pos')){
-          label.pos<-0
-        }
-        if (all(tweenCoords[activev,]==0)){
-          label.pos<-5
-        }
-        
          #TODO:what if we want to include innactive nodes
         plot.network(slice,coord=tweenCoords[activev,,drop=FALSE],
-                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,label.pos=label.pos,...) 
+                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...) 
         # check if user has passed in extra plotting commands that need to be rendered
         if (!is.null(render.par$extraPlotCmds)){
           eval(render.par$extraPlotCmds)
@@ -391,46 +373,6 @@ guessSlicePar <- function(nd){
   return(slice.par)
 }
 
-# Rough draft of a primitive internal command for plotting labels on edges
-.plotEdgeLabel<-function(net,coords, eid,label,...){
-  # figure out the coords from eid
-  v1<-net$mel[[eid]]$outl
-  v2<-net$mel[[eid]]$inl
-  v1coords<-coords[v1,]
-  v2coords<-coords[v2,]
-  textCoords<-v1coords+((v2coords-v1coords)/2)
-  # assumes that line is straight
-  text(textCoords[1],textCoords[2],labels=label,...)
-}
-
-.plotEdgeLabels <-function(net,coords,attrname,...){
-  # get the values from the net
-  vals <- get.edge.value(net,attrname)
-  # if there are any edges / values
-  if (length(vals) > 0){
-    # get head ant tail vertex ids
-    v1<-sapply(net$mel,'[[','outl')
-    v2<-sapply(net$mel,'[[','inl')
-    # get coords of those vertices
-    v1coords<-coords[v1,,drop=FALSE]
-    v2coords<-coords[v2,,drop=FALSE]
-    # compute a point inbetween vertices (won't be on edge if edge is curved)
-    textCoords<-v1coords+((v2coords-v1coords)/2)
-    # draw the labels
-    text(textCoords[,1],textCoords[,2],labels=vals,...)
-  }
-}
-
-.plotActiveEdgeLabels <-function(net,at,eids=seq_len(network.edgecount(net)),attrname,...){
-  # get the values from the net
-  vals <- get.edge.value.active(net,attrname,at=at)
-  x<-get.vertex.attribute.active(net,'animation.x',onset=at,terminus=at)
-  y<-get.vertex.attribute.active(net,'animation.y',onset=at,terminus=at) 
-  coords<-cbind(x,y)
-  for (e in eids){
-    .plotEdgeLabel(net,coords,e,label=vals[e],...)
-  }
-}
 
 # helper function to pretty print slice.par object
 .print.slice.par <-function(sp){

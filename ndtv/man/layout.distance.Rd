@@ -28,7 +28,7 @@ An (optional) value to be used to replace undefined values created by isolates a
 }
   \item{weight.attr}{character, (optional) the name of an edge attribute of \code{net} containing numeric values to use for edge distances.}
   
-  \item{weight.dist}{logical, should the edge values given by \code{weight.attr} be interpreted as distances (larger values should place vertices farther apart) ? Default (\code{FALSE}) assumes values are similarities (larger values means stronger connection means virtices closer together ).
+  \item{weight.dist}{logical, should the edge values given by \code{weight.attr} be interpreted as distances (larger values should place vertices farther apart) ? Default (\code{FALSE}) assumes values are similarities (larger values means stronger connection means vertices closer together ).
   }
   
 }

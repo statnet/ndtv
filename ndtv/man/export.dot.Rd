@@ -16,7 +16,8 @@ Export a network file as Graphviz .dot formatted text file.
 A crude exporter for saving out a network in the Graphviz .dot format. \url{http://graphviz.org/content/dot-language}
 }
 \usage{
-export.dot(x, file = "", coords = NULL, all.dyads = FALSE)
+export.dot(x, file = "", coords = NULL, all.dyads = FALSE, 
+            vert.attrs = NULL, edge.attrs = NULL)
 }
 
 \arguments{
@@ -28,6 +29,8 @@ export.dot(x, file = "", coords = NULL, all.dyads = FALSE)
 }
   \item{all.dyads}{ If true, entries are written out for all possible dyads in the network, necessary for some use cases. 
 }
+  \item{vert.attrs}{optional character vector listing the names of any vertex attributes of the network that should be included as attributes of the nodes in the Graphviz dot file. (e.g. 'label', 'width')}
+  \item{edge.attrs}{optional character vector listing the names of any edge attributes of the network that should be included as attributes of edges in the Graphviz dot file. (e.g. 'weight','penwidth')}
 }
 \details{
 A crude exporter for saving out a network in the Graphviz .dot format. \url{http://graphviz.org/content/dot-language}

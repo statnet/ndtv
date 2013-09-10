@@ -131,10 +131,8 @@ render.animation(test,displaylabels=TRUE)
 
 # try labels moving on edges, but only 5 edges
 set.edge.attribute(dyn,"eLabel",1:network.edgecount(dyn))
-render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=expression( if(exists('tweenCoords')){
-  .plotEdgeLabels(slice,tweenCoords,attrname='eLabel',col='blue',cex=0.7)
-}))
-render.animation(dyn,render.par=render.par,verbose=FALSE,edge.col='gray')
+render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL)
+render.animation(dyn,render.par=render.par,verbose=FALSE,edge.col='gray',edge.label='eLabel',edge.label.cex=0.7,edge.label.col='blue')
 
 # single vertex matrix collapse bug #332
 compute.animation(as.networkDynamic(network.initialize(1)))

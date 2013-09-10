@@ -1,4 +1,13 @@
 ChangeLog for ndtv
+v0.3 - minor features and bug fixes
+ - resaved data objects to fix spurious namespace import problem flagged by CRAN
+ - fixed bug when network has only single vertex
+ - fixed undefiend plot range bug triggered by same condidtion
+ - fixed error specifying xlim and ylim in render.animation
+ - added parameters to export.dot to make possible exporting vertex and edge attributes to Graphviz
+ - removed some workarounds for fixed bugs in network
+ - removed edge label plotting code (now supported in network)
+ 
 v0.2 - minor features and bug fixes
  - added work-around for RStudio plotting errors
  - fixed jittering plots issue
