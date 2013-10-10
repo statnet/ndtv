@@ -20,7 +20,8 @@ Steps through a networkDynamic object and applies layout algorithms at specified
 \usage{
 compute.animation(net, slice.par = NULL, animation.mode = "kamadakawai", 
                   seed.coords = NULL, layout.par = list(), 
-                  default.dist = NULL, verbose = TRUE,...)
+                  default.dist = NULL, chain.direction=c('forward','reverse'),
+                  verbose = TRUE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -61,6 +62,9 @@ The name of the network animation layout to be used. These layouts are name netw
   \item{default.dist}{
   The default distance to be used to separate nodes (or disconnected network components). Default to \code{sqrt(network.size(net))}. See \code{\link{layout.distance}}. 
 }
+  \item{chain.direction}{
+  a value of \code{'forward'} indicates the chain of layouts should be computes in forward temporal order. A value \code{'reverse'} runs the chain backwards. For some layouts, reverse-chaining means that isolated vertices are more likely to have positions close to the partners they will be tied to.
+  }
   \item{verbose}{
   If true, additional information about the layout process and progress will be returned to console. 
 }

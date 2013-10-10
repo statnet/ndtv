@@ -13,7 +13,7 @@ require(networkDynamic)
 require(animation)
 #apply a series of network layouts to a networkDynamic object
 #store the coordinates as temporal attributes on the network
-compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai", seed.coords=NULL, layout.par=list(),default.dist=NULL, verbose=TRUE,...){
+compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai", seed.coords=NULL, layout.par=list(),default.dist=NULL, chain.direction=c('forward','reverse'), verbose=TRUE,...){
   #check that we are dealing with the right types of objects
   if (!is.networkDynamic(net)){
     stop("The 'net' argument to compute.animation must be a networkDynamic object")
@@ -34,6 +34,8 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
   # figure out the range we will be centering in
   xlim<-c(0,0)
   ylim<-c(0,0)
+  
+  chain.direction<-match.arg(chain.direction)
   
   
   # some stuff so we can modify argument
@@ -78,6 +80,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
   #TODO: allow alternate "per change specification" or passing in a vector of times
   starts <- seq(from=slice.par$start,to=slice.par$end,by=slice.par$interval)
   ends <- seq(from=slice.par$start+slice.par$aggregate.dur,to=slice.par$end+slice.par$aggregate.dur,by=slice.par$interval)
+  
   #TODO need more initial coord options
   if (is.null(seed.coords)){
     seed.coords <- matrix(data=runif(network.size(net)*2) , ncol=2)
@@ -93,7 +96,12 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
   coords <-seed.coords
   
   #extract crossections and apply layouts, must be in sequence to allow chaining
-  for ( s in 1:length(starts)){
+  if (chain.direction=='reverse'){
+    sliceIndices <-length(starts):1
+  } else {  # assume we will be doing it forward
+    sliceIndices <-1:length(starts)
+  }
+  for ( s in sliceIndices){
     #debug, print out the coordinte range
     xrange <-c(min(coords[,1]),max(coords[,1]))
     yrange <-c(min(coords[,2]),max(coords[,2]))
@@ -140,7 +148,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   
   externalDevice<-FALSE
   if (!is.function(options()$device)){
-    if (options("device")$device=="RStudioGD"){
+    if (names(dev.cur())=="RStudioGD"){
       message("RStudio's graphics device is not well supported by ndtv, attempting to open another type of plot window")
       # try to open a new platform-appropriate plot window
       if (.Platform$OS.type=='windows'){
