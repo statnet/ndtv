@@ -1,5 +1,7 @@
 ChangeLog for ndtv
 v0.3 - minor features and bug fixes
+ - added a render.cache argument to render.animation which makes it possible to avoid intermediate plot generation when rendering long animations
+ - added chain.direction option to compute.animation
  - resaved data objects to fix spurious namespace import problem flagged by CRAN
  - fixed bug when network has only single vertex
  - fixed undefiend plot range bug triggered by same condidtion

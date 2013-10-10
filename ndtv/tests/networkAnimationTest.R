@@ -99,14 +99,27 @@ expect_error(compute.animation(stergm.sim.1,slice.par=list()),"the 'slice.par' a
 expect_error(compute.animation(stergm.sim.1,slice.par=list(start=1)),"the 'slice.par' argument to compute.animation must include")
 expect_error(compute.animation(stergm.sim.1,slice.par=list(start=1,end=5,interval=1)),"the 'slice.par' argument to compute.animation must include")
 
+
+# does reverse chaining option crash things
+dyn<-dynNew
+slice.par<-list(start=0,end=2,interval=1, aggregate.dur=1,rule='latest')
+compute.animation(dyn,slice.par=slice.par,verbose=FALSE,chain.direction='reverse')
+expect_error(compute.animation(dyn,slice.par=slice.par,verbose=FALSE,chain.direction='sideways'), "'arg' should be one of")
+
+
+
 #----- render animation ------
 # does it crash on basic example
 # shorten time range so wont dake as long
-dyn<-network.extract(dynNew,onset=0,terminus=3,trim.spells=TRUE)
+dyn<-network.extract(dynNew,onset=0,terminus=3,trim.spells=TRUE) 
 render.animation(dyn,verbose=FALSE)
 
 # does replay work 
 ani.replay()
+
+# can it run and record plots without creating alist of animations
+saveVideo(render.animation(dyn,verbose=FALSE,render.cache='none'))
+
 
 # does increasing tween produce different results
 
@@ -146,6 +159,8 @@ render.animation(test)
 
 # test specifying xlim and ylim
 render.animation(test,xlim=c(-1,1),ylim=c(-1,1))
+
+
 
 # ----- java tests ----
 

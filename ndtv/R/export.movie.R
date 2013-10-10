@@ -134,7 +134,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
-render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),verbose=TRUE,label,displaylabels=!missing(label),xlab,xlim,ylim,...){
+render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),render.cache=c('plot.list','none'), verbose=TRUE,label,displaylabels=!missing(label),xlab,xlim,ylim,...){
   if (!is.network(net)){
     stop("render.animation requires the first argument to be a network object")
   }
@@ -188,6 +188,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   if (is.null(render.par$show.time)){
     render.par$show.time<-TRUE
   }
+  # check plot caching params
+  match.arg(render.cache)
   
   #check graphics params
   if(missing(xlab)){
@@ -264,7 +266,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     
   coords2 <- coords
   
-  ani.record(reset=TRUE)
+  if (render.cache=='plot.list'){
+    ani.record(reset=TRUE)
+  }
   #move through frames to render them out
   for(s in 1:length(starts)){
     if (verbose){print(paste("rendering",render.par$tween.frames,"frames for slice",s-1))}
@@ -307,7 +311,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
         if (!is.null(render.par$extraPlotCmds)){
           eval(render.par$extraPlotCmds)
         }
-        ani.record();
+        if (render.cache=='plot.list'){
+          ani.record()
+        }
       }
       coords<-coords2;
     } else { # end slice > 0 block
@@ -324,7 +330,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
         if (!is.null(render.par$extraPlotCmds)){
           eval(render.par$extraPlotCmds)
         }
-        ani.record();
+        if (render.cache=='plot.list'){
+          ani.record()
+        }
       }
     } # end empty network block
   }
