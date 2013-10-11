@@ -143,7 +143,8 @@ render.animation(wheel,edge.lwd='width',vertex.cex='mySize',vertex.col='color')
 ani.replay()
 
 # render it directly to a movie file without caching the plots
-saveVideo( render.animation(wheel,edge.lwd='width',vertex.cex='mySize',vertex.col='color',render.cache='none') )
+saveVideo( render.animation(wheel,edge.lwd='width',vertex.cex='mySize',vertex.col='color',
+           render.cache='none') )
 
 # simulation based example
 # disabled to save time when testing

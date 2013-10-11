@@ -93,7 +93,7 @@ check.graphviz <-function(){
 }
 
 install.graphviz <-function(){
-  cat("Please visit the Graphviz website and install the libraries on your machine: http://www.graphviz.org/Download.php")
+  message("Please visit the Graphviz website and install the libraries on your machine: http://www.graphviz.org/Download.php")
   browseURL("http://www.graphviz.org/Download.php")
 }
 
@@ -113,13 +113,13 @@ check.ffmpeg <- function(){
 
 install.ffmpeg <-function(){
   if (.Platform$OS.type == "windows"){
-    cat("To export movies, please install ffmpeg for windows from http://ffmpeg.zeranoe.com/builds/\n type ?install.ffmpeg for more detailed instructions")
+    message("To export movies, please install ffmpeg for windows from http://ffmpeg.zeranoe.com/builds/\n type ?install.ffmpeg for more detailed instructions")
     browseURL("http://ffmpeg.zeranoe.com/builds/")
     
   } else if (.Platform$OS.type == "unix") {
-    cat("To export movies, please install ffmpeg using your system's package manager.\n Type ?install.ffmpeg for more detailed instructions.")
+    message("To export movies, please install ffmpeg using your system's package manager.\n Type ?install.ffmpeg for more detailed instructions.")
   } else {
-    cat("To determine if ffmpeg can be installed on your system, please visit http://ffmpeg.org")
+    message("To determine if ffmpeg can be installed on your system, please visit http://ffmpeg.org")
     browseURL("http://ffmpeg.org")
   }
 }

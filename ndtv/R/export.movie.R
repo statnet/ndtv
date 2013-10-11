@@ -189,12 +189,13 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     render.par$show.time<-TRUE
   }
   # check plot caching params
-  match.arg(render.cache)
+  render.cache<-match.arg(render.cache)
   
   #check graphics params
   if(missing(xlab)){
     xlab=NULL
   }
+  
   
   #TODO: how are we doing interpolation?
   interp.fun<-coord.interp.smoothstep
@@ -255,6 +256,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       stats <- eval(parse(text=paste("summary.statistics.network(network.extract(net,onset=",starts[1],", terminus=",ends[1],")",render.par$show.stats,")",sep=''))) 
       xlab <- paste(xlab,paste(rbind(names(stats),stats),collapse=":"))
     }
+    
+
     
     plot.network(slice,coord=coords[activev,,drop=FALSE],
                  label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...)

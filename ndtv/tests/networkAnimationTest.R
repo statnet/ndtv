@@ -160,6 +160,17 @@ render.animation(test)
 # test specifying xlim and ylim
 render.animation(test,xlim=c(-1,1),ylim=c(-1,1))
 
+# test specifying plotting arguments via  a function
+#test<-network.initialize(5)
+#activate.vertex.attribute(test,'size',1,onset=1,length=1)
+#activate.vertex.attribute(test,'size',2,onset=2,length=1)
+#activate.vertex.attribute(test,'size',3,onset=3,length=1)
+#activate.vertex.attribute(test,'status',0,onset=-Inf,length=Inf)
+#activate.vertex.attribute(test,'status',1,onset=0,length=1,v=1)
+#activate.vertex.attribute(test,'status',1,onset=1,length=1,v=2)
+#activate.vertex.attribute(test,'status',1,onset=2,length=1,v=3)
+#render.animation(test,vertex.cex=function(s){s%v%'size'})
+
 
 
 # ----- java tests ----
