@@ -8,5 +8,6 @@ network.layout.animate.MDSJ,
 network.layout.animate.useAttribute,
 layout.distance,
 layout.center,
-timeline
+timeline,
+proximity.timeline
 )

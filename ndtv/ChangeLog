@@ -1,5 +1,7 @@
 ChangeLog for ndtv
-v0.3 - minor features and bug fixes
+v0.3 - features and bug fixes
+ - added weight.attr and weight.dist arguments to compute.animation, making it possible to use numeric edge attributes to specifiy desired distances/similarities in network layouts
+ - added a draft proximity.timeline function for creating experimental 1D timeline layouts
  - added a render.cache argument to render.animation which makes it possible to avoid intermediate plot generation when rendering long animations
  - added chain.direction option to compute.animation
  - resaved data objects to fix spurious namespace import problem flagged by CRAN

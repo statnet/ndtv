@@ -33,7 +33,7 @@ An (optional) value to be used to replace undefined values created by isolates a
   
 }
 \details{
-If no \code{default.dist} is provided the value \code{sqrt(network.size(net))} will be used. If input is similarity, it will be recoded/reversed to distances by subtracting each non-zero value from the max  value of the matrix and adding the min value of the matrix. Input matrix will then be symmatrized to max value of i-j relation. 
+If no \code{default.dist} is provided the value \code{sqrt(network.size(net))} will be used. If input is similarity, it will be recoded/reversed to distances by subtracting each non-zero value from the max  value of the matrix and adding the min value of the matrix. If the network is directed, the matrix will then be symmatrized to either the max value of i-j relation (if \code{weight.dist=FALSE}) or min value of i-j relation (if \code{weight.dist=TRUE}). Note that if the network is marked as undirected but includes bi-directional edges, the (i,j) value will be chosen instead of (j,i). 
 }
 \value{
 A distance matrix assumed to be appropriate for the network.

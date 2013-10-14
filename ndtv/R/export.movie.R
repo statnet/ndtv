@@ -13,7 +13,7 @@ require(networkDynamic)
 require(animation)
 #apply a series of network layouts to a networkDynamic object
 #store the coordinates as temporal attributes on the network
-compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai", seed.coords=NULL, layout.par=list(),default.dist=NULL, chain.direction=c('forward','reverse'), verbose=TRUE,...){
+compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai", seed.coords=NULL, layout.par=list(),default.dist=NULL, weight.attr=NULL,weight.dist=FALSE, chain.direction=c('forward','reverse'), verbose=TRUE,...){
   #check that we are dealing with the right types of objects
   if (!is.networkDynamic(net)){
     stop("The 'net' argument to compute.animation must be a networkDynamic object")
@@ -111,13 +111,18 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
     }
     #only compute the layout involving active nodes and edges
     activev <- is.active(net,starts[s],ends[s], rule=if(slice.par$rule!='all'){'any'},v=seq_len(network.size(net)))
-    slice <- network.collapse(net,starts[s],ends[s], rule=slice.par$rule)
+    slice <- network.collapse(net,starts[s],ends[s], rule=slice.par$rule,rm.time.info=is.null(weight.attr))
     
 
     if (length(slice) > 0 & network.size(slice)>0){
       #only update those coords that were calced
       newCoords <-coords[activev,,drop=FALSE] # maybe this assignment necessary to force a copy before passing to C?
-      newCoords  <- layout.fun(slice,dist.mat=NULL, default.dist=default.dist, seed.coords=newCoords,layout.par=layout.par,verbose=verbose)
+      # if a weight attribute is defined, precompute a dist.matrix
+      dist.mat=NULL
+      if (!is.null(weight.attr)){
+        dist.mat<-layout.distance(slice,default.dist=default.dist,weight.attr=weight.attr,weight.dist=weight.dist)
+      }
+      newCoords  <- layout.fun(slice,dist.mat=dist.mat, default.dist=default.dist, seed.coords=newCoords,layout.par=layout.par,verbose=verbose)
       # recenter the new coords
       newCoords<-center.fun(newCoords,xlim,ylim)
       coords[activev,] <- newCoords
@@ -196,7 +201,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     xlab=NULL
   }
   
-  
   #TODO: how are we doing interpolation?
   interp.fun<-coord.interp.smoothstep
   #interp.fun<-coord.interp.linear
@@ -208,7 +212,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   
   #print some summary info as a starting frame?
   #compute some starting coords  
-  slice <- network.collapse(net,starts[1],ends[1]) 
+  slice <- network.collapse(net,starts[1],ends[1],rule=slice.par$rule,rm.time.info=FALSE) 
   activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
   
   #compute coordinate ranges to know how to scale plots
@@ -238,8 +242,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   # TODO: start from initial coords?
   coords<-matrix(0,ncol=2,nrow=network.size(net))
   if (length(slice)>0 & network.size(slice)>0){ 
-    #coords[activev,1] <-get.vertex.attribute.active(slice,"animation.x",onset=starts[1],terminus=ends[1])
-    #coords[activev,2] <-get.vertex.attribute.active(slice,"animation.y",onset=starts[1],terminus=ends[1])
     coords[activev,1] <-get.vertex.attribute(slice,"animation.x")
     coords[activev,2] <-get.vertex.attribute(slice,"animation.y")
     #need to update plot params with slice-specific values
@@ -257,8 +259,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       xlab <- paste(xlab,paste(rbind(names(stats),stats),collapse=":"))
     }
     
-
-    
     plot.network(slice,coord=coords[activev,,drop=FALSE],
                  label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...)
     # check if user has passed in extra plotting commands that need to be rendered
@@ -275,7 +275,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   #move through frames to render them out
   for(s in 1:length(starts)){
     if (verbose){print(paste("rendering",render.par$tween.frames,"frames for slice",s-1))}
-    slice <- network.collapse(net,starts[s],ends[s],rule=slice.par$rule)
+    slice <- network.collapse(net,starts[s],ends[s],rule=slice.par$rule,rm.time.info=FALSE)
     activev <- is.active(net,starts[s],ends[s],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
    
     #TODO: draw new slices for intermediate tween frames?
@@ -352,6 +352,10 @@ layout.distance <-function(net,default.dist=NULL,weight.attr=NULL,weight.dist=FA
   if (is.null(default.dist)){
     default.dist=sqrt(network.size(net))
   }
+  # if there are no edges, don't worry about the edge value
+  if (network.edgecount(net)<1){
+    weight.attr=NULL
+  }
   raw<-as.matrix.network.adjacency(net,attrname=weight.attr,expand.bipartite=TRUE)
   # if the attribute is similairity (bigger=closer, need to invert values)
   if(!is.null(weight.attr) & !weight.dist){
@@ -359,8 +363,18 @@ layout.distance <-function(net,default.dist=NULL,weight.attr=NULL,weight.dist=FA
     matmin<-min(raw[raw>0])
     raw[]<-vapply(raw,function(x){ifelse(x>0,(matmax-x)+matmin,0)},numeric(1))
   }
-  #TODO: give option to use pmin?  is there a fast version of pmean?
-  dg <- geodist(pmax(raw,t(raw)),inf.replace=default.dist,ignore.eval=is.null(weight.attr))$gdist
+  # if it is a distance matrix, symmatrize with pmin (shortest path), if it is similarity matrix, symmatrize with pmax, (most similar)
+  if (is.directed(net)){
+    if (weight.dist){
+      # replace any 0 values with their transpose (to avoid zeroing the min)
+      raw[raw==0]<-t(raw)[raw==0]
+      # now take min  
+      raw<-pmin(raw,t(raw))
+    } else {
+      raw<-pmax(raw,t(raw))
+    }
+  }
+  dg <- geodist(raw,inf.replace=default.dist,ignore.eval=is.null(weight.attr))$gdist
   return(dg)
 }
 

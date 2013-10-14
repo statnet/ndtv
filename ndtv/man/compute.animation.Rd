@@ -20,7 +20,8 @@ Steps through a networkDynamic object and applies layout algorithms at specified
 \usage{
 compute.animation(net, slice.par = NULL, animation.mode = "kamadakawai", 
                   seed.coords = NULL, layout.par = list(), 
-                  default.dist = NULL, chain.direction=c('forward','reverse'),
+                  default.dist = NULL, weight.attr = NULL, weight.dist=FALSE,
+                  chain.direction=c('forward','reverse'),
                   verbose = TRUE,...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -62,6 +63,11 @@ The name of the network animation layout to be used. These layouts are name netw
   \item{default.dist}{
   The default distance to be used to separate nodes (or disconnected network components). Default to \code{sqrt(network.size(net))}. See \code{\link{layout.distance}}. 
 }
+  \item{weight.attr}{charater providing the name of a (possibly dynamic) numeric edge attribute defining weights for the edges in each time slice. The values \code{activity.duration} or \code{activity.count} can be used to weight edges by the duration or count of the edge's activity spells in the time slice. 
+  }
+  \item{weight.dist}{logical, defaults to \code{FALSE}, meaning that the edge weight values provided by \code{weight.attr} will be treated as similarities (larger values means closer). A value of \code{TRUE} means that weights should be intrepreted as distances. See \code{\link{layout.distance}} for more information. 
+  
+  }
   \item{chain.direction}{
   a value of \code{'forward'} indicates the chain of layouts should be computes in forward temporal order. A value \code{'reverse'} runs the chain backwards. For some layouts, reverse-chaining means that isolated vertices are more likely to have positions close to the partners they will be tied to.
   }

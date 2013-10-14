@@ -51,6 +51,16 @@ expect_equal(layout.distance(test,weight.attr='weight'),matrix(c(0, 6, 9, 2, 6, 
 
 expect_equal(layout.distance(test,weight.attr='weight',weight.dist=TRUE),matrix(c(0, 3, 9, 2, 3, 0, 6, 2, 9, 6, 0, 2, 2, 2, 2, 0),ncol=4,byro=TRUE),info='test layout distance with weights with weights as distance')
 
+# test symetrization
+test_that("symetrization of directed network according to weight.dist",{
+  test<-network.initialize(2,directed=TRUE)
+  test[1,2]<-1
+  test[2,1]<-1
+  set.edge.attribute(test,'count',value=c(1,2))
+  expect_equal(as.vector(layout.distance(test,weight.attr='count',weight.dist=TRUE)),c(0,1,1,0))
+  expect_equal(as.vector(layout.distance(test,weight.attr='count',weight.dist=FALSE)),c(0,2,2,0))
+})
+
 # ----- test layout centering ----
 
 pos<-matrix(c(1:5,1:5),ncol=2,byrow=FALSE)
