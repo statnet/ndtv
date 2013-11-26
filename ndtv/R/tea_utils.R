@@ -14,8 +14,11 @@ timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex
   if (!is.network(x)){
     stop('x must be a network object in timeline plot function')
   }
-  
-	tel <- get.edge.activity(x,e=e,as.spellList=TRUE)[c(1:4,8)]
+  if (plot.edge.spells & network.edgecount(x)>0){
+	  tel <- get.edge.activity(x,e=e,as.spellList=TRUE)[c(1:4,8)]
+  } else {
+    tel<-as.data.frame(matrix(nrow=0,ncol=8))
+  }
 	tvl <- get.vertex.activity(x,v=v,as.spellList=TRUE)[1:3]
 	
   # shrink tel to show only edges invovling desired vids
@@ -71,7 +74,7 @@ timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex
     cex<-0.5
   }
   
-	if (plot.edge.spells){
+	if (plot.edge.spells & network.edgecount(x)>0){
 	  # do potential attribute matching for colors, etc 
     
     if(missing(e.label)){
@@ -93,7 +96,7 @@ timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex
       v.label<-network.vertex.names(x)
     }
 		for (r in seq_len(length(v.rows))){
-      y<-which(v.plot.rows==tvl$vertex.id[v.rows[r]])+rows+1
+      y<-which(v.plot.rows==tvl$vertex.id[v.rows[r]])+rows
 			lines(c(tvl$onset[v.rows[r]],tvl$terminus[v.rows[r]]),c(y,y),col=vertex.col,...)
 			if (displaylabels){
 				text(tvl$onset[v.rows[r]],y,labels=v.label[tvl$vertex.id[v.rows[r]]],col="blue",cex=cex,...)

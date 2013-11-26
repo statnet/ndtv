@@ -78,7 +78,7 @@ additional arguments to be passed to plot subroutines.  See \code{\link{plot.def
 }
 
 \details{
-When the \code{v} argument is included, edges involving vertices not in \code{v} are excluded (but the reverse is not true for the \code{e} argument). Additional plotting arguments can be passed in to modify drawing.  For example, \code{lwd} to set line with, \code{lty} for line style.
+When the \code{v} argument is included, edges involving vertices not in \code{v} are excluded (but the reverse is not true for the \code{e} argument). Additional plotting arguments can be passed in to modify drawing.  For example, \code{lwd} to set line with, \code{lty} for line style. Vertices and edges that are never active are not included on the plot.
 }
 \value{
 A plot is produced.

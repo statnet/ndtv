@@ -26,7 +26,7 @@ data(stergm.sim.1)
 timeline(stergm.sim.1)
 
 # plot empty net
-expect_warning(timeline(network.initialize(0)),'Network does not have any edge activity')
+timeline(network.initialize(0))
 
 
 # plot only vertices

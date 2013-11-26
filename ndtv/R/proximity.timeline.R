@@ -77,9 +77,9 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
       mat<-layout.distance(slice,default.dist=default.dist)
       # use the appropriate function as specified in mode
       ycoords[,s]<-switch(mode,
-        sammon=MASS:::sammon(mat,y=prev_ycoord,k=1,trace=FALSE,tol=1e-9)$points,
-        isoMDS=MASS:::isoMDS(mat,y=prev_ycoord,k=1,maxit=500,tol=1e-9,trace=FALSE)$points,
-        #smacofSym=smacof:::smacofSym(mat,ndim=1,init=prev_ycoord,metric=TRUE)$conf,
+        sammon=MASS::sammon(mat,y=prev_ycoord,k=1,trace=FALSE,tol=1e-9)$points,
+        isoMDS=MASS::isoMDS(mat,y=prev_ycoord,k=1,maxit=500,tol=1e-9,trace=FALSE)$points,
+        #smacofSym=smacof::smacofSym(mat,ndim=1,init=prev_ycoord,metric=TRUE)$conf,
         cmdscale=cmdscale(mat,k=1)
       )       
       prev_ycoord<-ycoords[,s,drop=FALSE]
