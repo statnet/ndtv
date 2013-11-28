@@ -1,19 +1,22 @@
 ChangeLog for ndtv
-v0.3 - features and bug fixes
+v0.4
+ - added ability to specify plot.network as functions to be evaluated at each network time point
  - added weight.attr and weight.dist arguments to compute.animation, making it possible to use numeric edge attributes to specifiy desired distances/similarities in network layouts
  - fixed bug in timeline function that would sometimes draw vertex out of plot range
  - added a draft proximity.timeline function for creating experimental 1D timeline layouts
  - added a render.cache argument to render.animation which makes it possible to avoid intermediate plot generation when rendering long animations
  - added chain.direction option to compute.animation
- - resaved data objects to fix spurious namespace import problem flagged by CRAN
- - fixed bug when network has only single vertex
- - fixed undefiend plot range bug triggered by same condidtion
- - fixed error specifying xlim and ylim in render.animation
  - added parameters to export.dot to make possible exporting vertex and edge attributes to Graphviz
  - removed some workarounds for fixed bugs in network
  - removed edge label plotting code (now supported in network)
  - the attribute aggregation rule element of slice.par now defaults to 'latest', where previously it defaulted to 'any', which gave the behavior of 'earliest' and produced a warning. 
- 
+
+v0.3 - features and bug fixes
+- resaved data objects to fix spurious namespace import problem flagged by CRAN
+ - fixed bug when network has only single vertex
+ - fixed undefiend plot range bug triggered by same condidtion
+ - fixed error specifying xlim and ylim in render.animation
+
 v0.2 - minor features and bug fixes
  - added work-around for RStudio plotting errors
  - fixed jittering plots issue

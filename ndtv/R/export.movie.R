@@ -139,7 +139,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
-render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),render.cache=c('plot.list','none'), verbose=TRUE,label,displaylabels=!missing(label),xlab,xlim,ylim,...){
+render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),render.cache=c('plot.list','none'), verbose=TRUE,...){
   if (!is.network(net)){
     stop("render.animation requires the first argument to be a network object")
   }
@@ -185,7 +185,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   
   # check render.par params
   if (is.null(render.par)){
-    stop("render.animaion is missing the 'render.par' argument (a list of rendering parameters).")
+    stop("render.animation is missing the 'render.par' argument (a list of rendering parameters).")
   }
   if (is.null(render.par$tween.frames)){
     render.par$tween.frames<-10 
@@ -196,47 +196,70 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   # check plot caching params
   render.cache<-match.arg(render.cache)
   
-  #check graphics params
-  if(missing(xlab)){
-    xlab=NULL
+  
+  # cache plotting arguments 
+  plot_params<-list(...)
+  
+  # define some defaults for ploting args
+  # label defaults to vertex names
+  if(is.null(plot_params$label)){
+    plot_params$label<-function(slice){network.vertex.names(slice)}
+  }
+  # xlab defaults to time
+  if(is.null(plot_params$xlab) & render.par$show.time){
+    plot_params$xlab <- function(onset,terminus){paste("t=",onset,"-",terminus,sep='')}
+  }
+  # but if show stats, use that instead 
+  # TODO: deprecate show.stats in favor of passing in directly for evaluation?
+  if(!is.null(render.par$show.stats) && render.par$show.stats!=FALSE){
+    # evaluate a eqn string giving the stats formual
+    # TODO: this requires that tergm be loaded! give informative warning if not
+    if(render.par$show.time){
+      # include the time string in the summary
+      plot_params$xlab <- eval(parse(text=paste("function(slice,onset,terminus){stats<-summary.statistics.network(slice",render.par$show.stats,")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
+    } else {
+      plot_params$xlab <- eval(parse(text=paste("function(slice){stats<-summary.statistics.network(slice",render.par$show.stats,")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+    }
+  }
+  
+  #disable jitter by default because it messes things up
+  if(is.null(plot_params$jitter)){
+    plot_params$jitter<-FALSE
   }
   
   #TODO: how are we doing interpolation?
   interp.fun<-coord.interp.smoothstep
   #interp.fun<-coord.interp.linear
   
+  # compute lists of times that networks will be collapsed
   starts <- seq(from=slice.par$start,to=slice.par$end,by=slice.par$interval)
   ends <- seq(from=slice.par$start+slice.par$aggregate.dur,to=slice.par$end+slice.par$aggregate.dur,by=slice.par$interval)
-  
-  #TODO: check that there are at least two frames
-  
-  #print some summary info as a starting frame?
-  #compute some starting coords  
-  slice <- network.collapse(net,starts[1],ends[1],rule=slice.par$rule,rm.time.info=FALSE) 
-  activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
-  
+
   #compute coordinate ranges to know how to scale plots
   xmin <- aggregate.vertex.attribute.active(net,"animation.x",min)
   xmax <- aggregate.vertex.attribute.active(net,"animation.x",max)
   ymin <- aggregate.vertex.attribute.active(net,"animation.y",min)
   ymax <- aggregate.vertex.attribute.active(net,"animation.y",max)
-  if (missing(xlim)){
+  if (is.null(plot_params$xlim)){
     # deal with case of only one coord, so no range
     if(xmin==xmax){
       xmax<-xmin+1
       xmin<-xmin-1
     }
-    xlim<-c(xmin,xmax)
+    plot_params$xlim<-c(xmin,xmax)
   }
-  if(missing(ylim)){
+  if(is.null(plot_params$ylim)){
     # deal with case of only one coord, so no range
     if(ymin==ymax){
       ymax<-ymin+1
       ymin<-ymin-1
     }
-    ylim<-c(ymin,ymax)
+    plot_params$ylim<-c(ymin,ymax)
   }
   
+  #compute some starting coords  
+  slice <- network.collapse(net,starts[1],ends[1],rule=slice.par$rule,rm.time.info=FALSE) 
+  activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
   
   #if the first slice is empty, just start from zeros
   # TODO: start from initial coords?
@@ -245,22 +268,15 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     coords[activev,1] <-get.vertex.attribute(slice,"animation.x")
     coords[activev,2] <-get.vertex.attribute(slice,"animation.y")
     #need to update plot params with slice-specific values
-    if(missing(label)){
-      slice.label <- network.vertex.names(slice)
-    } else {
-      slice.label <- label
-    }
-    if(render.par$show.time){
-      xlab <- paste("t=",starts[1],"-",ends[1],sep='')
-    }
-    if(!is.null(render.par$show.stats) && render.par$show.stats!=FALSE){
-      # evaluate a eqn string giving the stats formual
-      stats <- eval(parse(text=paste("summary.statistics.network(network.extract(net,onset=",starts[1],", terminus=",ends[1],")",render.par$show.stats,")",sep=''))) 
-      xlab <- paste(xlab,paste(rbind(names(stats),stats),collapse=":"))
-    }
+    evald_params<-.evaluate_plot_params(plot_params=plot_params,net=net,slice=slice,s=1,onset=starts[1],terminus=ends[1])
     
-    plot.network(slice,coord=coords[activev,,drop=FALSE],
-                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...)
+    
+    # set up arguments
+    plot_args<-list(x=slice,coord=coords[activev,,drop=FALSE])
+    plot_args<-c(plot_args,evald_params)
+    # cll the plotting function with appropriate args
+    do.call(plot.network, plot_args)
+               
     # check if user has passed in extra plotting commands that need to be rendered
     if (!is.null(render.par$extraPlotCmds)){
       eval(render.par$extraPlotCmds)
@@ -281,11 +297,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     #TODO: draw new slices for intermediate tween frames?
     #skip any empty networks
     if (length(slice)>0 & network.size(slice)>0){
-      if(missing(label)){
-        slice.label <- network.vertex.names(slice)
-      } else {
-        slice.label <-label
-      }
+      #need to update plot params with slice-specific values
+      evald_params<-.evaluate_plot_params(plot_params=plot_params,net=net,slice=slice,s=s,onset=starts[s],terminus=ends[s])
       
       #show the time on the plot
       if(render.par$show.time){
@@ -308,8 +321,11 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
         tweenCoords <- interp.fun(coords,coords2,t,render.par$tween.frames)
         
          #TODO:what if we want to include innactive nodes
-        plot.network(slice,coord=tweenCoords[activev,,drop=FALSE],
-                 label=slice.label,displaylabels=(!missing(label) | displaylabels),xlim=xlim,ylim=ylim,xlab=xlab,jitter=FALSE,...) 
+        # set up arguments
+        plot_args<-list(x=slice,coord=tweenCoords[activev,,drop=FALSE])
+        plot_args<-c(plot_args,evald_params)
+        # cll the plotting function with appropriate args
+        do.call(plot.network, plot_args) 
         # check if user has passed in extra plotting commands that need to be rendered
         if (!is.null(render.par$extraPlotCmds)){
           eval(render.par$extraPlotCmds)
@@ -320,15 +336,18 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       }
       coords<-coords2;
     } else { # end slice > 0 block
+      # empty network causes plot problems
       # draw some blank frames while time passes
       if(render.par$show.time){
-        xlab <- paste("t=",starts[s],"-",ends[s],sep='')
+        xlab<-evald_params$xlab
+      } else {
+        xlab<-NULL
       }
 
       singlenet <-network.initialize(1)
       for(t in 1:render.par$tween.frames){
         plot.network(singlenet,
-                   vertex.cex=0,xlim=xlim,ylim=ylim,xlab=xlab)
+                   vertex.cex=0,xlab=xlab)
         # check if user has passed in extra plotting commands that need to be rendered
         if (!is.null(render.par$extraPlotCmds)){
           eval(render.par$extraPlotCmds)
@@ -345,6 +364,49 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     dev.off()
   }
   
+}
+
+
+# function to evaluate graphics parameters defined as functions
+# net is the original (uncollapsed) network
+# slice is collapsed network
+# s is the slice number
+# onset is the start time of the slice
+# terminus is the end time of the slice
+# functions will be evaluated in the parent frame
+.evaluate_plot_params <- function(plot_params,net,slice,s,onset,terminus){
+  if (length(plot_params)<1){
+    return(plot_params)
+  }
+  # figure out which plot params are functions
+  fun_params<-which(sapply(plot_params,is.function))
+  # loop over all the functinons..
+  for (fun_index in fun_params){
+    # get the names of the funtions arguments
+    argnames<-names(as.list(args(plot_params[[fun_index]])))
+    argnames = argnames[-length(argnames)]
+    # construct an argument list by mapping of values to function params
+    args<-list()
+    for (arg in argnames){
+      if (arg=='net'){
+        args<-c(args,list(net=net))
+      } else if (arg=='slice'){
+        args<-c(args,list(slice=slice))
+      } else if (arg=='s'){
+        args<-c(args,list(s=s))
+      } else if (arg=='onset'){
+        args<-c(args,list(onset=onset))
+      } else if (arg=='terminus'){
+        args<-c(args,list(terminus=terminus))
+      } else {
+        stop('unknown argument name "',arg,'" in function provided for ',names(fun_params)[[fun_index]],' graphic parameter:',deparse(plot_params[[fun_index]]))
+      }
+    }
+    # replace the function on the list with the results of its evaluation
+    plot_params[[fun_index]]<-do.call(plot_params[[fun_index]],args=args)
+  }
+  # return the modified list of plot params
+  return(plot_params)
 }
     
 #common function called to construct the distance matrix for mds-based layouts

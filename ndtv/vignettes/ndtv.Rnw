@@ -279,7 +279,8 @@ ani.replay()
 
 This new rolling--``who interacted this week'' network\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/windsurfers_v2.mp4}} is larger and more dense (which is to be expected) and also far more stable. There is still some turnover due to people who don't make it to the beach every week but is possible to see some of the sub-groups and the the various bridging individuals. 
 
-\section{Animating attributes}
+\section{Animating graphic attributes}
+\subsection{Using dynamic attributes (TEAs)}
 If a network has dynamic attributes defined, they can be used to define graphic properties of the network which change over time.  We can activate some attributes on our earlier ``wheel'' example, setting a dynamic attribute for edge widths:
 
 <<color_wheel>>=
@@ -313,6 +314,47 @@ ani.replay()
 
 The attribute values for the time points are defined using \verb@network.collapse@, which controls the behavior if multiple values are active for the plot period. 
 
+\subsection{Functional plot arguments}
+
+Sometimes it is awkward or inefficient to pre-generate dynamic attribute values.  Why create and another attribute for color if it is just a simple transformation of an existing attribute or measure? The \verb@render.animation@ function has the ability to accept the \verb@plot.network@ arguments as functions with special arguments to be evaluated on the fly at each time point as the network is rendered. So for example, if we wanted to use our previously created `width` attribute to control the color of edges along with their width:
+
+<<wheel_color_function>>=
+render.animation(wheel,edge.lwd=3, 
+    edge.col=function(slice){rgb((slice%e%'width')/10,0,0)},
+    verbose=FALSE)
+ani.replay()
+@
+
+Notice the use of the \verb@slice@ argument to the function instead of the original name of the network. The arguments of plot control functions must draw from a specific set of named arguments which will be substituted in and evaluated at each time point before plotting.  The set of valid argument names is:
+\begin{itemize}
+  \item \verb@net@ is the original (uncollapsed) network
+  \item \verb@slice@ is the network collapsed to be rendered with the appropriate onset and terminus
+  \item \verb@s@ is the slice number in the sequence to be rendered
+  \item \verb@onset@ is the onset (start time) of the slice to be rendered
+  \item \verb@terminus@ is the terminus (end time) of the slice to be rendered
+\end{itemize}
+
+So in the example above, at each time point the edge attribute `width' is extracted and used to control the red component of the rgb color. We can also define functions based on network measures such as betweenness: 
+
+<<wheel_betweeness_function>>=
+require(sna)
+wheel%n%'slice.par'<-list(start=1,end=10,interval=1, 
+                          aggregate.dur=1,rule='latest')
+render.animation(wheel,
+      vertex.cex=function(slice){(betweenness(slice)+1)/5},
+      verbose=FALSE)
+ani.replay()
+@
+In this example we had to modify the start time using the \verb@slice.par@ setting to avoid time 0 because the betweenness function will give an error for a network with no edges.  The main plot commands accept functions as well, so it is possible to do fun things like implement a crude zoom effect by setting \verb@xlim@ and \verb@ylim@ parameters to be dependent on the time. 
+
+<<wheel_zoom>>=
+render.animation(wheel,
+      xlim=function(onset){c(-5/(onset*.5),5/(onset*.5))},
+      ylim=function(onset){c(-5/(onset*.5),5/(onset*.5))},
+      verbose=FALSE)
+ani.replay()
+@
+
 
 \section{Dependencies}
 \label{sec:dependencies}
@@ -324,7 +366,7 @@ FFmpeg \url{http://ffmpg.org} is a cross-platform tool for converting and render
 
 \section{Compressing video}
 \label{sec:compressing}
-The saved video output of the animation often produces very large files. These may cause problems for your viewers if you upload them directly to the web.  It is almost always a good idea to compress the video, as a dramatically smaller file can usually be created with little or no loss of quality. Although it may be possible to give \verb@saveVideo()@ various \verb@other.opts@ to control video compression, determining the right settings can be a trial and error process. Handbrake \url{http://handbrake.fr/} is an excellent and easy to use tool for doing video compression into the web-standard H.264 codec with appropriate presets. 
+The saved video output of the animation often produces very large files. These may cause problems for your viewers if you upload them directly to the web.  It is almost always a good idea to compress the video, as a dramatically smaller file can usually be created with little or no loss of quality. Although it may be possible to give \verb@saveVideo()@ various \verb@other.opts@ to control video compression\footnote{The default settings for ffmpeg differ quite a bit depending on platform, some installations may give decent compression without tweaking the settings}, determining the right settings can be a trial and error process. Handbrake \url{http://handbrake.fr/} is an excellent and easy to use tool for doing video compression into the web-standard H.264 codec with appropriate presets. 
 
 \section{Reference for the main command}
 Included here are more complete explanations of the main function. You can also refer to the man pages \verb@?compute.animation@ and \verb@?render.animation@.
@@ -351,7 +393,9 @@ Parameters to control the animation are read from a list passed in via the \verb
 \item \verb@extraPlotCmds@ provides a way present additional information (such as annotations) on the plot.  The value of this argument will be passed to \verb@eval()@ after each frame has been plotted, so drawing commands can be added here.
 \end{itemize}
 
-There are also several lists of arguments that give default values that will be passed to the appropriate lower-level commands. The \verb@plot.par@ list is passed to the \verb@par()@ command and provides a way to configure some of the general plot details such as background color, margins, fonts, etc.   Similarly, the \verb@ani.options@ list is passed to the \verb@ani.options()@ command to configure settings for the animation package such as \verb@interval@ to control the time between frames in playback.  
+There are also several lists of arguments that give default values that will be passed to the appropriate lower-level commands. The \verb@plot.par@ list is passed to the \verb@par()@ command and provides a way to configure some of the general plot details such as background color, margins, fonts, etc.   Similarly, the \verb@ani.options@ list is passed to the \verb@ani.options()@ command to configure settings for the animation package such as \verb@interval@ to control the time between frames in playback.
+
+The \verb@render.cache@ argument provides a way to control the cacheing of the plot frames. The default value of `plot.list' causes each frame of the animation to be stored in an internal list by the \verb@ani.record@ function of the animation library. This is very useful for testing and replaying animations in R's plot window, but can be very slow (or cause out-of-memory errors) for large animations. If the value is set to 'none', the plot will not be recorded (but can be saved directly to disk via \verb@saveVideo()@) and cannot be replayed via the \verb@ani.replay()@ function. 
 
 \subsection{saveVideo()}
 The \verb@animation@ package provides several neat tools for storing animations once they have been rendered.

@@ -185,12 +185,25 @@ if (!all(symat == matrix(c(0,1,2,20, 1,0,1,20, 2,1,0,20, 20,20,20,0),ncol=4,byro
 }
 
 
+# test using a function to specifiy a graphic plotting property
+test<-network.initialize(5)
+add.edges.active(test,onset=0,terminus=10,tail=1:4,head=2:5)
+activate.vertices(test,v=5,onset=4,terminus=10)
+activate.vertex.attribute(test,'status',0,onset=0,terminus=10)
+activate.vertex.attribute(test,'status',1,onset=1,terminus=10,v=1)
+activate.vertex.attribute(test,'status',1,onset=2,terminus=10,v=2)
+activate.vertex.attribute(test,'status',1,onset=3,terminus=10,v=3)
+activate.vertex.attribute(test,'status',1,onset=4,terminus=10,v=4)
+compute.animation(test)
+render.animation(test,vertex.col=function(slice){ifelse(slice%v%'status'==1,'red','blue')})
 
 # ----- kk layout ------
 
 # ----- mdsj layout -----
 # ndtv:::install.mdsj()
 
+# test a bad function arg
+expect_error(render.animation(test,vertex.col=function(peaches){ifelse(peaches%v%'status'==1,'red','blue')}),'unknown argument name')
 
 
 
