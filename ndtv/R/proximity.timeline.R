@@ -1,4 +1,12 @@
-
+#  File R/proximity.timeline.R in package ndtv, part of the Statnet suite
+#  of packages for network analysis, http://statnet.org .
+#
+#  This software is distributed under the GPL-3 license.  It is free,
+#  open source, and has the attribution requirements (GPL Section 7) at
+#  http://statnet.org/attribution
+#
+#  Copyright 2012-2013 Statnet Commons
+#######################################################################
 
 #TODO: change structure so that x axis (and params) are based on time rather than slice index
 #TODO: when the network contains isolates, the values for default.dist tend to dominate the network, provide option to not include isolates

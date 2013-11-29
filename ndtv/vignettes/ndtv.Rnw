@@ -2,12 +2,22 @@
 \documentclass{article}
 \usepackage{natbib} %for easy biblo
 \usepackage{hyperref} %for url links
-\usepackage{comment} 
+\usepackage{comment}
+\usepackage{color} 
 
 %\VignetteIndexEntry{Using ndtv}
 %\VignettePackage{ndtv} 
 
 \begin{document}
+
+% redefine the colors for code, input and output
+\definecolor{Sinput}{rgb}{0.19,0.19,0.75}
+\definecolor{Soutput}{rgb}{0.2,0.3,0.2}
+\definecolor{Scode}{rgb}{0.75,0.19,0.19}
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{formatcom = {\color{Sinput}}} 
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{formatcom = {\color{Soutput}}}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{formatcom = {\color{Scode}}} 
+\renewenvironment{Schunk}{}{}
 
 \SweaveOpts{concordance=TRUE}
 
@@ -133,7 +143,7 @@ After it has finished, replay the movie in an R plot window.
 ani.replay()
 @   
 
-Notice that in addition to the labels on the bottom of the plot indicating which time step is being viewed, it also displays the network statistics of interest for the time step. When the 'edges' parameter increases up, you can see the density on the graph increase and the number of isolates decrease. Eventually the model corrects, and the parameter drifts back down. 
+Notice that in addition to the labels on the bottom of the plot indicating which time step is being viewed, it also displays the network statistics of interest for the time step. When the ``edges'' parameter increases up, you can see the density on the graph increase and the number of isolates decrease. Eventually the model corrects, and the parameter drifts back down. 
 
 We can also use the \verb@animation@ library to save out the movie in \verb@.mp4@ format (assuming that the FFmpeg library is installed on your machine).
 
@@ -145,7 +155,7 @@ saveVideo(ani.replay(),video.name="stergm.sim.1.mp4",
 This should produce a movie\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/stergm.sim.1.mp4}} in an R working directory on disk. The \verb@other.opts@ parameter is set here to generate a higher-quality video than the default, but this will result in a large file size. For more information on compressing videos for the web, see Compressing Video (section \ref{sec:compressing}).
 
 \section{Slicing time}
-The basic network layout algorithms we are using, like most ``traditional' network metrics, don't really know what to do with dynamic networks.  They need to be fed a static set of relationships which can be used to compute a set of distances in a Euclidean space suitable for plotting.  A common way to apply static metrics to a time-varying object is to sample it, taking a sequence static observations at a series of time points and using these to describe the changes over time.  In the case of networks, we call this ``extracting' or ``slicing'.
+The basic network layout algorithms we are using, like most ``traditional' network metrics, don't really know what to do with dynamic networks.  They need to be fed a static set of relationships which can be used to compute a set of distances in a Euclidean space suitable for plotting.  A common way to apply static metrics to a time-varying object is to sample it, taking a sequence static observations at a series of time points and using these to describe the changes over time.  In the case of networks, we call this ``extracting'' or ``slicing''.
 
 Slicing up a dynamic network created from discrete panels may be fairly straightforward but it is much less clear how to do it when working with continuous time or streaming relations. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The \verb@slice.par@ parameters make it possible to experiment with various slicing options. In many situations we have even found \citep{sonia} it useful to let slices mostly overlap -- incrementing each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale.
 
@@ -195,7 +205,7 @@ ani.replay()
 Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the \verb@rule@ element of the \verb@slice.par@ argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally \verb@rule='latest'@ gives resonable results, returning the most recent value found within the query spell. 
 
 \section{Layout algorithms}
-Producing ``good' (for an admittedly ambiguous definition of `good') layouts of networks is generally a computationally difficult problem. There are a wide variety of algorithms and approaches being developed. Doing layouts for animations adds additional challenges because it is usually desirable that the layouts remain stable over time. Ideally this means that the layouts don't change much unless the network structure changes, and that small changes in the network structure should lead to small changes in the layouts.  Many otherwise excellent static layout algorithms are not stable in this sense, or they may require very specific parameter settings to improve their results for animation applications. 
+Producing ``good'' (for an admittedly ambiguous definition of good) layouts of networks is generally a computationally difficult problem. There are a wide variety of algorithms and approaches being developed. Doing layouts for animations adds additional challenges because it is usually desirable that the layouts remain stable over time. Ideally this means that the layouts don't change much unless the network structure changes, and that small changes in the network structure should lead to small changes in the layouts.  Many otherwise excellent static layout algorithms are not stable in this sense, or they may require very specific parameter settings to improve their results for animation applications. 
 
 The \verb@network.layout.animate.*@ layouts included in \verb@ndtv@ are adaptations or wrappers for existing static layout algorithms with some appropriate parameter presets. They all accept the coordinates of the previous layout as an argument so that they can try to construct a suitably smooth sequence of node positions. They also include the \verb@default.dist@ parameter which can be tweaked to increase or decrease the spacing between isolates and disconnected components. The default value for \verb@default.dist@ is \verb@sqrt(network.size(net))@, see \verb@?layout.dist@ for more information. 
 
@@ -245,7 +255,7 @@ ani.replay()
 We have tested some layouts using R libraries for doing SMACOF \citep{smacof} and standard MDS optimization.  The former gave high-quality results but was extremely slow, the later often didn't give stable results. Both may be included in future releases of \verb@ndtv@ if the performance issues improve.
 
 \section{Vertex dynamics}
-Edges are not the only things that can change in networks. In some dynamic network data-sets vertices also enter or leave the network (become active or inactive).  Lin Freeman's windsurfer social interaction data-set \citep{windsurfers} is a a good example of this. In this data-set there are different people are present on the beach on different days, and there is even a day of missing data. These networks also have a lot of isolates, which tends to scrunch up the rest of the components so they are hard to see.  Setting a lower \verb@default.dist@ can help with this. 
+Edges are not the only things that can change in networks. In some dynamic network data-sets vertices also enter or leave the network (become active or inactive).  Lin Freeman's windsurfer social interaction data-set \citep{windsurfers} is a good example of this. In this data-set there are different people present on the beach on different days, and there is even a day of missing data. These networks also have a lot of isolates, which tends to scrunch up the rest of the components so they are hard to see.  Setting a lower \verb@default.dist@ can help with this. 
 <<windsurfers,eval=true,include=TRUE>>=
 data(windsurfers)
 slice.par<-list(start=1,end=31,interval=1, 
@@ -261,7 +271,7 @@ render.animation(windsurfers,vertex.col="group1",
 ani.replay()
 @
 
-In this example\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/windsurfers_v1.mp4}} the turnover of people on the beach so so great that structure appears to change chaotically, and it is quite hard to see what is going on. Notice also the blank period at day 25 where the network data is missing. There is also a lot of periodicity, since a lot more people go to the beach on weekends. So in this case, lets try a week-long slice by setting \verb@aggregate.dur=7@ to try to smooth it out so we can see some structure. 
+In this example\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/windsurfers_v1.mp4}} the turnover of people on the beach is so great that structure appears to change chaotically, and it is quite hard to see what is going on. Notice also the blank period at day 25 where the network data is missing. There is also a lot of periodicity, since a lot more people go to the beach on weekends. So in this case, lets try a week-long slice by setting \verb@aggregate.dur=7@ to try to smooth it out so we can see some structure. 
 
 <<windsurfers,eval=true,include=TRUE>>=
 slice.par<-list(start=0,end=24,interval=1, 
@@ -316,7 +326,7 @@ The attribute values for the time points are defined using \verb@network.collaps
 
 \subsection{Functional plot arguments}
 
-Sometimes it is awkward or inefficient to pre-generate dynamic attribute values.  Why create and another attribute for color if it is just a simple transformation of an existing attribute or measure? The \verb@render.animation@ function has the ability to accept the \verb@plot.network@ arguments as functions with special arguments to be evaluated on the fly at each time point as the network is rendered. So for example, if we wanted to use our previously created `width` attribute to control the color of edges along with their width:
+Sometimes it is awkward or inefficient to pre-generate dynamic attribute values.  Why create and another attribute for color if it is just a simple transformation of an existing attribute or measure? The \verb@render.animation@ function has the ability to accept the \verb@plot.network@ arguments as functions with special arguments to be evaluated on the fly at each time point as the network is rendered. So, for example, if we wanted to use our previously created ``width'`'' attribute to control the color of edges along with their width:
 
 <<wheel_color_function>>=
 render.animation(wheel,edge.lwd=3, 
@@ -334,7 +344,7 @@ Notice the use of the \verb@slice@ argument to the function instead of the origi
   \item \verb@terminus@ is the terminus (end time) of the slice to be rendered
 \end{itemize}
 
-So in the example above, at each time point the edge attribute `width' is extracted and used to control the red component of the rgb color. We can also define functions based on network measures such as betweenness: 
+So in the example above, at each time point the edge attribute ``width'' is extracted and used to control the red component of the rgb color. We can also define functions based on network measures such as betweenness: 
 
 <<wheel_betweeness_function>>=
 require(sna)
@@ -345,7 +355,7 @@ render.animation(wheel,
       verbose=FALSE)
 ani.replay()
 @
-In this example we had to modify the start time using the \verb@slice.par@ setting to avoid time 0 because the betweenness function will give an error for a network with no edges.  The main plot commands accept functions as well, so it is possible to do fun things like implement a crude zoom effect by setting \verb@xlim@ and \verb@ylim@ parameters to be dependent on the time. 
+In this example we had to modify the start time using the \verb@slice.par@ setting to avoid time 0 because the \verb@betweenness@ function will give an error for a network with no edges.  The main plot commands accept functions as well, so it is possible to do fun things like implement a crude zoom effect by setting \verb@xlim@ and \verb@ylim@ parameters to be dependent on the time. 
 
 <<wheel_zoom>>=
 render.animation(wheel,
@@ -390,12 +400,12 @@ Parameters to control the animation are read from a list passed in via the \verb
 
 \item \verb@show.stats@ does nothing with its default value of \verb@NULL@. But if it is set to a string, it is assumed to be a formula and will passed to \verb@summary.stergm@ and the results used to display the network statistics for the current slice on the plot.
 
-\item \verb@extraPlotCmds@ provides a way present additional information (such as annotations) on the plot.  The value of this argument will be passed to \verb@eval()@ after each frame has been plotted, so drawing commands can be added here.
+\item \verb@extraPlotCmds@ provides a way to present additional information (such as annotations) on the plot.  The value of this argument will be passed to \verb@eval()@ after each frame has been plotted, so drawing commands can be added here.
 \end{itemize}
 
 There are also several lists of arguments that give default values that will be passed to the appropriate lower-level commands. The \verb@plot.par@ list is passed to the \verb@par()@ command and provides a way to configure some of the general plot details such as background color, margins, fonts, etc.   Similarly, the \verb@ani.options@ list is passed to the \verb@ani.options()@ command to configure settings for the animation package such as \verb@interval@ to control the time between frames in playback.
 
-The \verb@render.cache@ argument provides a way to control the cacheing of the plot frames. The default value of `plot.list' causes each frame of the animation to be stored in an internal list by the \verb@ani.record@ function of the animation library. This is very useful for testing and replaying animations in R's plot window, but can be very slow (or cause out-of-memory errors) for large animations. If the value is set to 'none', the plot will not be recorded (but can be saved directly to disk via \verb@saveVideo()@) and cannot be replayed via the \verb@ani.replay()@ function. 
+The \verb@render.cache@ argument provides a way to control the cacheing of the plot frames. The default value of verb@render.cache='plot.list'@ causes each frame of the animation to be stored in an internal list by the \verb@ani.record@ function of the animation library. This is very useful for testing and replaying animations in R's plot window, but can be very slow (or cause out-of-memory errors) for large animations. If the value is set to verb@render.cache='none'@, the plot will not be recorded (but can be saved directly to disk via \verb@saveVideo()@) and cannot be replayed via the \verb@ani.replay()@ function. 
 
 \subsection{saveVideo()}
 The \verb@animation@ package provides several neat tools for storing animations once they have been rendered.

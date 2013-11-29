@@ -89,3 +89,4 @@ expect_equal(ndtv:::layout.zoomfactor(pos,10,center=c(1,1)),(pos*10)-9)
 expect_equal(ndtv:::layout.zoomfactor(pos,2,v=2:3),matrix(c(-0.5, 1.5, 3.5, 5.5, 7.5, -0.5, 1.5, 3.5, 5.5, 7.5),ncol=2))
 
 
+

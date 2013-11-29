@@ -150,7 +150,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   }
   
   # temporary hard-coded param to work around plot issue in RStudio
-  
   externalDevice<-FALSE
   if (!is.function(options()$device)){
     if (names(dev.cur())=="RStudioGD"){
@@ -300,17 +299,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       #need to update plot params with slice-specific values
       evald_params<-.evaluate_plot_params(plot_params=plot_params,net=net,slice=slice,s=s,onset=starts[s],terminus=ends[s])
       
-      #show the time on the plot
-      if(render.par$show.time){
-        xlab <- paste("t=",starts[s],"-",ends[s],sep='')
-      }
-      
-      #show stats as title of the plot
-      if(!is.null(render.par$show.stats) && render.par$show.stats!=FALSE){
-        # evaluate a eqn string giving the stats formual
-        stats <- eval(parse(text=paste("summary.statistics.network(network.extract(net,onset=",starts[s],", terminus=",ends[s],")",render.par$show.stats,") ",sep='')))
-        xlab <- paste(xlab,paste(rbind(names(stats),stats),collapse=":"))
-      }
    
       for(t in 1:render.par$tween.frames){
         #coords2[activev,1]<-get.vertex.attribute.active(slice,"animation.x",onset=starts[s],terminus=ends[s])
