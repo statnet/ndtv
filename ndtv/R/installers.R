@@ -81,9 +81,9 @@ install.mdsj <-function(install.path){
 check.graphviz <-function(){
   if (.Platform$OS.type == "unix" | .Platform$OS.type == "windows"){
     if (Sys.which("neato")!=''){
-      return(system("neato -V"))
+      return(TRUE)
     } else {
-      warning("The Graphviz neato utility does not appear to be installed on this system")
+      warning("The Graphviz neato utility does not appear to be installed on this system. See ?install.graphviz for more information")
     }
   } else {
     warning(paste("not sure how to check for Graphviz on ",.Platform$OS.type,"implement me"))
@@ -93,7 +93,7 @@ check.graphviz <-function(){
 }
 
 install.graphviz <-function(){
-  message("Please visit the Graphviz website and install the libraries on your machine: http://www.graphviz.org/Download.php")
+  message("Please visit the Graphviz website and install the libraries on your machine: http://www.graphviz.org/Download.php  See ?install.graphviz for more information")
   browseURL("http://www.graphviz.org/Download.php")
 }
 

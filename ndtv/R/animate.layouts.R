@@ -87,8 +87,59 @@ network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,see
 }
 
 
-network.layout.animate.Graphviz <-function(nw, layout.par){
-  gv.path <- check.graphviz()
+network.layout.animate.Graphviz <-function(net, dist.mat=NULL, default.dist=NULL,seed.coords=NULL,layout.par=list(),verbose=TRUE){
+  
+  gv.installed <- check.graphviz()
+  # if not, give warning, and use KK instead so examples don't break
+  if(!gv.installed){
+    warning("Unable to locate the Graphviz library, using KamadaKawai layout instead")
+    return(network.layout.animate.kamadakawai(net, dist.mat=dist.mat, default.dist=default.dist,seed.coords=seed.coords, layout.par=list(),verbose=TRUE))
+  }
+  
+  #check ags from layout.par
+  if (!is.null(layout.par)){
+    if(!is.list(layout.par)){
+      stop("layout.par argument must be a list of appropriate layout parameters")
+    }
+   gv.engine<-layout.par$gv.engine
+   gv.engine<-match.arg(gv.engine,c('neato','dot','fdp','circo','osage','sfdp','twopi'))
+    
+   if(is.null(layout.par$gv.args)){
+     gv.args<-''
+   } else {
+     gv.args<-layout.par$gv.args
+   }
+    
+  } else {
+    # set to defaults
+    gv.engine<-'neato'
+  }
+  
+  n <- network.size(net)
+  #if seed.coord already set in layoutpar, overide
+  if (!is.null(dist.mat)){
+    warning("distance matrix not currently implented for Graphviz layouts")
+  }
+  if (is.null(default.dist)){
+    default.dist<-FALSE
+  }
+
+  filename <- tempfile("network",fileext=".dot")
+  export.dot(net,filename,coords=seed.coords,all.dyads=default.dist) #TODO: include attributes if defined
+  command <- paste(gv.engine,"-Tplain",gv.args,filename)
+  #print(command)
+  output <- system(command,intern=TRUE)
+  unlink(filename)
+ 
+  #NEED TO CHECK FOR ERROR
+  coords <- NULL
+  if(length(output)>n){
+    coords <- parseCoordsFromGraphvizPlain(output)
+  } else {
+    if (!verbose){print(output)}
+    stop("Unable to parse coordinates returned from Graphviz")
+  }
+  return(coords)
 }
 
 

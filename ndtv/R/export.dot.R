@@ -7,6 +7,7 @@
 #
 #  Copyright 2012-2013 Statnet Commons
 #######################################################################
+
 require(network)
 
 # x is a network to export
@@ -41,7 +42,7 @@ function(x,file="",coords=NULL,all.dyads=FALSE,vert.attrs=NULL,edge.attrs=NULL){
     cat(paste(1:network.size(x)," [",vAttrStrings,"];\n",sep=""),file=file, append=TRUE)
 	} else {
     for (n in 1:network.size(x)){
-      cat(paste(n," [pos=\"",coords[n,1],",",coords[n,2],"\"",labels[n],"];\n",sep=""),file=file,append=TRUE)
+      cat(paste(n," [pos=\"",coords[n,1],",",coords[n,2],"\"",vAttrStrings,"];\n",sep=""),file=file,append=TRUE)
     }
 	}
 	cat("edge [];\n",file=file, append=TRUE)
@@ -52,8 +53,49 @@ function(x,file="",coords=NULL,all.dyads=FALSE,vert.attrs=NULL,edge.attrs=NULL){
       eAttrStrings<-paste(eAttrStrings,attrname,'="',vals,'", ',sep='')
     }
   }
-	for(e in 1:nrow(edges)){
+	for(e in seq_len(nrow(edges))){
 		cat(paste(edges[e,1],"->",edges[e,2],"[",eAttrStrings[e],"];\n"),file=file, append=TRUE)
 	}	
 	cat("}",file=file, append=TRUE)	
 }
+
+
+# TODO: possibly replace this functions and make things faster using RGraphviz package:
+#http://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html
+
+#output of Graphviz -Tplain format looks like this:
+
+# graph 1 7.9819 8.5204
+# node 1 3.1943 3.3635 0.75 0.5 1 solid ellipse black lightgrey
+# node 2 4.159 3.9107 0.75 0.5 2 solid ellipse black lightgrey
+# node 3 4.8287 2.8863 0.75 0.5 3 solid ellipse black lightgrey
+# node 4 3.7991 5.0937 0.75 0.5 4 solid ellipse black lightgrey
+# edge 2 1 4 3.8696 3.7465 3.7875 3.7 3.6966 3.6484 3.6087 3.5986 solid black
+# edge 3 2 4 4.6767 3.1188 4.5911 3.2497 4.4825 3.4159 4.3868 3.5622 solid black
+# edge 4 2 4 3.8737 4.8486 3.9221 4.6895 3.9862 4.4787 4.0414 4.2973 solid black
+# stop
+
+# documented here: http://www.graphviz.org/content/output-formats#dplain
+
+# this function parses the output above and returns a two-column coordinate matrix
+parseCoordsFromGraphvizPlain<-function(text){
+  coords<-NULL
+  # grab all the rows that start with 'node'
+  nodeLines<-grep("^node",text,value=TRUE)
+  # check for 0-vertex net
+  if (length(nodeLines)>0){
+    # split on spaces and grab the 3rd and 4th elements
+    nodeLines<-lapply(nodeLines,function(line){strsplit(line,split=" ")[[1]][3:4]})
+    # reformat into matrix
+    coords<-matrix(as.numeric(unlist(nodeLines)),ncol=2,byrow=TRUE)
+  } else {
+    coords<-matrix(0,nrow=0,ncol=2)
+  }
+  
+  if(is.null(coords)){
+    stop('Unable to parse vertex coordinates from Graphviz plain-formated input')
+  }
+  return(coords)
+}
+
+
