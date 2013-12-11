@@ -147,14 +147,14 @@ activate.vertex.attribute(wheel,'color','blue',onset=7,terminus=8,v=6)
 activate.vertex.attribute(wheel,'color','pink',onset=8,terminus=9,v=7)
 # render it all
 render.animation(wheel,edge.lwd='width',vertex.cex='mySize',vertex.col='color')
-ani.replay()
+
 
 # an example with functional attributes
 set.network.attribute(wheel,'slice.par',
            list(start=1,end=10,interval=1, aggregate.dur=1,rule='latest'))
 # render vertex size as betweeness
 render.animation(wheel,vertex.cex=function(slice){(betweenness(slice)+1)/5})
-ani.replay()
+
 
 # render it directly to a movie file without caching the plots (faster)
 \dontrun{

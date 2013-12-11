@@ -88,5 +88,45 @@ expect_equal(ndtv:::layout.zoomfactor(pos,10,center=c(1,1)),(pos*10)-9)
 # zoom on set of vertices
 expect_equal(ndtv:::layout.zoomfactor(pos,2,v=2:3),matrix(c(-0.5, 1.5, 3.5, 5.5, 7.5, -0.5, 1.5, 3.5, 5.5, 7.5),ncol=2))
 
+# ----- graphviz tests -----
+
+# graphviz layout test
+# set up a basic tree structure
+tree<-network.initialize(21)
+add.edges.active(tree,head=1,tail=2,onset=0,terminus=5)
+add.edges.active(tree,head=c(2,2),tail=c(3,4),onset=1,terminus=5)
+add.edges.active(tree,head=c(3,3,3,4,4),tail=5:9,onset=2,terminus=5)
+add.edges.active(tree,head=c(6,6,8,9,9),tail=10:14,onset=3,terminus=5)
+add.edges.active(tree,head=c(10,10,12,12,12,14,14),tail=15:21,onset=4,terminus=5)
+
+# the tests below are contional on graphviz being installed on the system
+if (ndtv:::check.graphviz()){
+#plot.network(tree,coord=network.layout.animate.Graphviz(tree))
+coords<-network.layout.animate.Graphviz(tree)
+expect_equal(nrow(coords),21)
+expect_equal(ncol(coords),2)
+
+# check verbose
+network.layout.animate.Graphviz(tree,verbose=FALSE)
+
+# check using layout par to set differnet engines
+network.layout.animate.Graphviz(tree,layout.par=list(gv.engine='dot'))
+
+# check passing in gv.args
+network.layout.animate.Graphviz(tree,layout.par=list(gv.engine='dot',gv.args='-Grankdir=LR'))
+
+# check passing bad gv.args
+expect_error(network.layout.animate.Graphviz(tree,layout.par=list(gv.args='-Xhelloworld'),verbose=FALSE),'Error')
+
+}  else {
+# graphivz not installed, so check fallback to kk
+warning("graphviz layout tests skipped because graphviz not installed on system")
+expect_warning(coords<-network.layout.animate.Graphviz(tree),'KamadaKawai')
+expect_equal(nrow(coords),21)
+expect_equal(ncol(coords),2)
+
+}
+
+
 
 

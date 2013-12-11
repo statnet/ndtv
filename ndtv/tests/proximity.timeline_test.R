@@ -21,7 +21,7 @@ proximity.timeline(cls33_10_16_96,onsets=seq(0,45,0.5),termini=seq(2.5,47.5,0.5)
 
 # windsurfers
 data(windsurfers)
-proximity.timeline(windsurfers,start=0,end=31,vertex.col=ifelse(windsurfers%v%'group1','#000055ff','#55555555'),grid=F,splines=.5)
+proximity.timeline(windsurfers,start=20,end=31,vertex.col=ifelse(windsurfers%v%'group1','#000055ff','#55555555'),grid=F,splines=.5)
 
-data(newcomb)
-newDyn<-networkDynamic(network.list=newcomb,onsets=c(0:7,9:14),termini=c(1:8,10:15))
+#data(newcomb)
+#newDyn<-networkDynamic(network.list=newcomb,onsets=c(0:7,9:14),termini=c(1:8,10:15))

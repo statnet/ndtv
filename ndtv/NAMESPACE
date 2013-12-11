@@ -6,8 +6,10 @@ export.pajek.net,
 network.layout.animate.kamadakawai,
 network.layout.animate.MDSJ,
 network.layout.animate.useAttribute,
+network.layout.animate.Graphviz,
 layout.distance,
 layout.center,
 timeline,
-proximity.timeline
+proximity.timeline,
+filmstrip
 )

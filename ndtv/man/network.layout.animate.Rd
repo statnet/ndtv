@@ -11,11 +11,12 @@
 \alias{network.layout.animate.kamadakawai}
 \alias{network.layout.animate.MDSJ}
 \alias{network.layout.animate.useAttribute}
+\alias{network.layout.animate.Graphviz}
 \title{
 Sequentially-stable network layout algorithms suitable for generating network animations.
 }
 \description{
-The \code{network.layout.animate.*} layouts are often adaptations or wrappers for existing static layout algorithms with some appropriate presets.  They all accept the coordinates of the `previous' layout as an argument so that they can try to construct a suitably smooth sequence of node positions.
+The \code{network.layout.animate.*} layouts are often adaptations or wrappers for existing static layout algorithms with some appropriate presets.  They all accept the coordinates of the `previous' layout as an argument so that they can try to construct a suitably smooth sequence of node positions. Usually these layouts are not called directly and instead selected by specifying the appropriate \code{animation.mode} argument to \code{\link{compute.animation}}
 }
 \usage{
 network.layout.animate.kamadakawai(net, dist.mat = NULL, default.dist = NULL, 
@@ -26,6 +27,9 @@ network.layout.animate.MDSJ(net, dist.mat = NULL, default.dist = NULL,
                 
 network.layout.animate.useAttribute(net, dist.mat = NULL, default.dist = NULL,
      seed.coords = NULL,  layout.par = list(x = "x", y = "y"), verbose = TRUE)
+     
+network.layout.animate.Graphviz(net, dist.mat = NULL, default.dist = NULL,
+     seed.coords = NULL,  layout.par = list(), verbose = TRUE)     
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -63,7 +67,13 @@ MDSJ is quite fast for larger networks, but relatively less efficient for smalle
 
 \strong{useAttribute}
 
-The \code{useAttribute} layout makes it possible to define vertex positions using a dynamic vertex attributes to provide the x and y coordinates for each time step.  The names of the attributes to be used are passed in via the \code{layout.par} argument.  For example \code{layout.par = list(x = "myX", y = "myY")} The attribute must have values defined for each time point that the network plotted. 
+The \code{useAttribute} layout makes it possible to define vertex positions using a static or dynamic vertex attributes to provide the x and y coordinates for each time step.  The names of the attributes to be used are passed in via the \code{layout.par} argument.  For example \code{layout.par = list(x = "myX", y = "myY")} The attribute must have values defined for each time point that the network plotted. 
+
+\strong{Graphviz}
+
+The \code{Graphviz} layout is a wrapper for the Graphviz \url{http://http://www.graphviz.org} software library. If the library is installed on your system, it provides a number of additional high-quality layouts. When layout is called it checks for a working Graphviz installation (falling back to KamadaKawai if Graphviz cannot be found) and writes the network to a temp file using \code{\link{export.dot}}. Then the appropriate Graphviz layout engine (default is \code{neato}) is executed via a \code{system} call, and the coordinates of the vertices are parsed from the output.  
+
+Currently, the arguments to \code{layout.par} can be used to specify the Graphviz layout engine to use (i.e. \code{gv.engine='neato'} for stress-minimized, \code{gv.engine='dot'} for hierarchal, \code{gv.engine='fdp'} for force-directed, etc) and additional command-line control parameters can be passed in via \code{gv.args}.  For example, to use the 'dot' layout, but change layout rank direction to Left-Right: \code{layout.par=list(gv.engine='dot',gv.args='-Grankdir=LR')}.  See \url{http://www.graphviz.org/content/command-line-invocation}.  Note that Graphviz's graphic rendering parameters are not used to control network plot rendering (but they may impact layout positions). 
 
 
 }
@@ -74,6 +84,11 @@ A two-column by n-vertex matrix of coordinates.
 Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}. University of Konstanz, 2009.
 
 Kamada, T. and Kawai, S. (1989). An Algorithm for Drawing General Undirected Graphs. Information Processing Letters, 31(1):7-15.
+
+
+John Ellson et.al (2001) "Graphviz -- open source graph drawing tools" Lecture Notes in Computer Science. Springer-Verlag. p483-484  \url{http://www.graphviz.org}
+
+
 
 }
 \author{
