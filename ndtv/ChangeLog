@@ -1,4 +1,7 @@
 ChangeLog for ndtv
+v0.5
+ - added support for using external Graphviz (http://www.graphviz.org) layouts if installed
+ - added filmstrip function to create static small multiple plots of frames from a network animation
 v0.4
  - added ability to specify plot.network as functions to be evaluated at each network time point
  - added weight.attr and weight.dist arguments to compute.animation, making it possible to use numeric edge attributes to specifiy desired distances/similarities in network layouts

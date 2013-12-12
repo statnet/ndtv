@@ -8,7 +8,7 @@ Create a `small multiples` plot of a networkDynamic object.
 Plots several frames of a network animation of a \code{networkDynamic} object in a single static image as a way to provide a quick visual summary of the dynamics of the network.
 }
 \usage{
-filmstrip(nd, frames = 9, slice.par, render.par, mfrow, ...)
+filmstrip(nd, frames = 9, slice.par, render.par, mfrow, verbose = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,6 +27,9 @@ optional list of parameters to control rendering of network. See \code{\link{ren
   \item{mfrow}{
    optional two-element numeric vector giving the number of rows and columns for the layout grid. See \code{\link{par}}.
 }
+  \item{verbose}{
+    boolean,(defaults to FALSE) verbose argument to be passed to \code{\link{compute.animation}}\code{\link{render.animation}}/
+  }
   \item{\dots}{
 additional arguments to be passed to \code{\link{plot.network}} via \code{\link{render.animation}}
 }

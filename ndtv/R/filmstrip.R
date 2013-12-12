@@ -10,7 +10,7 @@
 
 # function for creating small multiple images of frames of a nD animation
 
-filmstrip <- function(nd, frames=9, slice.par,render.par,mfrow,...){
+filmstrip <- function(nd, frames=9, slice.par,render.par,mfrow,verbose=FALSE,...){
   if (!is.networkDynamic(nd)){
     stop("filmstrip plots require a networkDynamic object as the first argument")
   }
@@ -25,7 +25,7 @@ filmstrip <- function(nd, frames=9, slice.par,render.par,mfrow,...){
     if(missing(slice.par)){
       slice.par=list(start=times[1],end=times[length(times)],interval=(times[length(times)]-times[1])/(frames-1), aggregate.dur=0,rule='latest')
     }
-    nd<-compute.animation(nd,slice.par=slice.par)
+    nd<-compute.animation(nd,slice.par=slice.par,verbose=verbose)
   } else {
     # frames should override slice par unless directl specified
     
@@ -51,6 +51,8 @@ filmstrip <- function(nd, frames=9, slice.par,render.par,mfrow,...){
   } else {
       render.par$tween.frames<-1;
   }
+  #pass in a secret parameter to tell render.animation not to do the RStudio plot work-around
+  render.par$'do_RStudio_plot_hack'<-FALSE
   
   # figure out grid dimensions
   
@@ -58,7 +60,7 @@ filmstrip <- function(nd, frames=9, slice.par,render.par,mfrow,...){
     # TODO: should be able to find a nearly-square rect that gets close to right value
     mfrow<-c(ceiling(sqrt(frames)),ceiling(sqrt(frames)))
   }
-  render.animation(nd,render.par=render.par,render.cache='none',plot.par=list(bg='white',mfrow=mfrow),...)
+  render.animation(nd,render.par=render.par,render.cache='none',plot.par=list(bg='white',mfrow=mfrow),verbose=verbose,...)
   
   # restore the state of slice.par
   nd%n%'slice.par'<-oldSlicePar

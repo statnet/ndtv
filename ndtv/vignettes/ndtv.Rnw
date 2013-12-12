@@ -154,6 +154,12 @@ saveVideo(ani.replay(),video.name="stergm.sim.1.mp4",
 
 This should produce a movie\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/stergm.sim.1.mp4}} in an R working directory on disk. The \verb@other.opts@ parameter is set here to generate a higher-quality video than the default, but this will result in a large file size. For more information on compressing videos for the web, see Compressing Video (section \ref{sec:compressing}).
 
+There is also a \verb@filmstrip()@ function that will create a ``small multiple'' plot using frames of the animation to construct a visual summary of the network changes as a static plot.
+
+<<filmstrip,fig=TRUE>>=
+filmstrip(stergm.sim.1,displaylabels=FALSE)
+@
+
 \section{Slicing time}
 The basic network layout algorithms we are using, like most ``traditional' network metrics, don't really know what to do with dynamic networks.  They need to be fed a static set of relationships which can be used to compute a set of distances in a Euclidean space suitable for plotting.  A common way to apply static metrics to a time-varying object is to sample it, taking a sequence static observations at a series of time points and using these to describe the changes over time.  In the case of networks, we call this ``extracting'' or ``slicing''.
 

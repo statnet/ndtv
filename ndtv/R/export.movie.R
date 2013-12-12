@@ -144,15 +144,32 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     stop("render.animation requires the first argument to be a network object")
   }
   
+  
+  # check render.par params
+  if (is.null(render.par)){
+    stop("render.animation is missing the 'render.par' argument (a list of rendering parameters).")
+  }
+  if (is.null(render.par$tween.frames)){
+    render.par$tween.frames<-10 
+  }
+  if (is.null(render.par$show.time)){
+    render.par$show.time<-TRUE
+  }
+  
   #check if coordinates have already been computed
   if (!all(c("animation.x.active","animation.y.active") %in% list.vertex.attributes(net))){
     net <- compute.animation(net,verbose=verbose)
   }
   
+  
   # temporary hard-coded param to work around plot issue in RStudio
   externalDevice<-FALSE
+  doRStudioHack<-TRUE
+  if(!is.null(render.par$'do_RStudio_plot_hack')){
+    doRStudioHack<-render.par$'do_RStudio_plot_hack'
+  }
   if (!is.function(options()$device)){
-    if (names(dev.cur())=="RStudioGD"){
+    if (names(dev.cur())=="RStudioGD" & doRStudioHack){
       message("RStudio's graphics device is not well supported by ndtv, attempting to open another type of plot window")
       # try to open a new platform-appropriate plot window
       if (.Platform$OS.type=='windows'){
@@ -182,16 +199,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     stop("render.animation can not locate the 'slice.par' list of parameters in the input network object")
   }
   
-  # check render.par params
-  if (is.null(render.par)){
-    stop("render.animation is missing the 'render.par' argument (a list of rendering parameters).")
-  }
-  if (is.null(render.par$tween.frames)){
-    render.par$tween.frames<-10 
-  }
-  if (is.null(render.par$show.time)){
-    render.par$show.time<-TRUE
-  }
+  
   # check plot caching params
   render.cache<-match.arg(render.cache)
   
