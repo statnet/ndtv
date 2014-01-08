@@ -155,11 +155,18 @@ network.layout.animate.smacofMDS <- function(nw, layout.par){
 network.layout.animate.useAttribute <- function(net, dist.mat=NULL, default.dist=NULL,seed.coords=NULL,layout.par=list(x='x',y='y'),verbose=TRUE){
   #TODO: write a wrapper for user-stored layout coords
   # check that coord attribute name args are given
-  if (is.null(layout.par$x) | is.null(layout.par$y)){
-    stop("useAttribute layout must have layout.par list argument with elements named 'x' and 'y' giving the names of the vertex attributes containing the x and y coordinates to use")
+  if (is.list(layout.par) & length(layout.par)>0){
+    if (is.null(layout.par$x) | is.null(layout.par$y)){
+      stop("useAttribute layout must have layout.par list argument with elements named 'x' and 'y' giving the names of the vertex attributes containing the x and y coordinates to use")
+    }
+    xattr <- layout.par$x
+    yattr <-layout.par$y
+  } else {
+    # default to x and y
+    xattr <- 'x'
+    yattr <- 'y'
   }
-  xattr <- layout.par$x
-  yattr <-layout.par$y
+  
   # check that they correspond to a valid attribute and the attribute is numeric
   if (!xattr%in%list.vertex.attributes(net) ){
     stop(paste("useAttribute layout is unable to find vertex attribute",xattr,"containing x coordinate information"))

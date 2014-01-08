@@ -9,6 +9,7 @@ network.layout.animate.useAttribute,
 network.layout.animate.Graphviz,
 layout.distance,
 layout.center,
+layout.normalize,
 timeline,
 proximity.timeline,
 filmstrip

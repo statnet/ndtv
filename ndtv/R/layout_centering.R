@@ -30,6 +30,24 @@ layout.center <- function(coords, xlim,ylim){
   return(coords)
 }
 
+
+# helper function to normalize coords in range (-1,1)
+layout.normalize <-function(coords,keep.aspect.ratio=TRUE){
+  # translate
+  coords[,1]<-coords[,1]-min(coords[,1])
+  coords[,2]<-coords[,2]-min(coords[,2])
+  # normalize to 1.0
+  if (keep.aspect.ratio){
+    coords<-coords/(max(coords)/2)
+  } else {
+    coords[,1]<-coords[,1]/(max(coords[,1])/2)
+    coords[,2]<-coords[,2]/(max(coords[,2])/2)
+  }
+  # shift to center
+  coords<-coords-1
+  return(coords)
+}
+
 # add barycenter function to focus on 'center of gravity' of layout
 
 

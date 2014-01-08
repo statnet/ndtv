@@ -52,6 +52,8 @@ The name of the network animation layout to be used. These layouts are name netw
   \itemize{
   \item \code{\link{network.layout.animate.kamadakawai}} essentially wrapper for the Kamadakawai layout included in the network package.
   \item \code{\link{network.layout.animate.MDSJ}} a wrapper to do a Stress Majorization optimized MDS layout using the Multi Dimensional Scaling for Java package. Note, due to license restrictions, this algorithm is for non-commercial use only)
+  \item \code{\link{network.layout.animate.useAttribute}} applies coordinates stored in a user-generated dynamic network attribute
+  \item \code{\link{network.layout.animate.Graphviz}} a wrapper for the Graphviz software library --if the library is installed on your system.
   }
 }
   \item{seed.coords}{

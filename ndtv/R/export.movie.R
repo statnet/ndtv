@@ -139,7 +139,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
-render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL),plot.par=list(bg='white'),ani.options=list(interval=0.1),render.cache=c('plot.list','none'), verbose=TRUE,...){
+render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE,show.stats=NULL,extraPlotCmds=NULL,initial.coords=0),plot.par=list(bg='white'),ani.options=list(interval=0.1),render.cache=c('plot.list','none'), verbose=TRUE,...){
   if (!is.network(net)){
     stop("render.animation requires the first argument to be a network object")
   }
@@ -154,6 +154,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   }
   if (is.null(render.par$show.time)){
     render.par$show.time<-TRUE
+  }
+  if (is.null(render.par$initial.coords)){
+    render.par$initial.coords<-matrix(0,ncol=2,nrow=network.size(net))
   }
   
   #check if coordinates have already been computed
@@ -264,13 +267,16 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     plot_params$ylim<-c(ymin,ymax)
   }
   
+  #set up default coords.  If not specified, default will be zero
+  if(is.numeric(render.par$initial.coords)){
+    coords<-matrix(render.par$initial.coords,ncol=2,nrow=network.size(net))
+  }
+  
   #compute some starting coords  
   slice <- network.collapse(net,starts[1],ends[1],rule=slice.par$rule,rm.time.info=FALSE) 
   activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
   
-  #if the first slice is empty, just start from zeros
-  # TODO: start from initial coords?
-  coords<-matrix(0,ncol=2,nrow=network.size(net))
+  # start from the coords of the first slice
   if (length(slice)>0 & network.size(slice)>0){ 
     coords[activev,1] <-get.vertex.attribute(slice,"animation.x")
     coords[activev,2] <-get.vertex.attribute(slice,"animation.y")
@@ -335,6 +341,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     } else { # end slice > 0 block
       # empty network causes plot problems
       # draw some blank frames while time passes
+      evald_params<-.evaluate_plot_params(plot_params=plot_params,net=net,slice=slice,s=s,onset=starts[s],terminus=ends[s])
       if(render.par$show.time){
         xlab<-evald_params$xlab
       } else {
@@ -381,7 +388,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   for (fun_index in fun_params){
     # get the names of the funtions arguments
     argnames<-names(as.list(args(plot_params[[fun_index]])))
-    argnames = argnames[-length(argnames)]
+    argnames <- argnames[-length(argnames)] # trim off last element
     # construct an argument list by mapping of values to function params
     args<-list()
     for (arg in argnames){
@@ -400,7 +407,11 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       }
     }
     # replace the function on the list with the results of its evaluation
-    plot_params[[fun_index]]<-do.call(plot_params[[fun_index]],args=args)
+    val<-do.call(plot_params[[fun_index]],args=args)
+    # make sure we dont' clobber the list element by setting it to NULL
+    if(!is.null(val)){
+      plot_params[[fun_index]]<-val
+    }
   }
   # return the modified list of plot params
   return(plot_params)

@@ -15,7 +15,7 @@ require(testthat)
 
 # check what happens if coords not defined
 nd <-as.networkDynamic(network.initialize(3))
-expect_error(compute.animation(nd,animation.mode='useAttribute'), 'must have layout.par')
+expect_error(compute.animation(nd,animation.mode='useAttribute'), 'unable to find vertex attribute x containing x')
 
 #check when coordinates specified
 nd <-network.initialize(3)
