@@ -186,12 +186,14 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       externalDevice<-TRUE
     }
   }
+  
   # make sure background color is not transparent unless set that way explicitly
-  if (par("bg")=="transparent"){
-    par(bg='white')
+  if (par("bg")=="transparent" & is.null(plot.par$'bg')){
+    plot.par$'bg'<-'white'
   }
   # set high-level plot attributes (bg color, margins, etc)
-  par(plot.par) 
+  # and cache initial graphics par settings
+  origPar<-par(plot.par) 
   
   # set animation options
   oopts <- ani.options(ani.options)
@@ -363,6 +365,8 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     } # end empty network block
   }
   
+  # reset the graphics params back
+  par(origPar)
   # turn off external device if using one
   if (externalDevice){
     dev.off()

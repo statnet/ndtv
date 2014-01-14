@@ -9,12 +9,16 @@
 #######################################################################
 
 require(ndtv)
+require(testthat)
 
 # ------- tests for filmstrip funciton -----
 data(stergm.sim.1)
 
 #try a default
 filmstrip(stergm.sim.1)
+
+# check that par was reset back to original
+expect_equal(par()$mfcol,c(1,1))
 
 # try setting mfcol and exporting a wide version to a pdf
 pdf('filmstripTest.pdf',width=7,height=2)
