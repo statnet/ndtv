@@ -116,6 +116,13 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
 @
 
 Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming MDSJ and Java are installed).
+<<mdsj_actual_download,echo=FALSE>>==
+# the command below will default to not installing MDSJ in a non-interactive session
+# so to make sure it is installed for this sweave build, call it internally
+mdsj.dir <- file.path(path.package("ndtv"), "exec/")
+ndtv:::install.mdsj(mdsj.dir)
+@
+
 <<calc_params,eval=true, results=hide>>=
 slice.par<-list(start=75,end=100,interval=1, 
                 aggregate.dur=1,rule="latest")
@@ -232,6 +239,14 @@ Please note that the MDSJ library is released under Creative Commons License ``b
 \subsection{Use a TEA attribute}
 The \verb@useAttribute@ layout is useful if you already know exactly where each vertex should be drawn at each timestep, and you just want to render out the network.  It just needs to know the names of the dynamic attribute holding the x coordinate and the y coordinate for each time step. 
 
+\subsection{Graphviz}
+The Graphviz layout is a wrapper for the Graphviz \url{http://http://www.graphviz.org} software library \citep{graphviz}. If the library is installed on your system (see verb@?install.graphviz@), it provides a number of additional high-quality layouts. When layout is called it checks for a working Graphviz installation (falling back to KamadaKawai if Graphviz cannot be found) and writes the network to a temp file using \verb@export.dot@. Then the appropriate Graphviz layout engine (default is \verb@neato@) is executed via a \verb@system@ call, and the coordinates of the vertices are parsed from the output.
+
+Currently, the arguments to \verb@layout.par@ can be used to specify the Graphviz layout engine to use (i.e. \verb@gv.engine='neato'@ for stress-minimized, \verb@gv.engine='dot'@ for hierarchal, \verb@gv.engine='fdp'@ for force-directed, etc) and additional command-line control parameters can be passed in via \verb@gv.args@. For example, to use the 'dot' layout, but change layout rank direction to Left-Right: 
+<<gv_options>>=
+layout.par=list(gv.engine='dot',gv.args='-Grankdir=LR') 
+@
+See \url{http://www.graphviz.org/content/command-line-invocation}. Note that Graphviz's graphic rendering parameters are not used to control network plot rendering (but they may impact layout positions).
 
 \subsection{User-generated layout functions}
 We can define new layout functions by following the appropriate naming structure. For example, if we wanted a layout that just arranged all the active vertices in a circle we could define a new function \verb@network.layout.animate.circle@.
@@ -393,6 +408,14 @@ The command takes several important arguments as named elements of the \verb@sli
 
 For each time slice, new coordinates are only computed for the active set of vertices, so the function usually behaves appropriately for networks with changing vertex sets. 
 
+The other parameters are as follows
+\begin{itemize}
+\item \verb@seed.coords@ an (optional) array of initial coordinates to be used for the very first layout in the sequence or when vertices first pop into existance.
+\item \verb@weight.attr@ can provide the name of a numeric edge attribute defining weights for edges to be interpreted by the layout alogirthm. The values \verb@activity.duration@ or \verb@activity.count@ can be used to weight edges by the duration or count of the edge's activity spells in the time slice. the \verb@weight.dist@ parameter determines if the weights should be treated as similarities (larger values means closer vertices) or distances.
+\item \verb@chain.direction@ a value of 'forward' indicates the chain of layouts should be computes in forward temporal order. A value 'reverse' runs the chain backwards. For some layouts, reverse-chaining means that isolated vertices are more likely to have positions close to the partners they will be tied to.
+\end{itemize}
+
+
 \subsection{render.animation()}
 This function is designed to step through a network object extracting slice networks according to the previously cached \verb@slice.par@ settings. It retrieves the \verb@animation.x@ and \verb@animation.y@ coordinates for each slice and passes them to \verb@plot.network@ to render the frame.  If no \verb@slice.par@ network attribute is found to define the time range to render it will make one up using the smallest and largest non-Inf time values and unit-length non-overlapping time steps. If no stored coordinates are found it will call \verb@compute.animation@. Additional \verb@plot.network@ control parameters (to set colors, line widths, etc) can be passed in via the \verb@...@ arguments. See \verb@?plot.network@ for the full list. 
 
@@ -411,7 +434,7 @@ Parameters to control the animation are read from a list passed in via the \verb
 
 There are also several lists of arguments that give default values that will be passed to the appropriate lower-level commands. The \verb@plot.par@ list is passed to the \verb@par()@ command and provides a way to configure some of the general plot details such as background color, margins, fonts, etc.   Similarly, the \verb@ani.options@ list is passed to the \verb@ani.options()@ command to configure settings for the animation package such as \verb@interval@ to control the time between frames in playback.
 
-The \verb@render.cache@ argument provides a way to control the cacheing of the plot frames. The default value of verb@render.cache='plot.list'@ causes each frame of the animation to be stored in an internal list by the \verb@ani.record@ function of the animation library. This is very useful for testing and replaying animations in R's plot window, but can be very slow (or cause out-of-memory errors) for large animations. If the value is set to verb@render.cache='none'@, the plot will not be recorded (but can be saved directly to disk via \verb@saveVideo()@) and cannot be replayed via the \verb@ani.replay()@ function. 
+The \verb@render.cache@ argument provides a way to control the caching of the plot frames. The default value of verb@render.cache='plot.list'@ causes each frame of the animation to be stored in an internal list by the \verb@ani.record@ function of the animation library. This is very useful for testing and replaying animations in R's plot window, but can be very slow (or cause out-of-memory errors) for large animations. If the value is set to verb@render.cache='none'@, the plot will not be recorded (but can be saved directly to disk via \verb@saveVideo()@) and cannot be replayed via the \verb@ani.replay()@ function. 
 
 \subsection{saveVideo()}
 The \verb@animation@ package provides several neat tools for storing animations once they have been rendered.
@@ -485,6 +508,9 @@ de Leeuw J and Mair P (2009).
  packageAsBibitem('ndtv')
 @
 
+\bibitem[John Ellson et al (2001)]{graphviz} 
+John Ellson et al (2001) 
+\newblock Graphviz -- open source graph drawing tools \emph{Lecture Notes in Computer Science}. Springer-Verlag. p483-484 \url{http://www.graphviz.org}
 
 
 \bibitem[Handcock et al (2003)]{statnet}
