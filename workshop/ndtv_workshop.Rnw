@@ -4,6 +4,8 @@
 \usepackage{hyperref} %for url links
 \usepackage{comment}
 \usepackage{color} 
+\usepackage{animate}
+\usepackage{graphicx}
 
 
 \begin{document}
@@ -21,47 +23,47 @@
 
 <<foo,include=FALSE,echo=FALSE>>=
 foo <- packageDescription("ndtv")
+# disable prompt characters
+options(prompt = " ", continue = " ")
 @
 
 \title{Workshop materials for learning \Sexpr{foo$Package}: \Sexpr{foo$Title} (Package version \Sexpr{foo$Version})}  
 \author{Skye Bender-deMoll}
 \maketitle
 
+\tableofcontents
 
 \section{Introduction to workshop}
-
-
 
 \subsection{What is ndtv?}
 The Network Dynamic Temporal Visualization (\verb@ndtv@) package provides tools for visualizing changes in network structure and attributes over time.
 \begin{itemize}
-\item Uses network information encoded in \verb@networkDynamic@ \citep{networkDynamic} objects as its input
-\item Outputs animated movies, timelines and other types of dynamic visualizations of evolving relational structures.
-
-\item The core use-case for development is examining the output of statistical network models (such as those produced by the \verb@tergm@ \citep{tergm} package in \verb@statnet@ \citep{statnet}) and simulations of disease spread across networks. 
+  \item Uses network information encoded in \verb@networkDynamic@ \citep{networkDynamic} objects as its input
+  \item Outputs animated movies, timelines and other types of dynamic visualizations of evolving relational structures.
+  
+  \item The core use-case for development is examining the output of statistical network models (such as those produced by the \verb@tergm@ \citep{tergm} package in \verb@statnet@ \citep{statnet}) and simulations of disease spread across networks. 
+  \item Easy to do basic things, but lots of ability to customize.
 \end{itemize}
 
 \subsection{Who are we?}
 \begin{itemize}
-\item Developed by members of the statnet \url{http://statnet.org} team
-\item This work was supported by grant R01HD68395 from the National Institute of Health.
+  \item Developed by members of the statnet \url{http://statnet.org} team
+  \item This work was supported by grant R01HD68395 from the National Institute of Health.
 \end{itemize}
 
 \subsection{Workshop prerequisites}
 \begin{itemize}
-\item Familiarity with the R statistical software.  We are not going to cover basics of how to use R
-\item Familiarity with general network and SNA concepts
-\item Experience with statnet packages and data structures preferred but not necessary
-\item Functioning R installation and basic statnet packages already installed \footnote{Instructions on installing R and statnet are located here \url{https://statnet.csde.washington.edu/trac/wiki/Sunbelt2013\#Downloadingstatnet}}. 
+  \item Familiarity with the R statistical software.  We are not going to cover basics of how to use R
+  \item Familiarity with general network and SNA concepts
+  \item Experience with statnet packages and data structures preferred but not necessary
+  \item Functioning R installation and basic statnet packages already installed. (Instructions on installing R and statnet are located here \url{https://statnet.csde.washington.edu/trac/wiki/Sunbelt2013\#Downloadingstatnet}.) 
+  \item A working internet connection (we will install some libraries and download datasets)
 \end{itemize}
 
-\subsection{Workshop outline}
-\tableofcontents
 
 
-
-\subsection{A quick demo from a tergm simulation (5min)}
-Enough talk. Lets get started with a realistic example. We can render a  simple network animation in the R plot window (no need to follow along in this part)
+\subsection{A quick demo from a tergm simulation}
+Lets get started with a realistic example. We can render a  simple network animation in the R plot window (no need to follow along in this part)
 
 Let say we've got a statistical model of a dynamic network, and we want to see what it looks like. 
 \begin{itemize}
@@ -105,18 +107,16 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 25)
 @
 
-NOTE: stergm code above is temporarily turned off while writing examples because it is slow. Instead, load in the pre-generated stergm object
+NOTE: stergm code above is temporarily turned off while writing examples because it is slow. If we want to avoid loading \verb@tergm@ and running the simulation,  we can load in the pre-generated stergm object and trim it to a shorter length: 
 <<pre-load_stergm>>==
 data(stergm.sim.1)
 stergm.sim.1<-network.extract(stergm.sim.1,onset=0,terminus=25,trim.spells=TRUE)
 @
 
-When we generate the movie, we can include the model statistics on screen to see how they are influenced by edge additions and deletions by telling it to display the time and the summary statistics formula. 
-
-Define some parameters for \verb@render.par@ in order to specify how many \verb@tween.frames@ to render
+We define some parameters in a list named \verb@render.par@ in order to specify how the movie should be rendered (more on this later). 
 
 <<render.par_animation>>==
-render.par=list(tween.frames=5,show.time=T,
+render.par=list(tween.frames=5,show.time=TRUE,
                 show.stats="~edges+gwesp(0,fixed=T)")
 @
 
@@ -126,7 +126,7 @@ render.animation(stergm.sim.1,render.par=render.par,
                  edge.col="darkgray",displaylabels=T,
                  label.cex=.6,label.col="blue")
 @
-This takes some time and produces many lines output which we are not showing. The output could also be suppressed by adding a \verb@verbose=FALSE@ argument.
+Rendering takes some time and produces many lines output which we are not showing. The output could also be suppressed by adding a \verb@verbose=FALSE@ argument.
 
 After it has finished, replay the movie in an R plot window.
 <<replay_animation,eval=false,include=TRUE>>=
@@ -135,20 +135,34 @@ ani.replay()
 
 Notice that in addition to the labels on the bottom of the plot indicating which time step is being viewed, it also displays the network statistics of interest for the time step. When the ``edges'' parameter increases up, you can see the density on the graph increase and the number of isolates decrease. Eventually the model corrects, and the parameter drifts back down. 
 
-But an animation is not the only way to display time.  There is also a \verb@filmstrip()@ function that will create a ``small multiple'' plot using frames of the animation to construct a visual summary of the network changes as a static plot.
+An animation is not the only way to display a sequence of views.  We could also use the \verb@filmstrip()@ function that will create a ``small multiple'' plot using frames of the animation to construct a visual summary of the network changes as a static plot.
 
 <<filmstrip,fig=TRUE>>=
 filmstrip(stergm.sim.1,displaylabels=FALSE)
 @
 
+We can view the dynamics as a timeline or where we plot the existance of edges and vertices over time (but don't show connectivity)
+<<timeline,fig=TRUE>>=
+timeline(stergm.sim.1)
+@
+
+We are experimenting with a form of timeline where vertices are positioned vertically by their proximities to each other over time.
+
+<<proximity_timeline,fig=TRUE>>=
+proximity.timeline(stergm.sim.1,default.dist=6,
+          mode='sammon',labels.at=17,vertex.cex=4)
+@
+
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} What are some strengths and weakness of the various views?}}
+
 \subsection{Bounds}
-Lets be clear tho, you can't just throw any network at this and expect good results
+Before we create too high of expectations, we should be clear that you can't just throw any network at this and expect good results.
 
 \begin{itemize}
 \item Not for ``big data'': So far we've mostly used it successfully with networks of ~1k vertices and several hundred time steps.
 \item Animations of dense networks may not be useful. 
 \item Works best when a relatively small number of ties are changing between time slices, 
-\item Vertex turnover (births and death rates) are not too high.
+\item Does not work well when vertex turnover rates (births and death) are high.
 \end{itemize}
 
 \section{The basics}
@@ -165,9 +179,9 @@ R should automatically install the dependencies when you install ndtv. So open u
 library(ndtv) # also loads animation and networkDynamic
 @
 
-\subsection{'Wheel' work along example}
+\subsection{``Wheel'' work along example}
 
-We are going to build a simple \verb@dynamicNetwork@ object ``by hand'' and then visualize its dynamics. 
+We are going to build a simple \verb@dynamicNetwork@ object ``by hand'' and then visualize its dynamics. Please follow along by running these commands in your R terminal. 
 <<trivial_example>>=
 wheel <- network.initialize(10)  # create a toy network
 add.edges.active(wheel,tail=1:9,head=c(2:9,1),onset=1:9, terminus=11)
@@ -180,36 +194,41 @@ class(wheel)  # now it is also a networkDynamic object
 as.data.frame(wheel) # peek at edge dynamics as a data frame
 @
 
-Now lets view it as a static plot.
+Now lets view it as a static plot, but labeling edges with their onset and termination times so we can check our work.
 
 <<trival_example_static,fig=TRUE>>==
-plot(wheel,displaylabels=TRUE) # peek at the static version
+# make a list of times for each edge
+elabels<-lapply(get.edge.activity(wheel),
+                function(spl){
+                  paste("(",spl[,1],"-",spl[,2],")",sep='')
+                })
+# peek at the static version
+plot(wheel,displaylabels=TRUE,edge.label=elabels,
+     edge.label.col='blue') 
 @
 
-And render and view it as a dynamic movie \footnote{An example of the movie is located at \url{http://statnet.csde.washington.edu/movies/ndtv_vignette/wheel.mp4}}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} Why is this edge labeling function dangerous? (Hint: do edges always have a single onset and terminus time?)}}
+
+
+Next, render and view it as a dynamic movie 
 <<trivial_example_dynamic>>==
 render.animation(wheel) # compute and render
 ani.replay() # play back in plot window
 @
 
-Hopefully, when you ran \verb@ani.replay()@ you saw a bunch of labeled nodes moving smoothly around in the R plot window, with edges slowly appearing to link them into a circle. Finally a set of ``spoke'' edges appear to draw a vertex into the center.
+Hopefully, when you ran \verb@ani.replay()@ you saw a bunch of labeled nodes moving smoothly around in the R plot window, with edges slowly appearing to link them into a circle \footnote{An example of the movie is located at \url{http://statnet.csde.washington.edu/movies/ndtv_vignette/wheel.mp4}}. Then a set of ``spoke'' edges appear to draw a vertex into the center, and finally the rest of the wheel diappears. 
   
-\fbox{\textbf{Question:} \emph{What are some strengths and weakness of the various views?}}
 
-
- 
-
-\section{Under the hood}
-Simple right? Yes, but that is because most of the difficult parts happened under the hood using default values. 
 \subsection{What happened automatically}
+Simple right? Most of the difficult parts happened under the hood using default values. 
 \begin{enumerate}
-\item We created a \verb@networkDynamic@ object named \verb@wheel@ containing information about the timing of edge activity.
-\item \verb@render.animation()@ asked the package to create an animation for \verb@wheel@ but we didn't include any arguments indicating what should be rendered or how.
-\item Since \verb@render.animation()@ didn't find any stored coordinate information about where to draw the vertices and edges, it (invisibly) called \verb@compute.animation()@ with default arguments to figure out where to position the vertices at each time step.
-\item Because we didn't tell \verb@compute.animation()@ what time points to look at when doing its computations, it reported this, \verb@"No slice.par found"@, and made a guess as to when the animation should start and end (the earliest and latest observed times in the network) and how much time should be incremented between each set of layout coordinate calculations.
-\item \verb@compute.animation()@ then stepped through the \verb@wheel@ network, computing coordinates for each time step and storing them. (This was the \verb@"Calculating layout for network slice from time 1 to 2"@ ... part.)
-\item \verb@render.animation()@ also stepped through the network, using the stored coordinates, \verb@plot.network()@ and \verb@ani.record()@ functions to cache snapshots of the network. It also caches a number of ``tweening'' images between each time step to smoothly interpolate the positions of the vertices. \verb@"rendering 10 frames for slice 1"@ ...
-\item \verb@ani.replay()@ quickly redraws the sequence of cached images in the plot window as an animation. 
+  \item We created a \verb@networkDynamic@ object named \verb@wheel@ containing information about the timing of edge activity.
+  \item \verb@render.animation()@ asked the package to create an animation for \verb@wheel@ but we didn't include any arguments indicating what should be rendered or how.
+  \item Since \verb@render.animation()@ didn't find any stored coordinate information about where to draw the vertices and edges, it (invisibly) called \verb@compute.animation()@ with default arguments to figure out where to position the vertices at each time step.
+  \item Because we didn't tell \verb@compute.animation()@ what time points to look at when doing its computations, it reported this, \verb@"No slice.par found"@, and made a guess as to when the animation should start and end (the earliest and latest observed times in the network) and how much time should be incremented between each set of layout coordinate calculations.
+  \item \verb@compute.animation()@ then stepped through the \verb@wheel@ network, using \verb@network.collapse()@ to get the approprite active network, computing coordinates for each time step -- using the previous step's coordinates as starting points -- and storing them as a TEA attribute. (This was the \verb@"Calculating layout for network slice from time 1 to 2"@ ... part.)
+  \item \verb@render.animation()@ also stepped through the network, using the stored coordinates, \verb@plot.network()@ and \verb@ani.record()@ functions to cache snapshots of the network. It also caches a number of ``tweening'' images between each time step to smoothly interpolate the positions of the vertices. \verb@"rendering 10 frames for slice 1"@ ...
+  \item \verb@ani.replay()@ quickly redraws the sequence of cached images in the plot window as an animation. 
 \end{enumerate}
 
 \subsection{Doing it step by step}
@@ -236,8 +255,26 @@ This is essentially what \verb@render.animation@ does internally, which is why w
 render.animation(wheel,vertex.col='blue',edge.col='gray')
 @
 
-If you are like me, you probably forget what the various parameters are and what they do.  You can use \verb@?compute.animation@ or \verb@?render.animation@ to display the appropriate help files. and \verb@?plot.network@ to show the list of plotting control arguments
+We can adjust how many ``tweening'' frames are rendered. This indirectly impacts the perceived speed of the movie (more means slower and smoother). If we wanted no animation smoothing at all, set \verb@tween.frames=1@.
 
+<<wheel_detail_tween_render2>>==
+render.animation(wheel,render.par=list(tween.frames=1),
+                 vertex.col='blue',edge.col='gray')
+ani.replay()
+@
+
+Or bump it up to 30
+
+<<wheel_detail_tween_render>>==
+render.animation(wheel,render.par=list(tween.frames=30),
+                 vertex.col='blue',edge.col='gray')
+ani.replay()
+@
+
+If you are like me, you probably forget what the various parameters are and what they do.  You can use \verb@?compute.animation@ or \verb@?render.animation@ to display the appropriate help files. and \verb@?plot.network@ to show the list of plotting control arguments.
+
+
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} Why is all this necessary? Why not just call plot.network over and over at each time point?}}
 
 \section{Installing external dependencies}
 \label{sec:dependencies}
@@ -259,7 +296,7 @@ When java is installed correctly the following command should print out the vers
 system('java -version')
 @
 
-The first time the MDSJ layout is called after installing or updating the ndtv package, it is going to ask to download the MDSJ library.  Lets do that now on a pretend movie to get it out of the way
+Due to CRAN's license restrictions, necessary components of the MDSJ layout (which we will use in a minute) are not distributed with ndtv.  Instead, the first time the MDSJ layout is called after installing or updating the ndtv package, it is going to ask to download the library.  Lets do that now on a pretend movie to get it out of the way:
 
 <<mdsj_download,results=hide>>==
 network.layout.animate.MDSJ(network.initialize(1))
@@ -308,44 +345,56 @@ The \verb@animation@ package provides several neat tools for storing animations 
 \item \verb@ani.replay()@ plays the animation back in the R plot window. (see \verb@?ani.options@ for more parameters)
 \item \verb@saveVideo()@ saves the animation as a movie file on disk (if the FFmpeg library is installed).
 \item \verb@saveGIF()@ creates an animated GIF (if ImageMagick's convert installed)
-\item \verb@saveLatex()@ creates an animation embedded in a pdf (didn't work for me...)
+\item \verb@saveLatex()@ creates an animation embedded in a pdf
 \end{itemize}
 Please see \verb@?animation@ and each function's help files for more details. 
 
 \subsection{saveVideo()}
-
-Since we just rendered the ``wheel'' example movie, it is already cached so we can capture the output of \verb@ani.replay@ into a movie file
+Since we just rendered the ``wheel'' example movie, it is already cached so we can capture the output of \verb@ani.replay@ into a movie file. Try out the various output options below.
 
 <<save_video>>==
 saveVideo(ani.replay(),video.name="wheel_movie.mp4")
 @
 
-
-changing the dimensions of the movie output
+Sometimes we may want to change the pixel dimensions of the movie output.
 <<save_video_dimensions>>==
-saveVideo(ani.replay(),video.name="wheel_movie.mp4",ani.width=800,ani.height=800)
+saveVideo(ani.replay(),video.name="wheel_movie.mp4",
+          ani.width=800,ani.height=800)
 @
 
+We can increase the video's image quality (and file size) by telling ffmpeg to use a higher bit-rate (less compression), although this setting mostly impacts jpeg output. 
 <<save_video_bitrate>>==
-saveVideo(ani.replay(),video.name="wheel_movie.mp4",other.opts="-b 5000k")
+saveVideo(ani.replay(),video.name="wheel_movie.mp4",
+          other.opts="-b 5000k")
 @
-
 
 Because the \verb@ani.record()@ and \verb@ani.replay()@ functions cache each plot image in memory, they are not very speedy and will tend to bog down as memory fills up when rendering large networks or long movies.  We can avoid this by saving the output of \verb@render.animation@ directly to disk by wrapping it inside the \verb@saveVideo()@ call and setting \verb@render.cache='none'@.
-<<save_video_direct>>==
-saveVideo(render.animation(wheel,vertex.col='blue',edge.col='gray',render.cache='none'),video.name="wheel_movie.mp4")
+<<save_video_direct,results=hide>>==
+saveVideo(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none'),
+          video.name="wheel_movie.mp4")
 @
 
+\subsection{saveGIF}
 We can also export it as an animated gif image. Gif animations will be very large files, but very portable for sharing on the web (assuming you happen to have ImageMagick installed...).
 
-<<save_video>>==
-#saveGIF(ani.replay(),movie.name="wheel_movie.gif",interval=NULL)
+<<save_video,results=hide>>==
+saveGIF(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none'),
+         movie.name="wheel_movie.gif")
 @
 
-\fbox{\textbf{Exercise:} \emph{Using the list of options from the help page ?ani.options, locate the option to control the time interval of the animation, and use it to render a gif where each frame stays on screen for 2 seconds.}}
+\subsection{saveLatex}
+<<save_latex_example,results=hide>>==
+saveLatex(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none'))
+@
 
 
-\section{Exploring Layout algorithms}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} Using the list of options from the help page ?ani.options, locate the option to control the time interval of the animation, and use it to render a gif where each frame stays on screen for 2 seconds.}}
+
+
+\section{Comparing Layout algorithms}
 Producing ``good'' (for an admittedly ambiguous definition of good) layouts of networks is generally a computationally difficult problem. 
 
 Common goals:
@@ -355,55 +404,37 @@ Common goals:
 \end{itemize}
 Many otherwise excellent static layout algorithms are not stable in this sense, or they may require very specific parameter settings to improve their results for animation applications. 
 
-The \verb@network.layout.animate.*@ layouts included in \verb@ndtv@ are adaptations or wrappers for existing static layout algorithms with some appropriate parameter presets. They all accept the coordinates of the previous layout as an argument so that they can try to construct a suitably smooth sequence of node positions. 
+So far, in ndtv we are using variations of Multidimensional Scaling (MDS) layouts.  MDS algorithms use various numerical optimization techniques to find a configuration of points (the vertices) in a low dimensional space (the screen) where the distances between the points are as close as possible to the desired distances (the edges). This is analgous to the process of squashing a 3D world globe onto a 2D map: there are many useful ways of doing the projection, but each introduces some type of distortion.
+
+The \verb@network.layout.animate.*@ layouts included in \verb@ndtv@ are adaptations or wrappers for existing static layout algorithms with some appropriate parameter presets. They all accept the coordinates of the previous layout as an argument so that they can try to construct a suitably smooth sequence of node positions. Using the previous coordinates allows us to ``chain'' the layouts together. Each step can often avoid some work by using a previous solution as its sarting point, and it is likely to find a solution that is similar to previous step.  
+
+\subsection{Why we don't (yet) use Fruchterman-Reingold}
+The Fruchterman-Reingold (CITE) algorithm has been one of the most popular layout algorithms (it is the default for \verb@plot.network@).  For larger networks it can be tuned to run much more quickly than most MDS algorithms.  Unfortunately, its default optimization is based on a sort of simulated aneeling approach, so ``memory'' of previous positions is usually erased each time the layout is run\footnote{Various authors have had useful animation results by modifying FR to explicitly include references to vertices' positions in previous time points. Hopefully we will be able to include such algorithms in future releases of ndtv.}, producing very unstable layouts. 
 
 \subsection{Kamada-Kawai adaptation}
-The function \verb@network.layout.animate.kamadakawai@ is essentially a wrapper for \verb@network.layout.kamadakawai@. It computes a symmetric geodesic distance matrix from the input network (replacing infinite values with \verb@default.dist@), and seeds the initial coordinates for each slice with the results of the previous slice in an attempt to find solutions that are as close as possible to the previous positions. It is not as fast as MDSJ, and the layouts it produces are not as smooth. But it has the advantage of being written entirely in R, so it doesn't have the pesky external dependencies of MDSJ. For this reason it is the default layout algorithm. 
+The Kamada-Kawai network layout algorithm is often described as ``spring embeddder'' simulation, but it is mathamatically equivilent to some forms of MDS. The function \verb@network.layout.animate.kamadakawai@ is essentially a wrapper for \verb@network.layout.kamadakawai@. It computes a symmetric geodesic distance matrix from the input network (replacing infinite values with \verb@default.dist@), and seeds the initial coordinates for each slice with the results of the previous slice in an attempt to find solutions that are as close as possible to the previous positions. It is not as fast as MDSJ, and the layouts it produces are not as smooth. But it has the advantage of being written entirely in R, so it doesn't have the pesky external dependencies of MDSJ. For this reason it is the default layout algorithm. 
 
 \subsection{MDSJ (Multidimensional Scaling for Java)}
-According to its authors: 
-\begin{quote}MDSJ \citep{mdsj} is a free Java library for Multidimensional Scaling (MDS). It is a free, non-graphical, self-contained, lightweight implementation of basic MDS algorithms and intended to be used both as a standalone application and as a building block in Java based data analysis and visualization software.
-\end{quote}
 
-MDSJ is a very efficient implementation of MDS so \verb@network.layout.animate.MDSJ@ gives the best performance of any of the algorithms tested so far -- despite the overhead of writing matrices out to a Java program and reading coordinates back in. Like all of the MDS-variants, MDSJ will check and give errors if you try to call it with a non-symmetric distance matrix.  Currently \verb@max_iter@ is the only user argument that is passed through to the Java wrapper.  It controls the maximum number of optimization steps.  The default value is 50 which is usually sufficient.  But it can be increased for layouts that appear to be not entirely converging, or perhaps decreased to save some speed on simpler layouts. 
+MDSJ is a very efficient implementation of ``SMACOF'' stress-optimization Multidimensonal Scaling so \verb@network.layout.animate.MDSJ@ gives the best performance of any of the algorithms tested so far -- despite the overhead of writing matrices out to a Java program and reading coordinates back in.  It also produces very smooth layouts with less of the wobbling and flipping which can sometimes occur with Kamada-Kawai
 
-Please note that the MDSJ library is released under Creative Commons License ``by-nc-sa'' 3.0.  This means using the algorithm for commercial purposes would be a violation of the license. Due to CRAN's license restrictions, the MDSJ binary is not distributed along with the (GPL-licensed) \verb@ndtv@ package. Instead, the first time the layout is called, it will ask if you want to automatically download and install the library. More information about the MDSJ library and its licensing can be found at \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}.
+As noted earlier, the MDSJ library is released under Creative Commons License ``by-nc-sa'' 3.0.  This means using the algorithm for commercial purposes would be a violation of the license. More information about the MDSJ library and its licensing can be found at \url{http://www.inf.uni-konstanz.de/algo/software/mdsj/}.
 
 \subsection{Graphviz layouts}
 
-\subsection{Use a TEA attribute}
-The \verb@useAttribute@ layout is useful if you already know exactly where each vertex should be drawn at each time step, and you just want to render out the network.  It just needs to know the names of the dynamic attribute holding the x coordinate and the y coordinate for each time step. 
+The Graphviz \citep{graphviz} external layout library includes a number of excellent algorithms for graph layout, including \verb@neato@, an stress-optimization varient, and \verb@dot@ a hierarchial layout (for trees and DAG networks). 
 
+\subsection{Use a TEA attribute or write your own}
+The \verb@useAttribute@ layout is useful if you already know exactly where each vertex should be drawn at each time step (based on external data, like latitude and longitude), and you just want to render out the network\footnote{It is also possible to write your own layout function and easily plug it in.  See the ndtv package vignette for an example circular layout.}.  It just needs to know the names of the dynamic attribute holding the x coordinate and the y coordinate for each time step. 
 
-\subsection{User-generated layout functions}
-We can define new layout functions by following the appropriate naming structure. For example, if we wanted a layout that just arranged all the active vertices in a circle we could define a new function \verb@network.layout.animate.circle@.
-
-<<define_layout,eval=true,include=TRUE>>=
-network.layout.animate.circle <- function(net, dist.mat = NULL, 
-        default.dist = NULL, seed.coords = NULL, layout.par = list(),
-        verbose=FALSE){
-  
-    n<-network.size(net)
-    x<-10*cos( seq(0,2*pi, length.out=n))
-    y<-10*sin( seq(0,2*pi, length.out=n))
-    return(cbind(x,y))
-  }
-@
-
-We can then re-compute a new animation for the simulation output using our new ``circle' layout function.
-
-<<demo_layout,eval=true,include=TRUE,results=hide>>=
-stergm.sim.1<-compute.animation(stergm.sim.1,animation.mode='circle')
-render.animation(stergm.sim.1)
-ani.replay()
-@
-
+TODO: include layout time comparison plots
 
 
 \section{Slicing time}
-The basic network layout algorithms we are using, like most ``traditional' network metrics, don't really know what to do with dynamic networks.  They need to be fed a static set of relationships which can be used to compute a set of distances in a Euclidean space suitable for plotting.  A common way to apply static metrics to a time-varying object is to sample it, taking a sequence static observations at a series of time points and using these to describe the changes over time.  In the case of networks, we call this ``extracting'' or ``slicing''.
 
-Slicing up a dynamic network created from discrete panels may be fairly straightforward but it is much less clear how to do it when working with continuous time or streaming relations. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The \verb@slice.par@ parameters make it possible to experiment with various slicing options. In many situations we have even found \citep{sonia} it useful to let slices mostly overlap -- incrementing each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale.
+The basic network layout algorithms we are using, like most ``traditional' network metrics, don't really know what to do with dynamic networks.  They need to be fed a static set of relationships which can be used to compute a set of distances in a Euclidean space suitable for plotting.  A common way to apply static metrics to a time-varying object is to sample it, taking a sequence static observations at a series of time points and using these to describe the changes over time.  In the case of networks, we might call this this ``extracting'' or ``slicing''.
+
+Slicing up a dynamic network created from discrete panels may be fairly straightforward but it is much less clear how to do it when working with continuous time or streaming relations. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The \verb@slice.par@ parameters make it possible to experiment with various slicing options. In many situations we have even found \citep{sonia} it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale.
 
 As an example, lets look at the McFarland \citep{mcfarland} data-set of streaming classroom interactions and see what happens when we chop it up in various ways. First, we can animate at the fine time scale, viewing the first half-hour of class using instantaneous slices.
 <<results=hide>>=
@@ -450,7 +481,7 @@ ani.replay()
 
 Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the \verb@rule@ element of the \verb@slice.par@ argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally \verb@rule='latest'@ gives reasonable results, returning the most recent value found within the query spell. 
 
-\fbox{\textbf{Exercise:} \emph{Define a slice.par and render an animation of the first 15 minutes of classroom interactions using 5 minute non-overlapping slices }}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} Define a slice.par and render an animation of the first 15 minutes of classroom interactions using 5 minute non-overlapping slices }}
 
 
 \section{Vertex dynamics}
@@ -525,7 +556,7 @@ ani.replay()
 
 The attribute values for the time points are defined using \verb@network.collapse@, which controls the behavior if multiple values are active for the plot period. 
 
-\fbox{\textbf{Exercise:} \emph{Using the wheel network, create a dynamic vertex attributed named ``group''.  Define the TEA so that initially most of the vertices will be in group ``A'', but over time more and more will be in group ``B'' }}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} Using the wheel network, create a dynamic vertex attributed named ``group''.  Define the TEA so that initially most of the vertices will be in group ``A'', but over time more and more will be in group ``B'' }}
 
 \subsection{Functional plot arguments}
 
@@ -559,7 +590,7 @@ render.animation(wheel,
 ani.replay()
 @
 
-\fbox{\textbf{Exercise:} \emph{write a functional plot argument that scales vertex size in proportion to momentary degree}}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} write a functional plot argument that scales vertex size in proportion to momentary degree}}
 
 In this example we had to modify the start time using the \verb@slice.par@ setting to avoid time 0 because the \verb@betweenness@ function will give an error for a network with no edges.  The main plot commands accept functions as well, so it is possible to do fun things like implement a crude zoom effect by setting \verb@xlim@ and \verb@ylim@ parameters to be dependent on the time. 
 
@@ -570,6 +601,83 @@ render.animation(wheel,
       verbose=FALSE)
 ani.replay()
 @
+
+
+\section{Using and aggregating edge weights}
+When we are looking at an aggregate network, should an edge that exists for a single moment be treated the same way as an edge that exists the entire time?
+
+Collapse a network, and tell it not to remove the time related info
+<<edge_weights>>=
+simAgg <-network.collapse(stergm.sim.1,rm.time.info=FALSE)
+list.edge.attributes(simAgg)
+@
+
+Notice the \verb@activity.count@ and \verb@activity.duration@ that are now attached to the edges. Lets plot it, using those durations to control the edge width.
+
+<<edge_weights_plot,fig=TRUE>>=
+plot(simAgg,edge.lwd='activity.duration',edge.col='#00000055',
+     edge.label='activity.duration',edge.label.col='blue',
+     edge.label.cex=0.5)
+@
+
+We have to go through some convoluted steps to illustrate the example, but instructing the layout to use the edge weight is really just a matter of telling the name of the attribute to use.
+
+Ignore edge weights
+<<edge_weights_ignore,fig=TRUE>>=
+stergm.sim.1%n%'slice.par'<-list(start=0,end=25,interval=25, 
+                                 aggregate.dur=25,rule='latest')
+compute.animation(stergm.sim.1,animation.mode='MDSJ')
+# extract the coords so we can do a static plot
+coords<-cbind(get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
+              get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
+plot(simAgg,coord=coords,
+     edge.lwd='activity.duration', edge.col='#00000055',
+     edge.label='activity.duration',edge.label.col='blue',
+     edge.label.cex=0.5)
+@
+
+Now compute the layout so that the higher-valued edges draw vertices closer together (the default \verb@weight.dist=FALSE@ considers edge weights to be similarities)
+<<edge_weights_similarity,fig=TRUE>>=
+compute.animation(stergm.sim.1,weight.attr='activity.duration',
+                  animation.mode='MDSJ',seed.coords=coords,default.dist=20)
+coords<-cbind(get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
+              get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
+plot(simAgg,coord=coords,
+     edge.lwd='activity.duration', edge.col='#00000055',
+     edge.label='activity.duration',edge.label.col='blue',
+     edge.label.cex=0.5)
+@
+
+Compute layout with \verb@weight.dist=FALSE@ so weights are treated as distance and higher-valued edges push vertices further apart.
+<<edge_weights_distance,fig=TRUE>>=
+compute.animation(stergm.sim.1,weight.attr='activity.duration',weight.dist=TRUE,
+                  animation.mode='MDSJ',seed.coords=coords,default.dist=20)
+coords<-cbind(get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
+              get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
+plot(simAgg,coord=coords,
+     edge.lwd='activity.duration', edge.col='#00000055',
+     edge.label='activity.duration',edge.label.col='blue',
+     edge.label.cex=0.5)
+@
+
+Although we can clearly see that the layout is trying to do what we ask it, the result is a graph that is visually hard to read.  Part of the problem is that we are asking the layout to achieve something difficult: the edge weights (and corresponding desired lengths) differ by more than an order of magnitude
+<<edge_weights_log,fig=TRUE>>=
+range(simAgg%e%'activity.duration')
+range(log(simAgg%e%'activity.duration'+1))
+set.edge.attribute(stergm.sim.1,'logDuration',log(simAgg%e%'activity.duration'+1))
+compute.animation(stergm.sim.1,
+              weight.attr='logDuration',
+                  animation.mode='MDSJ',seed.coords=coords)
+coords<-cbind(get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
+              get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
+plot(simAgg,coord=coords,
+     edge.lwd='activity.duration', edge.col='#00000055',
+     edge.label='activity.duration',edge.label.col='blue',
+     edge.label.cex=0.5)
+@
+Which gives us somethig better looking--big edges are a bit shorter, but not so much to squinch up the layout.
+
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} What types of data have edge weights that would best be thought of as distances? Similarities?}}
 
 \section{How to make plots with isolates and components look better: layout.distance}
 They also include the \verb@default.dist@ parameter which can be tweaked to increase or decrease the spacing between isolates and disconnected components. The default value for \verb@default.dist@ is \verb@sqrt(network.size(net))@, see \verb@?layout.dist@ for more information. 
@@ -586,18 +694,20 @@ plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50),vertex.cex=0.5)
 In this case, the default distance must have been set to about 31 (square root of 10000). This results in the giant component being well separated from the smaller components and isolates. Although this certainly focus visual attention on the big component, it squishes up the rest of the network.  We can set it smaller.
 
 <<default_dist_example2,fig=TRUE>>==
-plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50,default.dist=10),vertex.cex=0.5)
+plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50,default.dist=10),
+     vertex.cex=0.5)
 @
 
 In the example above, the default dist value was too small to effectively separate the components. 
 
-<<default_dist_example2,fig=TRUE>>==
-plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50,default.dist=18),vertex.cex=0.5)
+<<default_dist_example3,fig=TRUE>>==
+plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50,default.dist=18),
+     vertex.cex=0.5)
 @
 
 For this network, \verb@default.dist=18@ seems to give a reasonable compromise between spacing and scaling, but it can still lead to some edge overlaps.  We can now compute the overall movie to see how it works.  (this is going to be slow..).  And then peek at four time points to see if the parameter is going to give reasonable values over the time range of the movie. 
 
-<<default_dist_example3,fig=TRUE>>==
+<<default_dist_example4,fig=FALSE>>==
 #TODO: disabled to save time while writing doc
 #compute.animation(msm.sim,animation.mode='MDSJ',default.dist=18)
 #filmstrip(msm.sim,frames=4,displaylabels=FALSE,vertex.cex=0.5)
@@ -608,7 +718,9 @@ So it seems like it will work, but by the end of the movie the giant component w
 
 \section{Advanced example}
 
-We construct a fictitious rumor transmission network using code from the ``Making Lin Freeman’s windsurfers gossip'' section of the networkDynamic vignette.  The code below defines a function to run the simulation, sets initial seeds (starts the rumor) and then runs the simulation.  If you don't care about the details, just execute the entire block of code. 
+We will construct a fictitious rumor transmission network using code from the ``Making Lin Freeman's windsurfers gossip'' section of the \verb@networkDynamic@ vignette, and then examine various ways to look at the transmission.  
+
+The code below defines a function to run the simulation, sets initial seeds (starts the rumor) and then runs the simulation.  If you don't care about the details, just execute the entire block of code. 
 
 <<windsim>>==
 # function to simulate transmission
@@ -647,7 +759,12 @@ runSim<-function(net,timeStep,transProb){
   }
   return(net)
 }
+@
 
+We next need to load in the data with the edge dynamics, and set up the initial state of the sim, and then use the function we defined above to propagate the rumor. 
+
+
+<<windsim_initialize>>=
 data(windsurfers)    # let's go to the beach!
 
 # set initial params...
@@ -675,17 +792,23 @@ Lets plot the time-aggregate network with the infected vertices and edges highli
 <<windsim3,fig=TRUE>>=
 # plot the aggregate network, hiliting infected
 plot(windsurfers,
-     vertex.col=ifelse(!is.na(get.vertex.attribute.active(windsurfers,'knowsRumor',at=31)),'red','#55555555'),
-     edge.col=ifelse(!is.na(get.edge.attribute.active(windsurfers,'passedRumor',at=31)),'red','#55555555'),
+     vertex.col=ifelse(
+       !is.na(get.vertex.attribute.active(windsurfers,'knowsRumor',at=31)),
+       'red','#55555555'
+     ),
+     edge.col=ifelse(
+       get.edge.attribute.active(windsurfers,'passedRumor',at=31),
+       'red','#55555555'
+     ),
      vertex.cex=0.5
-     )
+)
 @
 
 Since we know that the high rate of vertex dynamics makes it hard to see this as a movie, we can create a ``flip-book'' style movie, where we will keep the vertex positions fixed, and just animate the dynamics.
 
-\fbox{\textbf{Question:} \emph{It a network has a high-turnover vertex set, should it be considered to be a dynamic network?}}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} It a network has a high-turnover vertex set, should it be considered to be a dynamic network?}}
 
-<<windsim4>>=
+<<windsim4,results=hide>>=
 # record the coords produced by plot
 coords<-plot(windsurfers)
 # set them as animation coords directly,without layout
@@ -695,21 +818,25 @@ activate.vertex.attribute(windsurfers, 'animation.y',coords[,2],
                           onset=-Inf,terminus=Inf)
 
 # construct slice par to indicate time range to render
-windsurfers%n%'slice.par'<-list(start=-31,end=0,interval=1, aggregate.dur=31,rule='latest')
+windsurfers%n%'slice.par'<-list(start=-31,end=0,interval=1, 
+                                aggregate.dur=31,rule='latest')
 # render it
 saveVideo(
   render.animation(windsurfers,
             render.par=list(initial.coords=coords),
             # color edges by rumor status       
             edge.col=function(slice){
-              ifelse(!is.na(slice%e%'passedRumor'),'red','#00000055')
+              ifelse(slice%e%'passedRumor','red','#00000055')
             },
             # color vertices by rumor status       
             vertex.col=function(slice){
               ifelse(!is.na(slice%v%'knowsRumor'),'red','gray')
             },
             # change text of label to show time and total infected.        
-            xlab=function(slice,terminus){paste('time:',terminus,' total infected:',sum(slice%v%'knowsRumor',na.rm=TRUE))},       
+            xlab=function(slice,terminus){
+              paste('time:',terminus,' total infected:',
+                    sum(slice%v%'knowsRumor',na.rm=TRUE))
+            },       
             vertex.cex=0.8,label.cex=0.8,render.cache='none'
   )
   ,video.name='windsurferFlipbook.mp4'
@@ -757,71 +884,196 @@ plot(windTree,displaylabels=TRUE)
 
 Now that we know how things work, we don't necessarily have to \verb@compute.animation@ to construct the sequence of coordinates.  If we are careful, we can even use coordinates from one layout and apply them to another.  In the next example, we will create an animated transition from the full cumulative network into a hierarchical representation of the transmission tree.
 
-
-<<windsim7>>=
-
+First, lets compute a layout for the cumulative across-time network
+<<windsim7,fig=TRUE>>=
 # calculate coord for aggregate network
-windAni<-network.collapse(windsurfers,onset=-Inf,terminus=Inf,rule='latest')
+windAni<-network.collapse(windsurfers,onset=-Inf,terminus=Inf,
+                          rule='latest')
 cumCoords<-plot.network(windAni)
 cumCoords<-layout.normalize(cumCoords)
+@
 
+Next, compute a hierarhical tree layout of the transmission tree.
+<<windsim7.5,fig=TRUE>>=
 # calculate coords for transmission tree
 treeCoords<-network.layout.animate.Graphviz(windTree,
-              layout.par=list(gv.engine='dot',gv.args='-Granksep=3'))
+              layout.par=list(gv.engine='dot',
+                              gv.args='-Granksep=3'))
 treeCoords<-layout.normalize(treeCoords)
+# peek at it
+plot(windTree,coord=treeCoords,displaylabels=TRUE,jitter=FALSE)
+@
 
+Now lets assemble a dynamic network on \verb@windAni@ using the parts of other networks.
 
+<<windsim8>>=
 # FIRST FRAME: all vertices and edges active
 activate.vertices(windAni,onset=0,terminus=1)
 activate.edges(windAni,onset=0,terminus=1)
 # store the plain network coords for cumulative network
-activate.vertex.attribute(windAni,'animation.x',cumCoords[,1],onset=0,terminus=Inf)
-activate.vertex.attribute(windAni,'animation.y',cumCoords[,2],onset=0,terminus=Inf)
+activate.vertex.attribute(windAni,'animation.x',cumCoords[,1],
+                          onset=0,terminus=Inf)
+activate.vertex.attribute(windAni,'animation.y',cumCoords[,2],
+                          onset=0,terminus=Inf)
 
-# SECOND FRAME: activate only the vertics that know the rumor and edges that passed it
-activate.vertices(windAni,onset=1,terminus=3,v=which(windAni%v%'knowsRumor'))
-activate.edges(windAni,onset=1,terminus=3,e=which(windAni%e%'passedRumor'))
+# 2ND FRAME: activate vertices that know and edges that passed it
+activate.vertices(windAni,onset=1,terminus=3,
+                  v=which(windAni%v%'knowsRumor'))
+activate.edges(windAni,onset=1,terminus=3,
+               e=which(windAni%e%'passedRumor'))
 
 # THIRD FRAME: transition to tree
-activate.vertex.attribute(windAni,'animation.x',treeCoords[,1],onset=2,terminus=Inf,v=network.vertex.names(windTree))
-activate.vertex.attribute(windAni,'animation.y',treeCoords[,2],onset=2,terminus=Inf,v=network.vertex.names(windTree))
+activate.vertex.attribute(windAni,'animation.x',treeCoords[,1],
+          onset=2,terminus=Inf,v=network.vertex.names(windTree))
+activate.vertex.attribute(windAni,'animation.y',treeCoords[,2],
+          onset=2,terminus=Inf,v=network.vertex.names(windTree))
 
 # construct slice par to indicate time range to render
-windAni%n%'slice.par'<-list(start=0,end=2,interval=1, aggregate.dur=1,rule='latest')
+windAni%n%'slice.par'<-list(start=0,end=2,interval=1, 
+                            aggregate.dur=1,rule='latest')
 
 # render it
 saveVideo(
   render.animation(windAni,
             edge.col=function(slice){
-              ifelse(!is.na(slice%e%'passedRumor'),'red','#00000055')
+              ifelse(!is.na(slice%e%'passedRumor'),
+                     'red','#00000055')
             },
             vertex.col=function(slice){
-              ifelse(!is.na(slice%v%'knowsRumor'),'red','gray')
+              ifelse(!is.na(slice%v%'knowsRumor'),
+                     'red','gray')
             },
-            vertex.cex=0.8,label.cex=0.8,label.pos=1,render.cache='none'
+            vertex.cex=0.8,label.cex=0.8,label.pos=1,
+                   render.cache='none'
   )
 , video.name='windsurferTreeTransition.mp4')
-
 @
 
-\fbox{\textbf{Exercise:}  \emph{Generate a similar movie, but use the coordinates of the non-hierarchical tree layout (i.e. don't use Graphviz)}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} Generate a similar movie, but use the coordinates of the non-hierarchical tree layout (i.e. don't use Graphviz)}}
 
 
 \section{Tips on loading in data}
+\subsection{Can I make a movie if my data is in a set of matrices?}
+Yes! We will use the example Harry Potter Support Networks of Goele Bossaert and Nadine Meidert \citep{hpdata}. They have coded the peer support ties between 64 characters appearing in the text of each of the well-known fictional J. K. Rowling novels and made the data available for general use in the form of 6 text formatted adjacency matrices and several attribute files.  You can download and unzip the data files from \url{http://www.stats.ox.ac.uk/~snijders/siena/HarryPotterData.html}, or use the R code below to load in directly from the zip file. 
+
+<<load_zipped_hp_data>>=
+# tmp filename for the data
+temp_hp.zip <- tempfile() 
+download.file("http://www.stats.ox.ac.uk/~snijders/siena/bossaert_meidert_harrypotter.zip",temp_hp.zip)
+# read in first matrix file, unziping in the process
+hp1 <- read.table(unz(temp_hp.zip, "hpbook1.txt"), 
+                  sep=" ",stringsAsFactors=FALSE)
+# is it really a matrix?
+dim(hp1)
+plot(as.network(hp1))
+@
+
+Notice the \verb@stringsAsFactors=FALSE@ argument to \verb@read.table@. This prevents the strings from being converted into factors, which then may unexpectedly appears as integers causing all kinds of headaches. Since that seemd to work, lets load in the rest of the files. 
+<<load_more_zipped_hp_data>>=
+# tmp filename for the data
+hp2 <- read.table(unz(temp_hp.zip, "hpbook2.txt"), 
+                  sep=" ",stringsAsFactors=FALSE)
+hp3 <- read.table(unz(temp_hp.zip, "hpbook3.txt"), 
+                  sep=" ",stringsAsFactors=FALSE)
+hp4 <- read.table(unz(temp_hp.zip, "hpbook4.txt"), 
+                  sep=" ",stringsAsFactors=FALSE)
+hp5 <- read.table(unz(temp_hp.zip, "hpbook5.txt"), 
+                  sep=" ",stringsAsFactors=FALSE)
+hp6 <- read.table(unz(temp_hp.zip, "hpbook6.txt"), 
+                  sep=" ",stringsAsFactors=FALSE)
+@
+
+To construct a dynamicNetwork, we will arrange them in a list and then convert it.
+<<format_hp_data>>=
+hpList<-list(hp1,hp2,hp3,hp4,hp5,hp6)
+
+# convert adjacency matrices to networks
+hpList<-lapply(hpList,as.network.matrix,matrix.type='adjacency')
+
+# convert list of networks to networkDynamic
+harry_potter_support<-networkDynamic(network.list=hpList,)
+
+# read in and assign the names
+names<-read.table(unz(temp_hp.zip, "hpnames.txt"),
+                  sep="\t",stringsAsFactors=FALSE,header=TRUE)
+network.vertex.names(harry_potter_support)<-names$name
+
+# read in and assign the attributes
+attributes<-read.table(unz(temp_hp.zip, "hpattributes.txt"),
+                       sep="\t",stringsAsFactors=FALSE,header=TRUE)
+harry_potter_support%v%'id'<-attributes$id
+harry_potter_support%v%'schoolyear'<-attributes$schoolyear
+harry_potter_support%v%'gender'<-attributes$gender
+harry_potter_support%v%'house'<-attributes$house
+
+# define a net.obs.period
+harry_potter_support%n%'net.obs.period'<-list(
+  observations=list(c(0,6)),mode="discrete", 
+  time.increment=1,time.unit="book volume")
+
+# which vertex is Harry Potter?
+which(network.vertex.names(harry_potter_support)=="Harry James Potter")
+@
+
+This is going to look like \emph{Harry Potter and the Philosopher's Stone}, right?
+
+<<render_hp,results=hide>>=
+render.animation(harry_potter_support)
+@
+
+Lets tweak it a bit for some more refinement
+<<render_hp,results=hide>>=
+compute.animation(harry_potter_support,
+                  animation.mode='MDSJ',
+                  default.dist=2)
+render.animation(harry_potter_support,
+            render.par=list(tween.frames=20),
+            vertex.cex=0.8,label.cex=0.8,label.col='gray',
+            # make shape relate to school year
+            vertex.sides=harry_potter_support%v%'schoolyear'-1983,
+            # color by gender
+            vertex.col=ifelse(harry_potter_support%v%'gender'==1,'blue','green'),
+            edge.col="#CCCCCC55"     
+)
+@
+
+One challenge of constucting movies from matrices is that (as the authors of this dataset note) there is often a great deal of change between network survey panels.
+
+
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} How could dynamic network data (like in the example above) be collected differently to support animations and more flexible analysis of dynamics?}}
+
+
+\noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} Choose one of the dynamic dataset (perhaps one from the package networkDynamicData and construct an animation.}}
 
 \section{Misc topics}
 \subsection{Compressing video}
 \label{sec:compressing}
 The saved video output of the animation often produces very large files. These may cause problems for your viewers if you upload them directly to the web.  It is almost always a good idea to compress the video, as a dramatically smaller file can usually be created with little or no loss of quality. Although it may be possible to give \verb@saveVideo()@ various \verb@other.opts@ to control video compression\footnote{The default settings for ffmpeg differ quite a bit depending on platform, some installations may give decent compression without tweaking the settings}, determining the right settings can be a trial and error process. Handbrake \url{http://handbrake.fr/} is an excellent and easy to use tool for doing video compression into the web-standard H.264 codec with appropriate presets.
-\subsection{transparent colors}
+
+\subsection{Transparent colors}
+Using a bit of transparency can help a lot with readability for many visualizations. It makes it so that overlaping edges can show through and/or be less distracting. Many of the R plot devices support transparency, but specifying the color can be a bit awkward.  The most concise way is to define colors as HTML colorcode hex strings with an alpha channel in the format\verb@"#RRGGBBAA"@. For example, 50\% black is \verb@"#00000088"@, 50\% green would be \verb@"#00FF0088"@.  These can be hard to remember!  It may be easier include an alpha (the computer graphics term for transparency) parameter to the \verb@rgb()@ function, but you still may need to guess the correct proportions of red, green, and blue.  If you want to just make one of R's existing named colors more transparent,  try \verb@grDevices::adjustcolor()@.
+
+<<transparent_colors>>=
+# 50% blue
+rgb(0,0,1,0.5)
+# 50% pink
+grDevices::adjustcolor('pink',alpha.f=0.5)
+
+# plot example net with 10% green
+colorNet<-network.initialize(5)
+colorNet[,]<-1
+plot(colorNet,edge.lwd=20,edge.col=rgb(0,1,0,0.1))
+@
+
 
 \section{How to get help}
-R's built in help functionality
-ndtv package vignette (includes much of the material from this workshop)
-statnet wiki
-statnet mailing list
-
-
+Here are some starting points if you reach a dead end:
+\begin{itemize}
+\item R's built in documentation feature. Each function has a help page, usually with some examples: i.e. \verb@?render.animation@ 
+\item The ndtv package vignette (includes much of the material from this workshop): \verb@browseVignettes(package='ndtv')@
+\item The statnet wiki has various FAQ pages and resources: \url{https://statnet.csde.washington.edu/trac/wiki}
+\item You can always subscribe to the statnet mailing list and post your problem there: \url{https://mailman2.u.washington.edu/mailman/listinfo/statnet_help}
+\end{itemize}
 
 
 \begin{thebibliography}{}
@@ -862,6 +1114,12 @@ Bender-deMoll, S., Morris, M. and Moody, J. (2008)
 \newblock Prototype Packages for Managing and Animating Longitudinal Network Data: dynamicnetwork and rSoNIA
 \newblock \emph{Journal of Statistical Software} 24:7.
 
+\bibitem[Bossaert, G. and Meidert, N. (2013)]{hpdata}
+Bossaert, G. and Meidert, N. (2013) 
+\newblock 'We are only as strong as we are united, as weak as we are divided'. A dynamic analysis of the peer support networks in the Harry Potter books. 
+\newblock \emph{Open Journal of Applied Sciences}, Vol. 3 No. 2, pp. 174-185.
+DOI: \url{http://dx.doi.org/10.4236/ojapps.2013.32024}
+
 \bibitem[Butts(2008)]{network}
 Butts CT (2008). 
 \newblock network: A Package for Managing Relational Data in R. 
@@ -882,6 +1140,9 @@ de Leeuw J and Mair P (2009).
  packageAsBibitem('ndtv')
 @
 
+\bibitem[John Ellson et al (2001)]{graphviz} 
+John Ellson et al (2001) 
+\newblock Graphviz – open source graph drawing tools \emph{Lecture Notes in Computer Science}. Springer-Verlag. p483-484 \url{http://www.graphviz.org}
 
 
 \bibitem[Handcock et al (2003)]{statnet}
