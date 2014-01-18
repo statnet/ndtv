@@ -43,7 +43,7 @@ logical, should vertex spells be plotted?
 logical, should edge spells be plotted?
 }
 \item{slice.par}{
-(optional) `slice.par' list giving network binning parameters. If included, rectangles corresponding to each bin will to be plotted over the spells.
+(optional) `slice.par' list giving network binning parameters. If included, rectangles corresponding to each bin will to be plotted over the spells. The rectangles will be drawn with slightly darker left edge more transparent right edge to evoke the effect of a right-open interval. 
 }
   \item{displaylabels}{
  logical, should labels be drawn for each spell

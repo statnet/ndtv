@@ -131,9 +131,14 @@ timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex
   s<-slice.par$start
   while(s<slice.par$end){
     # make it so durations of 0 are still visable
-    dur<-max(slice.par$aggregate.dur,(slice.par$end-slice.par$start)/500)
+    minDur<-(slice.par$end-slice.par$start)/500
+    dur<-max(slice.par$aggregate.dur,minDur)
     # plot a rect corresponding to each slice
-    rect(s,-2,s+dur,nrows+2,col=rgb(.1,.1,.1,.1),border=NA)
+    # each slice gets three rects of increasing transparency to indicate right-openess of interval
+    rect(s,-2,s+minDur,nrows+2,col=rgb(.1,.1,.1,.2),border=NA)
+    rect(s+minDur,-2,s+dur-(minDur*2),nrows+2,col=rgb(.1,.1,.1,.1),border=NA)
+    rect(s+dur-(minDur*2),-2,s+dur-minDur,nrows+2,col=rgb(.1,.1,.1,.07),border=NA)
+    rect(s+dur-minDur,-2,s+dur,nrows+2,col=rgb(.1,.1,.1,.025),border=NA)
     s<-s+slice.par$interval
   }
 }
