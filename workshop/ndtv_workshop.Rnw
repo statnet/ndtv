@@ -110,7 +110,8 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
 NOTE: stergm code above is temporarily turned off while writing examples because it is slow. If we want to avoid loading \verb@tergm@ and running the simulation,  we can load in the pre-generated stergm object and trim it to a shorter length: 
 <<pre-load_stergm>>==
 data(stergm.sim.1)
-stergm.sim.1<-network.extract(stergm.sim.1,onset=0,terminus=25,trim.spells=TRUE)
+stergm.sim.1<-network.extract(stergm.sim.1,onset=0,terminus=25,
+                              trim.spells=TRUE)
 @
 
 We define some parameters in a list named \verb@render.par@ in order to specify how the movie should be rendered (more on this later). 
@@ -706,10 +707,13 @@ plot(simAgg,coord=coords,
 
 Compute layout with \verb@weight.dist=FALSE@ so weights are treated as distance and higher-valued edges push vertices further apart.
 <<edge_weights_distance,fig=TRUE>>=
-compute.animation(stergm.sim.1,weight.attr='activity.duration',weight.dist=TRUE,
-                  animation.mode='MDSJ',seed.coords=coords,default.dist=20)
-coords<-cbind(get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
-              get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
+compute.animation(stergm.sim.1,weight.attr='activity.duration',
+                  weight.dist=TRUE, animation.mode='MDSJ',
+                  seed.coords=coords,default.dist=20)
+coords<-cbind(
+  get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
+  get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0)
+)
 plot(simAgg,coord=coords,
      edge.lwd='activity.duration', edge.col='#00000055',
      edge.label='activity.duration',edge.label.col='blue',
@@ -720,12 +724,14 @@ Although we can clearly see that the layout is trying to do what we ask it, the 
 <<edge_weights_log,fig=TRUE>>=
 range(simAgg%e%'activity.duration')
 range(log(simAgg%e%'activity.duration'+1))
-set.edge.attribute(stergm.sim.1,'logDuration',log(simAgg%e%'activity.duration'+1))
+set.edge.attribute(stergm.sim.1,'logDuration',
+                   log(simAgg%e%'activity.duration'+1))
 compute.animation(stergm.sim.1,
               weight.attr='logDuration',
                   animation.mode='MDSJ',seed.coords=coords)
-coords<-cbind(get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
-              get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
+coords<-cbind(
+  get.vertex.attribute.active(stergm.sim.1, 'animation.x',at=0),
+  get.vertex.attribute.active(stergm.sim.1, 'animation.y',at=0))
 plot(simAgg,coord=coords,
      edge.lwd='activity.duration', edge.col='#00000055',
      edge.label='activity.duration',edge.label.col='blue',

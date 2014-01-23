@@ -8,7 +8,6 @@
 #  Copyright 2012-2013 Statnet Commons
 #######################################################################
 #functions to generate and export movies
-#require(sna)
 require(networkDynamic)
 require(animation)
 #apply a series of network layouts to a networkDynamic object

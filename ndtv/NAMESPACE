@@ -1,3 +1,6 @@
+importFrom(sna,geodist)
+import(statnet.common, network, networkDynamic, animation)
+
 export(
 render.animation,
 compute.animation,

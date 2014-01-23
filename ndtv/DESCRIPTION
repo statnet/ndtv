@@ -6,8 +6,8 @@ Date: 2014-01-14
 Authors@R:c(
 		person("Skye", "Bender-deMoll", role=c("cre","aut"), email="skyebend@uw.edu"),
     person("Martina", "Morris", role=c("ctb"), email="morrism@u.washington.edu"))
-Depends: R (>= 3.0), network (>= 1.9),networkDynamic (>= 0.6),animation,sna,statnet.common
-Imports: MASS
+Depends: R (>= 3.0), network (>= 1.9),networkDynamic (>= 0.6),animation,sna
+Imports: MASS, statnet.common
 Suggests:tergm (>= 3.1),testthat
 Description: Renders dynamic network data from networkDynamic objects as animated movies or other representations of relational structure and node attributes that change over time.
 License: GPL-3 + file LICENSE
