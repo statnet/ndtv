@@ -93,15 +93,15 @@ require(tergm)    # dynamic ergm simulations
 Load in the original Florentine business network.
 <<label=loading_data,fig=TRUE>>=
 data("florentine") # an example network
-plot(flobusiness,displaylabels=T)
+plot(flobusiness,displaylabels=TRUE)
 @
 
 
 Define basic \verb@stergm@ model with formation and dissolution parameters.
-<<test_model,eval=true,results=hide>>=
+<<test_model,eval=TRUE,results=hide>>=
 theta.diss <- log(9)
 stergm.fit.1 <- stergm(flobusiness,
-  formation= ~edges+gwesp(0,fixed=T), 
+  formation= ~edges+gwesp(0,fixed=TRUE), 
   dissolution = ~offset(edges),
 	targets="formation",
   offset.coef.diss = theta.diss,	
@@ -110,7 +110,7 @@ stergm.fit.1 <- stergm(flobusiness,
 (time passes, lots simulation status output hidden)
 
 Now we can simulate 100 discrete time steps from the model and save them as a \verb@dynamicNetwork@ object.
-<<test_sim,eval=true, results=hide>>=
+<<test_sim,eval=TRUE, results=hide>>=
 stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 100)
 @
@@ -123,7 +123,7 @@ mdsj.dir <- file.path(path.package("ndtv"), "exec/")
 ndtv:::install.mdsj(mdsj.dir)
 @
 
-<<calc_params,eval=true, results=hide>>=
+<<calc_params,eval=TRUE, results=hide>>=
 slice.par<-list(start=75,end=100,interval=1, 
                 aggregate.dur=1,rule="latest")
 compute.animation(stergm.sim.1,slice.par=slice.par,
@@ -132,15 +132,15 @@ compute.animation(stergm.sim.1,slice.par=slice.par,
 
 Now that we have all the coordinates stored, we can define some parameters for \verb@render.par@ to specify how many \verb@tween.frames@ to render, and tell it to display the time and the summary statistics formula. 
 
-<<render.par_animation,eval=true,results=hide,include=TRUE>>=
-render.par=list(tween.frames=5,show.time=T,
-                show.stats="~edges+gwesp(0,fixed=T)")
+<<render.par_animation,eval=TRUE,results=hide,include=TRUE>>=
+render.par=list(tween.frames=5,show.time=TRUE,
+                show.stats="~edges+gwesp(0,fixed=TRUE)")
 @
 
 Then we ask it to build the animation, passing in some of the standard \verb@plot.network@ graphics arguments to change the color of the edges and show the labels with a smaller size and blue color.
-<<render_animation,eval=true,results=hide,include=TRUE>>=
+<<render_animation,eval=TRUE,results=hide,include=TRUE>>=
 render.animation(stergm.sim.1,render.par=render.par,
-                 edge.col="darkgray",displaylabels=T,
+                 edge.col="darkgray",displaylabels=TRUE,
                  label.cex=.6,label.col="blue")
 @
 This takes some time and produces many lines output which we are not showing. The output could also be suppressed by adding a \verb@verbose=FALSE@ argument.
@@ -154,7 +154,7 @@ Notice that in addition to the labels on the bottom of the plot indicating which
 
 We can also use the \verb@animation@ library to save out the movie in \verb@.mp4@ format (assuming that the FFmpeg library is installed on your machine).
 
-<<save_test,eval=true>>=
+<<save_test,eval=TRUE>>=
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
                     other.opts="-b 5000k",clean=TRUE)
 @     
@@ -251,7 +251,7 @@ See \url{http://www.graphviz.org/content/command-line-invocation}. Note that Gra
 \subsection{User-generated layout functions}
 We can define new layout functions by following the appropriate naming structure. For example, if we wanted a layout that just arranged all the active vertices in a circle we could define a new function \verb@network.layout.animate.circle@.
 
-<<define_layout,eval=true,include=TRUE>>=
+<<define_layout,eval=TRUE,include=TRUE>>=
 network.layout.animate.circle <- function(net, dist.mat = NULL, 
         default.dist = NULL, seed.coords = NULL, layout.par = list(),
         verbose=FALSE){
@@ -265,7 +265,7 @@ network.layout.animate.circle <- function(net, dist.mat = NULL,
 
 We can then re-compute a new animation for the simulation output using our new ``circle' layout function.
 
-<<demo_layout,eval=true,include=TRUE,results=hide>>=
+<<demo_layout,eval=TRUE,include=TRUE,results=hide>>=
 stergm.sim.1<-compute.animation(stergm.sim.1,
               slice.par=slice.par,animation.mode='circle')
 render.animation(stergm.sim.1)
@@ -277,7 +277,7 @@ We have tested some layouts using R libraries for doing SMACOF \citep{smacof} an
 
 \section{Vertex dynamics}
 Edges are not the only things that can change in networks. In some dynamic network data-sets vertices also enter or leave the network (become active or inactive).  Lin Freeman's windsurfer social interaction data-set \citep{windsurfers} is a good example of this. In this data-set there are different people present on the beach on different days, and there is even a day of missing data. These networks also have a lot of isolates, which tends to scrunch up the rest of the components so they are hard to see.  Setting a lower \verb@default.dist@ can help with this. 
-<<windsurfers,eval=true,include=TRUE>>=
+<<windsurfers,eval=TRUE,include=TRUE>>=
 data(windsurfers)
 slice.par<-list(start=1,end=31,interval=1, 
                 aggregate.dur=1,rule="latest")
@@ -294,7 +294,7 @@ ani.replay()
 
 In this example\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/windsurfers_v1.mp4}} the turnover of people on the beach is so great that structure appears to change chaotically, and it is quite hard to see what is going on. Notice also the blank period at day 25 where the network data is missing. There is also a lot of periodicity, since a lot more people go to the beach on weekends. So in this case, lets try a week-long slice by setting \verb@aggregate.dur=7@ to try to smooth it out so we can see some structure. 
 
-<<windsurfers,eval=true,include=TRUE>>=
+<<windsurfers,eval=TRUE,include=TRUE>>=
 slice.par<-list(start=0,end=24,interval=1, 
                 aggregate.dur=7,rule="latest")
 windsurfers<-compute.animation(windsurfers,slice.par=slice.par,
@@ -494,7 +494,7 @@ Butts CT (2008).
 \newblock \emph{Journal of Statistical Software}, 24(2). \url{http://www.jstatsoft.org/v24/i02/}. 
 
 
-<<echo=False, results=tex, include=True>>=
+<<echo=False, results=tex, include=TRUE>>=
  packageAsBibitem('networkDynamic')
 @
 
@@ -504,7 +504,7 @@ de Leeuw J and Mair P (2009).
 \emph{Journal of Statistical Software}, \textbf{31}(3), pp. 1--30.
 \url{http://www.jstatsoft.org/v31/i03/}
 
-<<echo=False, results=tex, include=True>>=
+<<echo=FALSE, results=tex, include=TRUE>>=
  packageAsBibitem('ndtv')
 @
 
@@ -526,7 +526,7 @@ Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).
 
 
 
-<<echo=False, results=tex, include=True>>=
+<<echo=False, results=tex, include=TRUE>>=
  packageAsBibitem('tergm')
 @
 

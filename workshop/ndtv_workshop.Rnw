@@ -21,6 +21,9 @@
 
 \SweaveOpts{concordance=TRUE}
 
+% increase plot widths to full text width
+\setkeys{Gin}{width=\textwidth}
+
 <<foo,include=FALSE,echo=FALSE>>=
 foo <- packageDescription("ndtv")
 # disable prompt characters
@@ -45,15 +48,15 @@ The Network Dynamic Temporal Visualization (\verb@ndtv@) package provides tools 
   \item Easy to do basic things, but lots of ability to customize.
 \end{itemize}
 
-\subsection{Who are we?}
+\subsection{Authors}
 \begin{itemize}
-  \item Developed by members of the statnet \url{http://statnet.org} team
+  \item Developed by Skye Bender-deMoll with members of the statnet \url{http://statnet.org} team. \verb@skyebend@skyeome.net@
   \item This work was supported by grant R01HD68395 from the National Institute of Health.
 \end{itemize}
 
 \subsection{Workshop prerequisites}
 \begin{itemize}
-  \item Familiarity with the R statistical software.  We are not going to cover basics of how to use R
+  \item Familiarity with the R statistical software.  We are not going to cover basics of how to use and install R.
   \item Familiarity with general network and SNA concepts
   \item Experience with statnet packages and data structures preferred but not necessary
   \item Functioning R installation and basic statnet packages already installed. (Instructions on installing R and statnet are located here \url{https://statnet.csde.washington.edu/trac/wiki/Sunbelt2013\#Downloadingstatnet}.) 
@@ -147,7 +150,7 @@ We can view the dynamics as a timeline or where we plot the existance of edges a
 timeline(stergm.sim.1)
 @
 
-We are experimenting with a form of timeline where vertices are positioned vertically by their proximities to each other over time.
+We are experimenting with a form of timeline or phase plot where vertices are positioned vertically by their proximities so that changes in network structure deflect their lines into new positions.
 
 <<proximity_timeline,fig=TRUE>>=
 proximity.timeline(stergm.sim.1,default.dist=6,
@@ -165,14 +168,14 @@ as.data.frame(stergm.sim.1)
 
 \noindent\fbox{\parbox{\textwidth}{\textbf{Exercise:} Load the saved version of stergm.sim.1. Are there any edges that are present for the entire time period from 0 until 25?}}
 
-\subsection{Bounds}
+\subsection{Limitations}
 Before we create too high of expectations, we should be clear that you can't just throw any network at this and expect good results.
 
 \begin{itemize}
 \item Not for ``big data'': So far we've mostly used it successfully with networks of ~1k vertices and several hundred time steps.
 \item Animations of dense networks may not be useful. 
 \item Works best when a relatively small number of ties are changing between time slices, 
-\item Does not work well when vertex turnover rates (births and death) are high.
+\item When vertex turnover rates (births and death) are high, you need to think carefully about how to aggregate and smooth the dynamics over time in order to reveal the underlying patterns of interest.  This is analagous to choosing bin-widths for histograms in order to reveal the distributional form of the data.
 \end{itemize}
 
 \section{The basics}
@@ -185,7 +188,8 @@ The \verb@ndtv@ \citep{ndtv} package relies on many other packages to do much of
 R should automatically install the dependencies when you install ndtv. So open up your R console, and if you don't already have \verb@ndtv@ installed do the following. 
 <<installation>>==
 # uncomment this when the appropriate version is on CRAN
-#install.packages('ndtv',repos='http://cran.us.r-project.org')
+#install.packages('ndtv',repos='http://cran.us.r-project.org',
+                depencies=TRUE)
 library(ndtv) # also loads animation and networkDynamic
 @
 
@@ -197,14 +201,14 @@ wheel <- network.initialize(10)  # create a toy network
 add.edges.active(wheel,tail=1:9,head=c(2:9,1),onset=1:9, terminus=11)
 add.edges.active(wheel,tail=10,head=c(1:9),onset=10, terminus=12)
 @
-We have now created a dynamic network.  Lets verify it.
+Adding active edges to a network has the side effect of converting it to a \verb@dynamicNetwork@. Lets verify it.
 
 <<trivial_example_verify>>==
 class(wheel)  # now it is also a networkDynamic object
 as.data.frame(wheel) # peek at edge dynamics as a data frame
 @
 
-Now lets view it as a static plot, but labeling edges with their onset and termination times so we can check our work.
+It is important to remember that \verb@dynamicNetwork@ objects are also static \verb@network@ objects.  So all of the \verb@network@ functions will still work, they will just ignore the time dimension attached to edges and vertices.  Now lets view it as a static plot, but labeling edges with their onset and termination times so we can check our work.
 
 <<trival_example_static,fig=TRUE>>==
 # make a list of times for each edge
@@ -217,7 +221,7 @@ plot(wheel,displaylabels=TRUE,edge.label=elabels,
      edge.label.col='blue') 
 @
 
-\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} Why is this edge labeling function dangerous? (Hint: do edges always have a single onset and terminus time?)}}
+\noindent\fbox{\parbox{\textwidth}{\textbf{Question:} Why is this edge labeling function not general enough for some networks? (Hint: do edges always have a single onset and terminus time?)}}
 
 
 Next, render and view it as a dynamic movie 
@@ -243,16 +247,22 @@ Simple right? Most of the difficult parts happened under the hood using default 
 
 \subsection{Doing it step by step}
 
-For more precise control of the processes, layout algorithms, etc, we can call each of the steps in sequence. Lets work through and examine the output
+For more precise control of the processes, layout algorithms, etc, we can call each of the steps in sequence. Lets work through and examine the output. First we will define a \verb@slice.par@ list of parameters to specifiy the time range that should have coordinates computed.
 
+<<wheel_detail_slicepar>>==
+spar=list(start=1, end=12, interval=1, aggregate.dur=1,
+              rule='latest')
+@
+
+Then we ask it to compute the coordinates for the animation.
 <<wheel_detail_compute>>==
-compute.animation(wheel,animation.mode='kamadakawai')
+compute.animation(wheel,animation.mode='kamadakawai',slice.par=spar)
 list.vertex.attributes(wheel)
 # peek at x coords at time 4
 get.vertex.attribute.active(wheel,'animation.x',at=4)
 @
 
-Since the coordinates are stored in the network, we could always just collapse the network at the time point and plot it with the appropriate values:
+We can see that in addition to the standard vertex attributes of \verb@na@ and \verb@vertex.names@, the network now has two dynamic ``TEA'' attributes for each vertex to describe its position over time. Since the coordinates are stored in the network, we could always just collapse the network at the time point and plot it with the appropriate values:
 <<wheel_detail_plot_coords,fig=TRUE>>==
 wheelAt8<-network.collapse(wheel,at=8)
 coordsAt8<-cbind(wheelAt8%v%'animation.x',wheelAt8%v%'animation.y')
@@ -475,15 +485,19 @@ timeline(stergm.sim.1,slice.par=list(start=0,end=25,interval=1,
 
 Some datasets that are collected as panels the time units many not be integers, so the slicing paramters might need to be adjusted to the natrual time units.  And, as we will see later in the windsurfers example, there are situations where using longer aggregation durations can be hellpful even for panel data. 
 
-\subsection(Slicing streaming data)
+\subsection{Slicing streaming data}
 
-Slicing up a dynamic network created from discrete panels may be fairly straightforward but it is much less clear how to do it when working with continuous time or streaming relations. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The \verb@slice.par@ parameters make it possible to experiment with various slicing options. In many situations we have even found \citep{sonia} it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale. 
+Slicing up a dynamic network created from discrete panels may be fairly straightforward but it is much less clear how to do it when working with continuous time or streaming relations. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The \verb@slice.par@ parameters make it possible to experiment with various aggregation options. In many situations we have even found \citep{sonia} it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale. 
 
-As an example, lets look at the McFarland \citep{mcfarland} data-set of streaming classroom interactions and see what happens when we chop it up in various ways. First, we can animate at the fine time scale, viewing the first half-hour of class using instantaneous slices.
-<<mcfarla,results=hide,fig=TRUE>>=
+As an example, lets look at the McFarland \citep{mcfarland} data-set of streaming classroom interactions and see what happens when we chop it up in various ways. 
+<<mcfarla,fig=TRUE>>=
 data(McFarland_cls33_10_16_96)
 # plot the time-aggregated network
 plot(cls33_10_16_96)
+@
+
+First, we can animate at the fine time scale, viewing the first half-hour of class using instantaneous slices.
+<<mcfarla1,results=hide>>=
 slice.par<-list(start=0,end=30,interval=2.5, 
                 aggregate.dur=0,rule="latest")
 compute.animation(cls33_10_16_96,
@@ -677,9 +691,9 @@ plot(simAgg,edge.lwd='activity.duration',edge.col='#00000055',
      edge.label.cex=0.5)
 @
 
-We have to go through some convoluted steps to illustrate the example, but instructing the layout to use the edge weight is really just a matter of telling the name of the attribute to use.
+By default the layout algorithms will assume that all edges should have the same ``ideal'' length, any weights or values attached to the edge will be ignored. But if we do have edge values, either from raw data or by aggregating the edges over time, we might want to have the layout attempt to map that information the desired lengths of the edges.  The \verb@weight.attr@ argument makes it possible to pass in the name of a numeric edge attribute to be used in constructing the \verb@layout.dist@ matrix of desired distances between vertices. 
 
-Ignore edge weights
+Lets do the plot again, still ignoring edge weights.  But this time we are going to extract the computed coords and feed them into the plot (this is just for constructing the examples, don't need to do it for real movies).
 <<edge_weights_ignore,fig=TRUE>>=
 stergm.sim.1%n%'slice.par'<-list(start=0,end=25,interval=25, 
                                  aggregate.dur=25,rule='latest')
@@ -693,7 +707,7 @@ plot(simAgg,coord=coords,
      edge.label.cex=0.5)
 @
 
-Now compute the layout so that the higher-valued edges draw vertices closer together (the default \verb@weight.dist=FALSE@ considers edge weights to be similarities)
+For comparision, we will compute the layout so that the higher-valued edges draw vertices closer together (the default \verb@weight.dist=FALSE@ considers edge weights to be similarities)
 <<edge_weights_similarity,fig=TRUE>>=
 compute.animation(stergm.sim.1,weight.attr='activity.duration',
                   animation.mode='MDSJ',seed.coords=coords,default.dist=20)
@@ -1021,8 +1035,9 @@ Yes! We will use the example Harry Potter Support Networks of Goele Bossaert and
 
 <<load_zipped_hp_data>>=
 # tmp filename for the data
+webLoc<-"http://www.stats.ox.ac.uk/~snijders/siena/bossaert_meidert_harrypotter.zip"
 temp_hp.zip <- tempfile() 
-download.file("http://www.stats.ox.ac.uk/~snijders/siena/bossaert_meidert_harrypotter.zip",temp_hp.zip)
+download.file(webLoc,temp_hp.zip)
 # read in first matrix file, unziping in the process
 hp1 <- read.table(unz(temp_hp.zip, "hpbook1.txt"), 
                   sep=" ",stringsAsFactors=FALSE)
@@ -1132,7 +1147,7 @@ plot(colorNet,edge.lwd=20,edge.col=rgb(0,1,0,0.1))
 \subsection{How to get help}
 Here are some starting points if you reach a dead end:
 \begin{itemize}
-\item R's built in documentation feature. Each function has a help page, usually with some examples: i.e. \verb@?render.animation@ 
+\item R's built in documentation feature. Each function has a help page, usually with some examples: i.e. \verb@?render.animation@.  The listing of all the documentation pages can be found iwth \verb@help(package='ndtv')@ or \verb@help(package='networkDynamic')
 \item The ndtv package vignette (includes much of the material from this workshop): \verb@browseVignettes(package='ndtv')@
 \item The statnet wiki has various FAQ pages and resources: \url{https://statnet.csde.washington.edu/trac/wiki}
 \item You can always subscribe to the statnet mailing list and post your problem there: \url{https://mailman2.u.washington.edu/mailman/listinfo/statnet_help}
