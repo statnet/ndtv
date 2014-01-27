@@ -9,14 +9,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \name{stergm.sim.1}
 \alias{stergm.sim.1}
+\alias{short.stergm.sim}
 \docType{data}
 \title{
 Very Very Basic stergm simulation output
 }
 \description{
-Simulation from a crude stergm model based on the flobusiness network. Mostly good for testing movies 'cause it is small (16 vertices) and fast. 
+Simulation from a crude stergm model based on the flobusiness network. Mostly good for testing movies 'cause it is small (16 vertices) and fast. The \code{stergm.sim.1} network is 100 simulation steps in duration. The \code{short.stergm.sim} network is an extract of the first 25 steps of \code{stergm.sim.1} -- its shorter duration makes it more suitable for quickly testing animation techniques. 
 }
-\usage{data(stergm.sim.1)}
+\usage{
+data(stergm.sim.1)
+data(short.stergm.sim)
+}
+
 \format{
   A \code{networkDynamic} object containing the output of 100 steps of the simulation
 }
@@ -45,6 +50,9 @@ See tergm package tutorials.
 
 \examples{
 data(stergm.sim.1)
+range(get.change.times(stergm.sim.1))
+data(short.stergm.sim)
+range(get.change.times(short.stergm.sim))
 
 }
 \keyword{datasets}
