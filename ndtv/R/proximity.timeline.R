@@ -108,27 +108,33 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   # TODO: add label processing
   
   # if vertex.cex is an attribute name, use that
-  if (is.character(vertex.cex) && (length(vertex.cex == 1))) {
+  if (is.character(vertex.cex) & (length(vertex.cex == 1))) {
     temp <- vertex.cex
     vertex.cex <- rep(get.vertex.attribute(nd, vertex.cex), 
                       length = network.size(nd))
     if (all(is.na(vertex.cex))) 
-      stop("Attribute '", temp, "' had illegal missing values for vertex.cex or was not present in proximity.timeline.")
+      stop("Attribute '", temp, "' had illegal missing values for vertex.cex or was not present in input network for the time range ",onset,'-',terminus)
   } else {
-    vertex.cex<-rep(vertex.cex,network.size(nd))
+    vertex.cex<-rep(vertex.cex,length=network.size(nd))
   }
   
   # if vertex.col is an attribute name, use that
-  if (is.character(vertex.col) && (length(vertex.col) == 1)) {
+  vattrnames<-list.vertex.attributes(nd)
+  if ((is.character(vertex.col) & (length(vertex.col) == 1)) & (vertex.col%in%vattrnames | paste(vertex.col,'.active',sep='')%in%vattrnames)) {
     temp <- vertex.col
     vertex.col <- rep(get.vertex.attribute(slice, vertex.col), 
                       length = network.size(nd))
-    if (all(is.na(vertex.col))) 
-      vertex.col <- rep(temp, length = network.size(nd))
-    else {
-      if (!all(is.color(vertex.col), na.rm = TRUE)) 
+    if (all(is.na(vertex.col))){
+      #vertex.col <- rep(temp, length = network.size(nd))
+      stop("Attribute '", temp, "' had illegal missing values for vertex.col or was not present in input network for the time range ",onset,'-',terminus)
+    } else {
+      if (!all(is.color(vertex.col), na.rm = TRUE)){
         vertex.col <- as.color(vertex.col)
+      }
+      
     }
+  } else { # just replicate the color strings for vertices
+    vertex.col<-rep(as.color(vertex.col),length=network.size(nd))
   }
   # figure out draw.inactive setting
   draw.inactive<-match.arg(draw.inactive)

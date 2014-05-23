@@ -127,7 +127,10 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
       coords[activev,] <- newCoords
       net <- activate.vertex.attribute(net,prefix="animation.x",onset=starts[s],terminus=ends[s],value=newCoords[,1],v=which(activev))
       net <- activate.vertex.attribute(net,prefix="animation.y",onset=starts[s],terminus=ends[s],value=newCoords[,2],v=which(activev))
-    }
+    } 
+      # TODO: should we still store coords at the same position as previous frame?
+      
+    
     
   }
   if(exists(xn, envir=ev))
@@ -282,20 +285,6 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     coords[activev,1] <-get.vertex.attribute(slice,"animation.x")
     coords[activev,2] <-get.vertex.attribute(slice,"animation.y")
     #need to update plot params with slice-specific values
-#     evald_params<-.evaluate_plot_params(plot_params=plot_params,net=net,slice=slice,s=1,onset=starts[1],terminus=ends[1])
-#     
-#     
-#     # set up arguments
-#     plot_args<-list(x=slice,coord=coords[activev,,drop=FALSE])
-#     plot_args<-c(plot_args,evald_params)
-#     # cll the plotting function with appropriate args
-#     do.call(plot.network, plot_args)
-#                
-#     # check if user has passed in extra plotting commands that need to be rendered
-#     if (!is.null(render.par$extraPlotCmds)){
-#       eval(render.par$extraPlotCmds)
-#     }
-    
   }# end slice > 0 block
     
   coords2 <- coords

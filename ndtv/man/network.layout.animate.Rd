@@ -7,7 +7,7 @@
 %
 %  Copyright 2012-2013 Statnet Commons
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\name{network.layout.animate.kamadakawai}
+\name{network.layout.animate}
 \alias{network.layout.animate.kamadakawai}
 \alias{network.layout.animate.MDSJ}
 \alias{network.layout.animate.useAttribute}
