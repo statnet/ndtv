@@ -152,6 +152,22 @@ expect_equal(ncol(coords),2)
 
 }
 
+# ------------- MDSJ tests -------
+
+# these need to be optionally enabled because they won't run if java and mdsj library not installed
+# wtest<-network.initialize(5)
+# add.edges.active(wtest,tail = 1,head=2,onset=0,terminus=10)
+# add.edges.active(wtest,tail = 2,head=3,onset=1,terminus=10)
+# add.edges.active(wtest,tail = 3,head=4,onset=2,terminus=10)
+# activate.edge.attribute(wtest,'len',0.5,onset=0,terminus=5,e = 1)
+# activate.edge.attribute(wtest,'len',2.5,onset=5,terminus=10,e=1)
+# activate.edge.attribute(wtest,'len',2,onset=1,terminus=5,e = 2)
+# activate.edge.attribute(wtest,'len',1,onset=5,terminus=10,e=2)
+# activate.edge.attribute(wtest,'len',5,onset=2,terminus=5,e = 3)
+# activate.edge.attribute(wtest,'len',0.1,onset=5,terminus=10,e=3)
+# 
+# compute.animation(wtest,animation.mode = 'MDSJ',weight.attr='len')
+
 
 
 

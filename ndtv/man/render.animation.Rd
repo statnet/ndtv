@@ -92,6 +92,8 @@ A few of the network drawing arguments have slightly different interpretations t
 \item \code{label} if not set explicitly, will default to the vertex names for the appropriate slice network. 
 }
 If the background color is transparent and not explicitly set, it will be reset to white to prevent unintentional behavior when exporting movies via ffmpeg. 
+
+One some installations, the default output from \verb{saveVideo()} (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the argument \verb{other.opts='-pix_fmt yuv420p"} to \verb{saveVideo} corrects the problem. 
 }
 
 \value{
@@ -103,9 +105,7 @@ Skye Bender-deMoll and McFarland, Daniel A. (2006) The Art and Science of Dynami
 \author{
 Skye Bender-deMoll, and the statnet team. 
 }
-\note{
-This is still a draft implementation and most of the package. Most specifics (including the function name) are likely to change.
-}
+
 
 
 \seealso{
@@ -189,7 +189,7 @@ ani.replay()
 
 # save the movie as mp4 compressed video (if FFMPEG installed)
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
-                    other.opts="-b 5000k",clean=TRUE)
+           other.opts="-b 5000k -pix_fmt yuv420p",clean=TRUE)
 }
 
 }

@@ -156,7 +156,7 @@ We can also use the \verb@animation@ library to save out the movie in \verb@.mp4
 
 <<save_test,eval=TRUE>>=
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
-                    other.opts="-b 5000k",clean=TRUE)
+                    other.opts="-b 5000k -pix_fmt yuv420p",clean=TRUE)
 @     
 
 This should produce a movie\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/stergm.sim.1.mp4}} in an R working directory on disk. The \verb@other.opts@ parameter is set here to generate a higher-quality video than the default, but this will result in a large file size. For more information on compressing videos for the web, see Compressing Video (section \ref{sec:compressing}).
@@ -445,6 +445,8 @@ The \verb@animation@ package provides several neat tools for storing animations 
 \item \verb@saveLatex()@ creates an animation embedded in a pdf (didn't work for me...)
 \end{itemize}
 Please see \verb@?animation@ and each function's help files for more details. With the exception of \verb@ani.replay()@ each of these requires the presence of some external library software which may need to be installed on your system as described in Dependencies (section \ref{sec:dependencies}). 
+
+On some installations, the default output from \verb@SaveVideo()@ (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the \verb@other.opts='-pix_fmt yuv420p"@ corrects the problem. 
 
 \section{Limitations}
 \subsection{Size limits}
