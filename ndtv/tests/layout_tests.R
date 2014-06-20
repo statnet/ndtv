@@ -118,6 +118,31 @@ network.layout.animate.Graphviz(tree,layout.par=list(gv.engine='dot',gv.args='-G
 # check passing bad gv.args
 expect_error(network.layout.animate.Graphviz(tree,layout.par=list(gv.args='-Xhelloworld'),verbose=FALSE),'Error')
 
+# test passing a weighted network into neato
+wtest<-network.initialize(5)
+add.edges.active(wtest,tail = 1,head=2,onset=0,terminus=10)
+add.edges.active(wtest,tail = 2,head=3,onset=1,terminus=10)
+add.edges.active(wtest,tail = 3,head=4,onset=2,terminus=10)
+activate.edge.attribute(wtest,'len',0.5,onset=0,terminus=5,e = 1)
+activate.edge.attribute(wtest,'len',2.5,onset=5,terminus=10,e=1)
+activate.edge.attribute(wtest,'len',2,onset=1,terminus=5,e = 2)
+activate.edge.attribute(wtest,'len',1,onset=5,terminus=10,e=2)
+activate.edge.attribute(wtest,'len',5,onset=2,terminus=5,e = 3)
+activate.edge.attribute(wtest,'len',0.1,onset=5,terminus=10,e=3)
+
+# test rendering using the gv 'len' attrigute
+compute.animation(wtest,animation.mode = 'Graphviz',layout.par=list(gv.len.mode='gv.edge.len',gv.edge.attrs='len'))
+#render.animation(wtest,edge.lwd='len')
+
+# test passing in matrix of distances
+compute.animation(wtest,animation.mode = 'Graphviz',weight.attr='len',layout.par=list(gv.engine='neato',gv.len.mode='ndtv.distance.matrix'))
+
+# test using default dist to generate a matrix
+compute.animation(wtest,animation.mode = 'Graphviz',default.dist=5)
+
+# test bad weight mode
+expect_error(compute.animation(wtest,animation.mode = 'Graphviz',layout.par=list(gv.len.mode='bla')))
+
 }  else {
 # graphivz not installed, so check fallback to kk
 warning("graphviz layout tests skipped because graphviz not installed on system")

@@ -109,23 +109,55 @@ network.layout.animate.Graphviz <-function(net, dist.mat=NULL, default.dist=NULL
    } else {
      gv.args<-layout.par$gv.args
    }
+   
+   # need to determine if we will be including weights from the distance matrix, the edge attributes
+   # or neither
+   gv.len.mode<-layout.par$gv.len.mode
+   if (is.null(gv.len.mode)){
+     gv.len.mode<-'gv.edge.len'
+   }else{
+     gv.len.mode<-match.arg(gv.len.mode,c('gv.edge.len','ndtv.distance.matrix'))
+   }
+   
+   # possible list of edge attributes from the network to include
+   gv.edge.attrs<-layout.par$gv.edge.attrs
     
   } else {
     # set to defaults
     gv.engine<-'neato'
+    gv.len.mode<-'gv.edge.len'
+    gv.edge.attrs=NULL
   }
+  
+  
+  
   
   n <- network.size(net)
   #if seed.coord already set in layoutpar, overide
-  if (!is.null(dist.mat)){
-    warning("distance matrix not currently implented for Graphviz layouts")
+  if (!is.null(dist.mat) & gv.len.mode=='gv.edge.len'){
+    warning("distance matrix was ignored because gv.len.mode=='gv.edge.len'")
   }
+  
   if (is.null(default.dist)){
     default.dist<-FALSE
   }
 
   filename <- tempfile("network",fileext=".dot")
-  export.dot(net,filename,coords=seed.coords,all.dyads=default.dist) #TODO: include attributes if defined
+  
+  if (gv.len.mode=='ndtv.distance.matrix'){
+    if (is.null(dist.mat)){
+      stop("dist.mat must not be null to use the gv.len.mode=='ndtv.distance.matrix' option")
+    }
+    # pass it the distance matrix as len, ignore edge attributes
+    export.dot(net,filename,coords=seed.coords,all.dyads=dist.mat, edge.attrs=gv.edge.attrs) 
+  } else if (!is.null(default.dist)) {
+    # pass in the default dist to create distance matrix as len, ignore edge attributes        
+    export.dot(net,filename,coords=seed.coords,all.dyads=default.dist, edge.attrs=gv.edge.attrs) 
+  } else {  #(gv.len.mode=='gv.edge.len')
+    #include edge attributes (especially 'len' ) if defined so that gv can uses them
+    export.dot(net,filename,coords=seed.coords,edge.attrs = gv.edge.attrs)
+  }
+  #TODO: should be able to pipe .dot contents directly into GV and skip disk IO ?
   command <- paste(gv.engine,"-Tplain",gv.args,filename)
   #print(command)
   output <- system(command,intern=TRUE)

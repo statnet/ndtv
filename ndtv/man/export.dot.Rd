@@ -27,7 +27,7 @@ export.dot(x, file = "", coords = NULL, all.dyads = FALSE,
 }
   \item{coords}{ Optional node coordinates to include
 }
-  \item{all.dyads}{ If true, entries are written out for all possible dyads in the network, necessary for some use cases. 
+  \item{all.dyads}{ FALSE, a numeric value, or a symetric matrix of distances providing the desired lengths for all dyads..  If numeric,  entries are written out for all possible dyads in the network, and the numeric value will be used to fill in the values for all the dyads in the matrix not linked by an edge (see \code{default.dist} param to \code{\link{layout.distance}}). This is necessary for some uses cases, but will generate dramatically larger files and slower performance. For the matrix and numeric cases, the values will be written as Graphviz 'len' edge attributes, and the values of \code{edge.attrs} will be ignored.  
 }
   \item{vert.attrs}{optional character vector listing the names of any vertex attributes of the network that should be included as attributes of the nodes in the Graphviz dot file. (e.g. 'label', 'width')}
   \item{edge.attrs}{optional character vector listing the names of any edge attributes of the network that should be included as attributes of edges in the Graphviz dot file. (e.g. 'weight','penwidth')}
@@ -45,7 +45,7 @@ Returns nothing but creates a file in .dot format: \url{http://graphviz.org/cont
 Skye Bender-deMoll
 }
 \note{
-This is still a partial implementation focusing on edges, edgewights, and node coordinates in order to pass the information to graphViz to use it as an external layout engine rather than a renderer. 
+This is still a partial implementation focusing on edges, edge wights, and node coordinates in order to pass the information to graphViz to use it as an external layout engine rather than a renderer. 
 }
 
 

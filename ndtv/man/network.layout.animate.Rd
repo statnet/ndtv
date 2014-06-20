@@ -75,6 +75,9 @@ The \code{Graphviz} layout is a wrapper for the Graphviz \url{http://http://www.
 
 Currently, the arguments to \code{layout.par} can be used to specify the Graphviz layout engine to use (i.e. \code{gv.engine='neato'} for stress-minimized, \code{gv.engine='dot'} for hierarchal, \code{gv.engine='fdp'} for force-directed, etc) and additional command-line control parameters can be passed in via \code{gv.args}.  For example, to use the 'dot' layout, but change layout rank direction to Left-Right: \code{layout.par=list(gv.engine='dot',gv.args='-Grankdir=LR')}.  See \url{http://www.graphviz.org/content/command-line-invocation}.  Note that Graphviz's graphic rendering parameters are not used to control network plot rendering (but they may impact layout positions). 
 
+It is also possible to pass edge attributes of the network directly through to the Graphviz .dot file by passing in the names of the attributes using \code{gv.edge.attrs} argument to \code{layout.par}. For example, \code{layout.par=list(gv.edge.attrs='len')} will write the value of the edge attribute 'len' to a gv attribute 'len', which would control the edge lengths when using neato or fdp \url{http://www.graphviz.org/content/attrs#dlen}.
+
+The Graphviz layout normally ignores the values in \code{dist.mat}, but for compatibility with other layouts, it is possible to use the values in \code{dist.mat} to influence Graphviz's edge length by setting \code{layout.par} \code{gv.len.mode='ndtv.distance.matrix'} instead of its default \code{'gv.edge.len'}. This writes out all of the possible edges to the file and will overide any other edge attributes. 
 
 }
 \value{
