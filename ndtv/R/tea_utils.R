@@ -10,7 +10,7 @@
 
 
 #plots spells of a network as a timeline for diagnostics
-timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex.spells=TRUE, plot.edge.spells=TRUE, slice.par=NULL,displaylabels=TRUE,e.label,v.label,cex,edge.col=rgb(.5,.2,.2,.5),vertex.col=rgb(.2,.2,.5,.5),xlab,ylab,xlim,...){
+timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex.spells=TRUE, plot.edge.spells=TRUE, slice.par=NULL,displaylabels=TRUE,e.label,v.label,cex,edge.col=rgb(.5,.2,.2,.5),vertex.col=rgb(.2,.2,.5,.5),xlab,ylab,xlim,ylim,...){
   if (!is.network(x)){
     stop('x must be a network object in timeline plot function')
   }
@@ -67,8 +67,12 @@ timeline <-function(x,v=seq_len(network.size(x)), e=seq_along(x$mel),plot.vertex
   if(missing(xlab)){
     xlab<-'time'
   }
+ 
+  if(missing(ylim)){
+    ylim<-c(1,(rows*plot.edge.spells)+(length(v.plot.rows)*plot.vertex.spells))
+  }
                  
-	plot(NULL,NULL, xlim=xlim,ylim=c(1,(rows*plot.edge.spells)+(length(v.plot.rows)*plot.vertex.spells)),xlab=xlab,ylab=ylab,yaxt='n',...)
+	plot(NULL,NULL, xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,yaxt='n',...)
 		
   if(missing(cex)){
     cex<-0.5

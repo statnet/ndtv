@@ -23,7 +23,7 @@ timeline(x, v = seq_len(network.size(x)), e = seq_along(x$mel),
         displaylabels = TRUE, e.label, v.label, cex, 
         edge.col = rgb(0.5, 0.2, 0.2, 0.5), 
         vertex.col = rgb(0.2, 0.2, 0.5, 0.5), 
-        xlab, ylab, xlim, ...)
+        xlab, ylab, xlim, ylim ...)
 }
 
 \arguments{
@@ -70,8 +70,9 @@ x-axis label for plot
  y-axis label for plot
 }
   \item{xlim}{
-two-element numeric vector giving the x-range (time bounds) of plot to show. Defaults to (non-infinite) max and min time of network
+two-element numeric vector giving the x-range (time bounds) of the plot to show. Defaults to (non-infinite) max and min time of network
 }
+ \item{ylim}{ two-element numeric vector giving the y-range (effectively the number of entities) of plot to show. Defaults to an appropriate mapping of the number of entities to the availible plot size.} 
   \item{\dots}{
 additional arguments to be passed to plot subroutines.  See \code{\link{plot.default}},\code{\link{lines}},\code{\link{text}}.
 }

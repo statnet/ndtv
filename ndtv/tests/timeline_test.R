@@ -50,3 +50,7 @@ slice.par<-list(start=0,end=24,interval=6, aggregate.dur=5,rule="any")
 timeline(cls33_10_16_96,slice.par=slice.par)
 slice.par<-list(start=0,end=24,interval=1, aggregate.dur=0,rule="any")
 timeline(cls33_10_16_96,slice.par=slice.par)
+
+# test setting plot bounds, bug #735
+timeline(cls33_10_16_96,ylim=c(20,30))
+timeline(cls33_10_16_96,xlim=c(0,10))
