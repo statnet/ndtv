@@ -23,7 +23,7 @@ timeline(x, v = seq_len(network.size(x)), e = seq_along(x$mel),
         displaylabels = TRUE, e.label, v.label, cex, 
         edge.col = rgb(0.5, 0.2, 0.2, 0.5), 
         vertex.col = rgb(0.2, 0.2, 0.5, 0.5), 
-        xlab, ylab, xlim, ylim ...)
+        xlab, ylab, xlim, ylim, ...)
 }
 
 \arguments{
