@@ -119,7 +119,7 @@ Since this isn't a terribly exciting simulation, lets only calculate coordinates
 <<mdsj_actual_download,echo=FALSE>>==
 # the command below will default to not installing MDSJ in a non-interactive session
 # so to make sure it is installed for this sweave build, call it internally
-mdsj.dir <- file.path(path.package("ndtv"), "exec/")
+mdsj.dir <- file.path(path.package("ndtv"), "java/")
 ndtv:::install.mdsj(mdsj.dir)
 @
 

@@ -1,5 +1,6 @@
 ChangeLog for ndtv
 v0.6
+ - java source and .class files now stored in /java and /inst/java instead of /exec subdirectory
  - updates to Graphviz layout and export.dot to be able pass through additional parameters
 v0.5
  - render.animation now caches and restores original plotting 'par()' params
