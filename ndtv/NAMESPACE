@@ -1,11 +1,13 @@
 importFrom(sna,geodist)
 import(statnet.common, network, networkDynamic, animation)
+import(jsonlite)
 
 export(
 render.animation,
 compute.animation,
 export.dot,
 export.pajek.net,
+render.d3movie,
 network.layout.animate.kamadakawai,
 network.layout.animate.MDSJ,
 network.layout.animate.useAttribute,

@@ -403,6 +403,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     # make sure we dont' clobber the list element by setting it to NULL
     if(!is.null(val)){
       plot_params[[fun_index]]<-val
+    } else {
+      # we can't leave it as a function, so what do we set it to?
+      plot_params[[fun_index]]<-numeric(0)
     }
   }
   # return the modified list of plot params
