@@ -1,0 +1,148 @@
+.ndtv-fullscreen { 
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ndtv-d3-container {
+  position: relative;
+}
+
+.main, .xlab {
+  text-anchor: middle;
+}
+
+.label, .main, .xlab, .tooltip {
+  font-family: sans-serif;
+}
+
+.dragging {
+  cursor: move;
+}
+
+.node {
+  stroke-width: 1px;
+  fill: red;
+  stroke: black;
+}
+
+.node, .edge {
+  cursor: pointer;
+  transition: stroke-width 0.2s ease;
+}
+
+.node:hover, .edge:hover {
+  stroke-width: 5px !important;
+}
+
+.edge {
+  stroke: black;
+}
+
+.label {
+  pointer-events: none;
+}
+
+.graph { 
+  position: relative;
+  overflow: hidden;
+}
+
+.key {
+  padding: 10px;
+  text-align: center;
+}
+
+.controls { 
+  margin: 10px 20px;
+  height: 40px;
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+.play-control-container>div {
+  width: 25px;
+  height: 25px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.controls .icon {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.controls .icon:hover {
+  fill: blue;
+}
+
+.data_chooser_container {
+  position: absolute; top: 10px; left: 10px;
+}
+
+.play-control-container {
+  float: right; 
+  background: #ccc; 
+  border-radius: 5px; 
+  padding: 7px;
+  padding-bottom: 3px;
+  box-sizing: border-box;
+}
+
+.ndtv-d3-container { 
+  position: relative;
+  box-sizing: border-box;
+  border: 1px solid;
+}
+
+.slider-control-container { 
+  margin-right: 160px;
+  box-sizing: border-box;
+}
+
+.d3-slider-handle {
+  min-width: 10px;
+}
+
+.d3-slider.axis {
+  height: 20px;
+}
+
+.tooltip {
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  padding: 10px 10px;
+  background: rgba(255,255,255, 1);
+  border: 1px solid #666;
+}
+
+.frameInfo {
+  display: none;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  padding: 5px;
+}
+
+.durationControlContainer {
+   position: absolute;
+   top: 5px;
+   right: 5px;
+   width: 20%;
+}
+
+.container .screen {
+  opacity: 0;
+  pointer-events: none;
+  fill: none;
+}
+
+.container .screen.network-selected {
+  opacity: .6;
+}

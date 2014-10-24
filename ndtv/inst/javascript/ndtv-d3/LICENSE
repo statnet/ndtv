@@ -1,0 +1,25 @@
+ndtv-d3 is a d3-based HTML5 network animation player for the ndtv package (http://cran.r-project.org/web/packages/ndtv/index.html)
+
+The ndtv-d3 library was created by Greg Michalec and Skye Bender-deMoll for the statnet project http://statnet.org funded by NICHD grant R01HD068395.
+
+This software is distributed under the GPL-3 license (http://choosealicense.com/licenses/gpl-3.0/).  It is free, open source, and has the attribution requirements (GPL Section 7) at http://statnet.org/attribution:
+
+a. you agree to retain in ndtv-d3 and any modifications to ndtv-d3 the copyright, author attribution and URL information as provided at a http://statnetproject.org/attribution.
+
+b. you agree that ndtv-d3 and any modifications to ndtv-d3 will, when used, display the attribution:
+
+    Based on 'statnet' project software (http://statnetproject.org). For license and citation information see http://statnetproject.org/attribution
+
+Copyright 2014 Statnet Commons http://statnet.org
+
+To cite this project, please use:
+
+Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 network animation player for the ndtv package' The statnet project. http://statnet.org
+
+
+This repository/distribution may also include copies of several other javascript libraries in the lib directory each of which includes its own license file.  Those libraries are:
+
+ * d3    http://d3js.org  Michael Bostock BSD license: http://opensource.org/licenses/BSD-3-Clause
+ * d3.slider    http://blog.thematicmapping.org Bjorn Sandvik  BSD license: http://opensource.org/licenses/BSD-3-Clause 
+ * jQuery    http://jquery.com/   jQuery Foundation  MIT License
+

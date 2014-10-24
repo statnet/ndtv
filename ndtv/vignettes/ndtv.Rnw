@@ -82,6 +82,7 @@ Of course, using defaults doesn't give much control of what should be rendered a
 
 \section{A tergm simulation example}
 Lets look at a more realistic example using output from the simulation of a crude dynamic model. This uses the statnet \verb@tergm@ package to estimate the parameters for an edge formation and dissolution process which produces a network similar to the Florentine business network (\verb@?ergm::flobusiness@) given as input.  Once the model has been estimated, we can take a number of sequential draws from it to see how the network might ``evolve'' over time.  When we generate the movie, we can include the model statistics on screen to see how they are influenced by edge additions and deletions.  This example also assumes you have some of the external libraries working (Java and FFmpeg) so you run into problems, try skipping to Dependencies (section \ref{sec:dependencies}) and come back. 
+\subsection{Data Setup}
 
 First load in the main necessary libraries (each of which loads a bunch of additional R libraries). 
 
@@ -115,6 +116,7 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 100)
 @
 
+\subsection{Animation Setup}
 Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming MDSJ and Java are installed).
 <<mdsj_actual_download,echo=FALSE>>==
 # the command below will default to not installing MDSJ in a non-interactive session
@@ -130,6 +132,8 @@ compute.animation(stergm.sim.1,slice.par=slice.par,
                                 animation.mode='MDSJ')
 @
 
+\subsection{Playing an animation in R plot window}
+
 Now that we have all the coordinates stored, we can define some parameters for \verb@render.par@ to specify how many \verb@tween.frames@ to render, and tell it to display the time and the summary statistics formula. 
 
 <<render.par_animation,eval=TRUE,results=hide,include=TRUE>>=
@@ -137,7 +141,7 @@ render.par=list(tween.frames=5,show.time=TRUE,
                 show.stats="~edges+gwesp(0,fixed=TRUE)")
 @
 
-Then we ask it to build the animation, passing in some of the standard \verb@plot.network@ graphics arguments to change the color of the edges and show the labels with a smaller size and blue color.
+Then we ask it to graphically render the animation, passing in some of the standard \verb@plot.network@ graphics arguments to change the color of the edges and show the labels with a smaller size and blue color.
 <<render_animation,eval=TRUE,results=hide,include=TRUE>>=
 render.animation(stergm.sim.1,render.par=render.par,
                  edge.col="darkgray",displaylabels=TRUE,
@@ -152,14 +156,31 @@ ani.replay()
 
 Notice that in addition to the labels on the bottom of the plot indicating which time step is being viewed, it also displays the network statistics of interest for the time step. When the ``edges'' parameter increases up, you can see the density on the graph increase and the number of isolates decrease. Eventually the model corrects, and the parameter drifts back down. 
 
+\subsection{Saving an animation as video}
+
 We can also use the \verb@animation@ library to save out the movie in \verb@.mp4@ format (assuming that the FFmpeg library is installed on your machine).
 
 <<save_test,eval=TRUE>>=
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
-                    other.opts="-b 5000k -pix_fmt yuv420p",clean=TRUE)
+                    other.opts="-b 5000k",clean=TRUE)
 @     
 
 This should produce a movie\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/stergm.sim.1.mp4}} in an R working directory on disk. The \verb@other.opts@ parameter is set here to generate a higher-quality video than the default, but this will result in a large file size. For more information on compressing videos for the web, see Compressing Video (section \ref{sec:compressing}).
+
+\subsection{Viewing animation as a web page}
+
+An alternate way to view the animation is to render it out as an HTML5 animation embedded in a web page.  This has the advantage of not requiring any external libraries, but does need a modern web browser to display properly. \verb@render.d3movie@ operates similarly to \verb@render.animation@, using the same coordinates stored by \verb@compute.animation@. 
+
+<<save_html >>=
+render.d3movie(stergm.sim.1,render.par=render.par,
+                 edge.col="darkgray",displaylabels=TRUE,
+                 label.cex=.6,label.col="blue",
+                filename='stergm.sim1.html')
+@
+
+This should open web browser displaying the page with a javascript animation player and an interactive version of the network.   There is an additional vignette demoing the features (such as interactive tooltips, and embedding in rmarkdown documents) of the ndtv-d3 player included in the ndtv package.  
+
+\subsection{Other views}
 
 There is also a \verb@filmstrip()@ function that will create a ``small multiple'' plot using frames of the animation to construct a visual summary of the network changes as a static plot.
 
@@ -184,7 +205,7 @@ render.animation(cls33_10_16_96,
 ani.replay()
 @
 
-We can also get an idea of how we are slicing up the network by using the \verb@timeline()@ function to plot the \verb@slice.par@ parameters against the vertex and edge spells. Our very thin slices (gray virtical lines) (\verb@aggregate.dur=0@) are not intersecting many edge events (purple numbers) at once. 
+We can also get an idea of how we are slicing up the network by using the \verb@timeline()@ function to plot the \verb@slice.par@ parameters against the vertex and edge spells. Our very thin slices (gray vertical lines) (\verb@aggregate.dur=0@) are not intersecting many edge events (purple numbers) at once. 
 
 <<mcfarla_timeline1,fig=TRUE>>=
 timeline(cls33_10_16_96,slice.par=slice.par)
@@ -393,13 +414,13 @@ ani.replay()
 In order to use the MDSJ layout algorithm, you must have Java installed on your system.  Java should be already installed by default on most Mac and Linux systems. If it is not installed, you can download it from \url{http://www.java.com/en/download/index.jsp}. On Windows, you may need to edit your `Path' environment variable to make Java executable from the command-line.
 
 \subsection{FFmpeg}
-FFmpeg \url{http://ffmpg.org} is a cross-platform tool for converting and rendering video content in various formats. It is used as an external library by the \verb@animation@ package to save out the animation as a movie file on disk. (see \verb@?saveVideo@ for more information.) Since FFmpeg is not part of R, you will need to install it separately on your system for the save functionality to work.  The instructions for how to do this will be different on each platform.  You can also access these instructions using \verb@?install.ffmpeg@
+FFmpeg \url{http://ffmpg.org} is a cross-platform tool for converting and rendering video content in various formats. It is used as an external library by the \verb@animation@ package to save out the animation as a movie file on disk. (see \verb@?saveVideo@ for more information.) Since FFmpeg is not part of R, you will need to install it separately on your system for the save video functionality to work.  The instructions for how to do this will be different on each platform.  You can also access these instructions using \verb@?install.ffmpeg@
 
 \section{Compressing video}
 \label{sec:compressing}
 The saved video output of the animation often produces very large files. These may cause problems for your viewers if you upload them directly to the web.  It is almost always a good idea to compress the video, as a dramatically smaller file can usually be created with little or no loss of quality. Although it may be possible to give \verb@saveVideo()@ various \verb@other.opts@ to control video compression\footnote{The default settings for ffmpeg differ quite a bit depending on platform, some installations may give decent compression without tweaking the settings}, determining the right settings can be a trial and error process. Handbrake \url{http://handbrake.fr/} is an excellent and easy to use tool for doing video compression into the web-standard H.264 codec with appropriate presets. 
 
-\section{Reference for the main command}
+\section{Reference for the main commands}
 Included here are more complete explanations of the main function. You can also refer to the man pages \verb@?compute.animation@ and \verb@?render.animation@.
 \subsection{compute.animation()}
 The \verb@compute.animation()@ function computes a sequence of vertex layouts suitable for rendering a network animation. It steps through a \verb@networkDynamic@ object and applies layout algorithms at specified intervals, storing the calculated coordinates in the network for later use by the \verb@render.animation@ function. Generally the layouts are done in a sequence with each using the previously calculated positions as initial seed coordinates in order to smooth out the resulting movie. 
@@ -444,9 +465,7 @@ The \verb@animation@ package provides several neat tools for storing animations 
 \item \verb@saveGIF()@ creates an animated GIF (if ImageMagick installed)
 \item \verb@saveLatex()@ creates an animation embedded in a pdf (didn't work for me...)
 \end{itemize}
-Please see \verb@?animation@ and each function's help files for more details. With the exception of \verb@ani.replay()@ each of these requires the presence of some external library software which may need to be installed on your system as described in Dependencies (section \ref{sec:dependencies}). 
-
-On some installations, the default output from \verb@SaveVideo()@ (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the \verb@other.opts='-pix_fmt yuv420p"@ corrects the problem. 
+Please see \verb@?animation@ and each function's help files for more details. With the exception of \verb@ani.replay()@ each of these requires the presence of some external library software which may need to be installed on your system as described in Dependencies (section \ref{sec:dependencies}).  
 
 \section{Limitations}
 \subsection{Size limits}

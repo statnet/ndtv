@@ -1,0 +1,119 @@
+---
+title: "ndtv-d3 vignette"
+author: "skyebend"
+date: "10/19/2014"
+output:
+  html_document:
+    toc: true
+    mathjax: null
+---
+
+<!-- \VignetteEngine{knitr::knitr} -->
+<!-- to render out this file for preview when not using RStudio:  rmarkdown::render('vignettes/ndtv-d3_vignette.rmd') -->
+
+## What is ndtv-d3? ##
+The `ndtv-d3` project is a d3-based HTML5 network animation player for the `ndtv` package. It makes it possible to view and share interactive network animations in a web browser, without needing to install any external tools. 
+
+## Most basic version in browser ##
+
+Load the library
+```{r,results='hide',message=FALSE}
+library(ndtv)
+```
+
+Load an example data set.
+```{r}
+data(short.stergm.sim)
+```
+
+Render the animation as an html file and open it in an external browser window and include labels for the vertices.
+```{r,results='hide',message=FALSE}
+render.d3movie(short.stergm.sim,displaylabels=TRUE)
+```
+
+This will call `compute.animation` to figure out the positions, and then export the animation as javascript data embedded in an HTML file. The animation should launch in new browser window displaying the ndtv-d3 player app with the animation inside it. 
+
+Notice that you can zoom (with the mousewheel), pan (drag the background) and click on the vertices and edges to display their ids.  Double clicking on a vertix will highlight that vertex and its neighbors. 
+
+
+If you wanted to use a specific filename (instead of `tempfile()`) and avoid automatically opening the file:
+
+```{r,results='hide',message=FALSE}
+render.d3movie(short.stergm.sim,filename='short.stergm.html',launchBrowser=FALSE)
+```
+
+
+In general, `render.d3movie` uses the same graphics control arguments as `plot.network` and operates similarly to `render.animation`.  See `?render.d3movie` for more detailed description of supported arguments. 
+
+
+## EpiModel simulation example + embedding reults in an rmarkdown document##
+
+We can set up one of Sam Jeness's basic epidemic simulation models using the EpiModel package.  Scroll all the way to the bottom for the fun stuff...
+
+
+```{r,results='hide',message=FALSE}
+
+library(EpiModel)
+
+## Network Estimation (using a tergm model)
+nw <- network.initialize(n = 100, directed = FALSE)
+formation <- ~ edges
+target.stats <- 50
+dissolution <- ~ offset(edges)
+coef.diss <- dissolution_coefs(dissolution, duration = 10)
+est <- netest(nw,
+              formation,
+              dissolution,
+              target.stats,
+              coef.diss,
+              verbose = FALSE)
+
+## Epidemic simulation
+param <- param.net(inf.prob = 0.8)
+init <- init.net(i.num = 5)
+control <- control.net(type = "SI", nsteps = 25, nsims = 1, verbose =
+                         FALSE)
+sim <- netsim(est, param, init, control)
+
+## Use some of EpiModel's default coloring functions
+nw.sim <- get_network(sim)
+nw.sim <- color_tea(nw.sim)
+
+slice.par <- list(start = 1, end = 25, interval = 1,
+                  aggregate.dur = 1, rule = "any")
+render.par <- list(tween.frames = 10, show.time = FALSE)
+plot.par <- list(mar = c(0, 0, 0, 0))
+
+# compute the animation coordinates
+compute.animation(nw.sim, slice.par = slice.par)
+```
+
+
+The ndtv-d3 player object can be rendered inside an iframe in the rmarkdown document. The `render.d3movie` command must have `output.mod='inline'` to tell it to spit out the content directly instead of saving it to an external HTML file.  We also need to set the markdown chunk argument for to `result='asis'` so that Knitr will pass through the HTML from ndtv "as is"" without modification.  
+
+We can pass in some standard network.plot commands, and a functional command to generate interactive html tooltips to be displayed when the vertices are clicked on. 
+
+
+```{r,results='asis'}
+render.d3movie(
+  nw.sim,
+  render.par = render.par,
+  plot.par = plot.par,
+  vertex.cex = 0.9,
+  vertex.col = "ndtvcol",
+  edge.col = "darkgrey",
+  vertex.border = "lightgrey",
+  displaylabels = FALSE,
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')},
+  output.mode='inline')
+```
+
+The output will appear as blank pane in the RStudio viewer, but works fine when viewed in a browser (Chrome is best/fastest).   
+
+
+## Some techincal notes ##
+The `ndtv-d3` player displays a copy of the dynamic network and its rendering information that have been cached in a JSON-formatted file. The network is rendered as an HTML5 SVG object and animated using the d3 (d3js.org) and JQuery Javascript libraries. 
+
+The default option is to save all of the scripts, data and external javascript libraries embeded in a single html file. This means that HTML page should remain fully portable and will can be viewd without an internet connection. But we should explore better designs for including multiple animations in a single document, deploying on the web, etc. 
+
+The library was created by Greg Michalec and Skye Bender-deMoll for the statnet project http://statnet.org funded by NICHD grant R01HD068395.

@@ -93,7 +93,7 @@ A few of the network drawing arguments have slightly different interpretations t
 }
 If the background color is transparent and not explicitly set, it will be reset to white to prevent unintentional behavior when exporting movies via ffmpeg. 
 
-One some installations, the default output from \verb{saveVideo()} (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the argument \verb{other.opts='-pix_fmt yuv420p"} to \verb{saveVideo} corrects the problem. 
+One some installations, the default output from \verb{saveVideo()} (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the argument \verb{other.opts='-pix_fmt yuv420p"} to \verb{saveVideo} corrects the problem. Recent versions of the \verb{animation} library will include this argument by default.  
 }
 
 \value{
@@ -189,7 +189,7 @@ ani.replay()
 
 # save the movie as mp4 compressed video (if FFMPEG installed)
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
-           other.opts="-b 5000k -pix_fmt yuv420p",clean=TRUE)
+           other.opts="-b 5000k",clean=TRUE)
 }
 
 }
