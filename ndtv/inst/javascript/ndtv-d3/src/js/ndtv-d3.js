@@ -1,4 +1,4 @@
-/*
+/**
 ndtv-d3 is a d3-based HTML5 network animation player for the ndtv package (http://cran.r-project.org/web/packages/ndtv/index.html)
 
 The ndtv-d3 library was created by Greg Michalec and Skye Bender-deMoll for the statnet project http://statnet.org funded by NICHD grant R01HD068395.
@@ -16,8 +16,8 @@ Copyright 2014 Statnet Commons http://statnet.org
 To cite this project, please use:
 
 Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 network animation player for the ndtv package' The statnet project. http://statnet.org
+@module
 */
-
 
 
 (function (root, factory) {
@@ -45,6 +45,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     dataChooserDir: 'data/',      //web path to dir containing data json files
     playControls: true,           //show the player controls
     slider: true,                 //show the slider control
+    menu: true,                   //show a menu in upper-right
     animateOnLoad: false,         //play the graph animation on page load
     margin: {                     //graph render area margins
       x: 20,
@@ -52,7 +53,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     },
     graphData: null,              //graph data, either as JSON object or URL to json file
     debugFrameInfo: false,        //Show the slice info in corner
-    debugDurationControl: false,  //Show a control to change duration speed
+    durationControl: true,  //Show a control to change duration speed
   };
 
   /**
@@ -146,21 +147,12 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     if (n3.options.dataChooser) { n3.createDataChooser(); }
     if (n3.options.playControls) { n3.createPlayControls(); }
     if (n3.options.slider) { n3.createSliderControl(); }
+    if (n3.options.menu) { n3.createMenu(); }
+
 
     n3.tooltip = n3.domTarget.select('.graph').append('div').attr('class', 'tooltip');
     n3.frameInfoDiv = n3.domTarget.select('.graph').append('div').attr('class', 'frameInfo')
     if (n3.options.debugFrameInfo) { n3.frameInfoDiv.style('display', 'block'); }
-    if (n3.options.debugDurationControl) { 
-      var durationControl = n3.domTarget.select('.graph').insert('div', ':first-child').attr('class', 'durationControlContainer');
-      var durationSlider = d3.slider().min(0).max(8).axis(new d3.svg.axis().ticks(5)).value(n3.options.animationDuration/1000);
-      durationControl.call(durationSlider)
-      durationSlider.on('slide', function(evt, value){
-        n3.options.animationDuration = value*1000;
-        if(n3.options.slider) {
-          n3.slider.animate(n3.options.animationDuration)
-        }
-      })
-    }
     if(n3.options.graphData) { n3.loadData(n3.options.graphData); }
   }
 
@@ -186,16 +178,16 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     var svg = domTarget.select('svg')
       .append('g')
 
-    var downLocation;
+    var dragEvent;
     var rect = svg.append("rect")
       .attr('class', 'background')
       .style("fill", "none")
       .style("pointer-events", "all")
       .on('mousedown', function() { 
-        downLocation = n3.container.attr('transform');
+        dragEvent = d3.event;
       })
       .on('mouseup', function() { 
-        if (downLocation == n3.container.attr('transform')) {
+        if (Math.abs(dragEvent.pageX - d3.event.pageX) < 5 && Math.abs(dragEvent.pageY - d3.event.pageY) < 5) {
           n3.hideTooltip();
           n3.unSelectNetwork();
         }
@@ -329,10 +321,50 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     })
   }
   
+  /** creates the optional menu element to be used for controlling settings and displaying 'about' link */
+  n3.prototype.createMenu = function() {
+    var n3 = this;
+    if (d3.select('#ndtv-svg-menu-icons').empty()) {
+      $('body').prepend(
+      '<svg id="ndtv-svg-menu-icons" display="none" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="176" height="32" viewBox="0 0 176 32">'+
+      '  <defs>'+
+      '    <g id="icon-list"><path d="M25.6 14.4h-19.2c-0.883 0-1.6 0.717-1.6 1.6s0.717 1.6 1.6 1.6h19.2c0.885 0 1.6-0.717 1.6-1.6s-0.715-1.6-1.6-1.6zM6.4 11.2h19.2c0.885 0 1.6-0.717 1.6-1.6s-0.715-1.6-1.6-1.6h-19.2c-0.883 0-1.6 0.717-1.6 1.6s0.717 1.6 1.6 1.6zM25.6 20.8h-19.2c-0.883 0-1.6 0.715-1.6 1.6s0.717 1.6 1.6 1.6h19.2c0.885 0 1.6-0.715 1.6-1.6s-0.715-1.6-1.6-1.6z"></path></g>'+
+      '  </defs>'+
+      '</svg>');
+    }
+    var div = n3.domTarget.select('.graph').append('div').attr('class', 'ndtv-menu-container');
+    div.html(
+      "<div class='ndtv-menu-icon'>"+
+      " <svg class='icon menu-control' viewBox='0 0 32 32'><use xlink:href='#icon-list'></use></svg>"+
+      "</div>"+
+      "<div class='ndtv-menu'></div>"
+    )
+    var menu = n3.domTarget.select('.ndtv-menu');
+
+    if (n3.options.durationControl) { 
+      var durationControl = menu.append('div').attr('class', 'menu-item durationControlContainer');
+      durationControl.append('span').attr('class', 'menu-label').html('Animation Duration');
+      var durationSlider = d3.slider().min(0).max(8).axis(new d3.svg.axis().ticks(5)).value(n3.options.animationDuration/1000);
+      durationControl.append('div').attr('class', 'durationControl').call(durationSlider)
+      durationSlider.on('slide', function(evt, value){
+        n3.options.animationDuration = value*1000;
+        if(n3.options.slider) {
+          n3.slider.animate(n3.options.animationDuration)
+        }
+      })
+    }
+
+    menu.append("div").attr('class', 'menu-item').html("<a href='https://github.com/michalgm/ndtv-d3/blob/master/README.md' target='_blank'>About NDTV-D3</a></div>");
+    n3.domTarget.select('.ndtv-menu-icon').on('click', function() {
+      $(menu.node()).fadeToggle(200);
+      $(this).toggleClass('menu-active')
+    })
+  }
+
   /** creates the optional play controls div using svg icons and defines the attached events */
   n3.prototype.createPlayControls = function() {
     var n3 = this;
-    
+
     //define SVG icons to be used in the play controller
     if (d3.select('#ndtv-svg-icons').empty()) {
       $('body').prepend(
@@ -650,7 +682,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
          edgeX = x2;
          edgeY = y2;
        }
-       return 'M '+x1.toFixed(3)+' '+y1.toFixed(3)+' L '+edgeX.toFixed(3)+' '+edgeY.toFixed(3);     
+       return 'M '+x1.toFixed(1)+' '+y1.toFixed(1)+' L '+edgeX.toFixed(1)+' '+edgeY.toFixed(1);     
       },
     })
   }
@@ -687,7 +719,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
             var ang = i * base + rot;
             var x = centerX + size * Math.cos(ang);
             var y = centerY + size * Math.sin(ang);
-            poly.push([x.toFixed(3)+','+y.toFixed(3)]);
+            poly.push([x.toFixed(1)+','+y.toFixed(1)]);
         }
         return poly.join(' ');
       },
@@ -702,9 +734,9 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
   */
   n3.prototype.drawCircleNode = function(selection, n3){
     selection.attr({
-      cx: function(d, i) { return n3.xScale(d.renderCoord[0]).toFixed(3); },
-      cy: function(d, i) { return n3.yScale(d.renderCoord[1]).toFixed(3); },
-      r: function(d, i) { return (d['vertex.cex'] * n3.baseNodeSize).toFixed(3); },
+      cx: function(d, i) { return n3.xScale(d.renderCoord[0]).toFixed(1); },
+      cy: function(d, i) { return n3.yScale(d.renderCoord[1]).toFixed(1); },
+      r: function(d, i) { return (d['vertex.cex'] * n3.baseNodeSize).toFixed(1); },
     })
   }
 
@@ -715,12 +747,12 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
   */
   n3.prototype.drawNodeLabel = function(selection, n3){
     selection.attr({
-      x: function(d, i) { return n3.xScale(d.renderCoord[0])+n3.options.labelOffset.x; },
-      y: function(d, i) { return n3.yScale(d.renderCoord[1])+n3.options.labelOffset.y; },
+      x: function(d, i) { return (n3.xScale(d.renderCoord[0])+n3.options.labelOffset.x).toFixed(1); },
+      y: function(d, i) { return (n3.yScale(d.renderCoord[1])+n3.options.labelOffset.y).toFixed(1); },
     })
   }
 
-
+  /** highlights the currently selected network */
   n3.prototype.updateSelectedNetwork = function() {
     var n3 = this;
     var node = n3.selectedNetwork;
@@ -755,6 +787,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     })    
   }
 
+  /** unhighlights the currently selected network */
   n3.prototype.unSelectNetwork = function() {
     var n3 = this;
     n3.selectedNetwork = null;
@@ -1024,8 +1057,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
   /** graph animation controller
   * @param {integer} - render the graph to the state at this timeslice index
   * @param {integer} - function will recursively call itself until time equals this value
-  * @param {milliseconds} - the amount of time the transition animation should take
-  * @param {boolean} - don't update time slider - FIXME - do we really need this?
+  * @param {boolean} - should the graph update immediately, or animate?
   */
   n3.prototype.animateGraph = function(time, endTime, immediate) {
     var n3 = this;
@@ -1082,6 +1114,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     }
   }
 
+  /** get center point of edge or node, in DOM pixels */
   n3.prototype.convertCoords = function(item) {
     var n3 = this;
     var type = item.inl ? 'edge' : 'node';
@@ -1101,7 +1134,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
       y = bbox.y + bbox.height/2;
     }
     var left = (x*ctm.a) + ctm.e - n3.offset.left +1;
-    var bottom = n3.height -(y*ctm.d)-ctm.f - n3.offset.top +1;
+    var bottom = n3.height -(y*ctm.d)-ctm.f + n3.offset.top +1;
     return [left, bottom];
   }
 

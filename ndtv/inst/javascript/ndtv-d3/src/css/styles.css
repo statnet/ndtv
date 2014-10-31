@@ -71,7 +71,7 @@
   display: inline-block;
 }
 
-.controls .icon {
+.controls .icon, .ndtv-menu-container .icon {
   width: 100%;
   height: 100%;
   cursor: pointer;
@@ -109,7 +109,7 @@
   min-width: 10px;
 }
 
-.d3-slider.axis {
+.d3-slider-axis {
   height: 20px;
 }
 
@@ -130,11 +130,9 @@
   padding: 5px;
 }
 
-.durationControlContainer {
-   position: absolute;
-   top: 5px;
-   right: 5px;
-   width: 20%;
+.durationControl {
+  width: 150px;
+  margin-bottom: 20px; 
 }
 
 .container .screen {
@@ -145,4 +143,46 @@
 
 .container .screen.network-selected {
   opacity: .6;
+}
+
+.ndtv-menu-container {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.ndtv-menu-icon {
+  width: 25px;
+  height: 25px;
+  float: right;
+  z-index: 100;
+}
+
+.ndtv-menu-icon.menu-active {
+  background: #fff;
+  border: 1px solid #666;
+  border-bottom: 1px solid #fff;
+}
+
+.ndtv-menu {
+  background: white;
+  border: 1px solid #666;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+  padding: 10px;
+  margin-top: 25px;
+  display: none;
+}
+
+.menu-item {
+  padding: 10px 0px;
+  border-bottom: 1px solid #CCC;
+}
+
+.menu-item:first-child {
+  padding-top: 0px;
+}
+
+.menu-item:last-child {
+  padding-bottom: 0px;
+  border: none;
 }

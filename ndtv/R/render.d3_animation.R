@@ -20,6 +20,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
                            plot.par=list(bg='white'),
                            d3.options, 
                            output.mode=c('HTML','JSON','inline'),
+                           script.type=c('embedded','remoteSrc'),
                            launchBrowser=TRUE,
                            verbose=TRUE,...){
   if (!is.network(net)){
@@ -34,6 +35,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   
   # check output modes
   output.mode<-match.arg(output.mode)
+  script.type=match.arg(script.type)
   
   # if outputmode is inline, need to disable verbose
   if (output.mode=='inline'){
@@ -76,7 +78,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     'animateOnLoad',
     'margin',
     'debugFrameInfo',        
-    'debugDurationControl')
+    'durationControl')
   if (!all(names(d3.options)%in%knownD3Params)){
     warning('unknown element(s) in d3.options argument: ',paste(names(d3.options)[!names(d3.options)%in%knownD3Params],collapse=', '))
   }
@@ -269,7 +271,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     }
   } else if (output.mode=='HTML'){
     
-    renderD3Html(filename,out,d3.options)
+    renderD3Html(filename,out,d3.options,scriptType=script.type)
     
     if (verbose){
       message('wrote animation HTML file to ',filename)
@@ -296,7 +298,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   } else if(output.mode=='inline'){
     # render it out to a tempfile, and then load it back into the browser in an iFrame
     cacheFile<-tempfile(fileext = '.html')
-    renderD3Html(cacheFile,out,d3.options)
+    renderD3Html(cacheFile,out,d3.options,scriptType=script.type)
     # emit the html for markdown, etc
     cat('<iframe style="width: 100%; height: 500px;" src="data:text/html;charset=utf-8,')
     #cat(gsub('"','&quot;',readChar(cacheFile,1e6)))
@@ -314,7 +316,7 @@ renderD3ScriptIncludes<-function(filename,ndtvD3BaseUrl,scriptType='embedded'){
   if(scriptType=='embedded'){  
     # include the scripts embedded inside the page
     cat("<!-- css for styling the d3.slider lib -->
-      <style type='text/css'>",file=filename)
+      <style type='text/css'>",file=filename,append=TRUE)
     file.append(filename,file.path(ndtvD3BaseUrl,"src/lib/d3.slider.css"))
     cat("</style>
       <!-- css for styling the ndtv-d3 render and components -->
@@ -339,8 +341,21 @@ renderD3ScriptIncludes<-function(filename,ndtvD3BaseUrl,scriptType='embedded'){
   cat("</script>",file=filename,append=TRUE)
   } else if (scriptType=='localSrc'){
     # include links to scripts in their local scripts
+    stop('local script links not yet implemented')
   } else if (scriptType=='remoteSrc'){
     # include links for remote web urls for scripts
+    cat("<!-- css for styling the d3.slider lib -->
+      <link rel='stylesheet' href='http://michalgm.github.io/ndtv-d3/src/lib/d3.slider.css' />
+      <!-- css for styling the ndtv-d3 render and components -->
+      <link rel='stylesheet' href='http://michalgm.github.io/ndtv-d3/src/css/styles.css' />
+      <!-- minimized d3.js library -->
+      <script src='http://d3js.org/d3.v3.min.js' charset='utf-8'></script>
+      <!-- minimized jquery js library -->
+      <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
+      <!-- d3.slider.js library -->
+      <script src='http://michalgm.github.io/ndtv-d3/src/lib/d3.slider.js'></script>
+      <!-- ndtv-d3 js code -->
+      <script src='http://michalgm.github.io/ndtv-d3/src/js/ndtv-d3.js'></script>",file=filename,append=TRUE)
   } else {
     stop('unknown script setup option, scripts not included ')
   }
