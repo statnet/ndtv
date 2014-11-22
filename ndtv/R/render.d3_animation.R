@@ -427,7 +427,7 @@ cachePlotValues<-function(slice,renderList,plotArgs,onset,terminus,vertices,edge
     if(arg != 'x'){ #skip the network object
       dataVals<-plotArgs[[arg]]
       # expand any network attributes as plot.network.default would
-      dataVals<-network:::.preparePlotArguments(x=slice,argName=arg,argValue=dataVals)
+      dataVals<-preparePlotArgs(x=slice,argName=arg,argValue=dataVals)
       # any color-related elements need to be translated to rgba spec for html
       if (arg%in%c('vertex.col','label.col','vertex.border','label.border', 'label.bg','edge.col','edge.label.col','bg')){
         # if the value '0' is present, it needs to be translated to background color
