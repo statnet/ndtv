@@ -45,6 +45,31 @@ timeline(windsurfers,e=5:10)
 # set colors
 timeline(stergm.sim.1,vertex.col='orange',edge.col='green')
 
+# test vertex color expansions
+timeline(stergm.sim.1,vertex.col='priorates')
+timeline(stergm.sim.1,v.label.col='priorates')
+
+# test edge colors
+# show only edge spells, hilite edge id 20
+set.edge.attribute(stergm.sim.1,'my_color','gray')
+set.edge.attribute(stergm.sim.1,'my_color','red',e=20)
+timeline(stergm.sim.1,edge.col='my_color',plot.vertex.spells=FALSE)
+timeline(stergm.sim.1,edge.col=1:10)
+
+# test label expansions
+timeline(stergm.sim.1,v.label='a')
+timeline(stergm.sim.1,v.label='priorates')
+timeline(stergm.sim.1,e.label='a')
+timeline(stergm.sim.1,e.label='my_color')
+
+
+# test vertex line size (vertex.cex)
+timeline(stergm.sim.1,vertex.cex=stergm.sim.1%v%'priorates'/5,plot.edge.spells = FALSE)
+
+
+
+
+
 # test plotting spell bounds
 slice.par<-list(start=0,end=24,interval=6, aggregate.dur=5,rule="any")
 timeline(cls33_10_16_96,slice.par=slice.par)
