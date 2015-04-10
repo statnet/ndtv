@@ -4,7 +4,7 @@ v0.6
  - timeline function can now specificy graphic paramters using network attributes as is done by plot.network
  - added render.d3movie function to export HTML5 web animation using ndtv-d3 library
  - java source and .class files now stored in /java and /inst/java instead of /exec subdirectory
- - updates to Graphviz layout and export.dot to be able pass through additional parameters
+ - updates to Graphviz layout and export.dot to be able pass through additional parameters. Now supports including edge weights
 v0.5
  - render.animation now caches and restores original plotting 'par()' params
  - added parameter to render.animation for passing in initial default coordiantes

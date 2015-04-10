@@ -62,7 +62,11 @@ ani.replay()
 saveVideo(ani.replay(),video.name="msm.simMomentary.mp4", other.opts="-b 5000k",clean=TRUE)
 
 # another version, this time with more temporal aggregation
-msm.sim <- compute.animation(msm.sim,slice.par=list(start=0,end=10,interval=1,aggregate.dur=3))
+msm.sim <- compute.animation(msm.sim,slice.par=list(start=0,
+                                                    end=10,
+                                                    interval=1,
+                                                    aggregate.dur=3,
+                                                    rule='latest'))
 # also more render more inbetween frames
 render.animation(msm.sim,render.par = list(tween.frames = 15,show.times=TRUE), 
   vertex.col=msm.net\%v\%'race',vertex.cex=.5)
