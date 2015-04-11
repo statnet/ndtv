@@ -59,6 +59,25 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   if (missing(d3.options)){
     d3.options<-list()
   }
+  
+  # if it is a non-dynamic network, disable the slider and play controls by default
+  # convert to network dynamic before calling compute animation
+  if(!is.networkDynamic(net)){
+    message('input network is not networkDynamic object and does not have temporal info so output animation controls disabled by default')
+    if(is.null(d3.options$'slider')){
+      d3.options$'slider'<-FALSE
+    }
+    if(is.null(d3.options$'playControls')){
+      d3.options$'playControls'<-FALSE
+    }
+    # turn off the time plot
+    render.par$show.time<-FALSE
+    net<-as.networkDynamic(net)
+    # set a dummy slice.par to avoid warning
+    net%n%'slice.par'<-list(start=0,end=0,interval=0, aggregate.dur=0,rule='latest')
+    
+  }
+  
   # set the ndtv version.  This is not read by javascript, but is included to make the
   # json library convert it correctly
   d3.options$ndtv.version=paste(packageDescription("ndtv")$Version,packageDescription("ndtv")$Date,sep=',')

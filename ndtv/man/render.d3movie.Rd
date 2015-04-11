@@ -24,7 +24,7 @@ render.d3movie(net, filename=tempfile(fileext = '.html'),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{net}{
-The networkDynamic object to be rendered, usually containing pre-computed vertex positions as dynamic attributes cached by \code{\link{compute.animation}}
+The network (usally \code{\link{networkDynamic}}) object to be rendered, usually containing pre-computed vertex positions as dynamic attributes cached by \code{\link{compute.animation}}
 }
   \item{filename}{
 The file name of the HTML or JSON file to be generated. Must end the proper file extension ('.json' for JSON '.html' for HTML) for correct browser display.
@@ -70,7 +70,7 @@ If \code{TRUE}, update text will be printed to the console to report the status 
  Other parameters to control network rendering. See \code{\link{plot.network.default}}. Most parameters can be set to TEA attribute names, or specified as a function to be evaluated at each timestep.  NOT ALL PLOT PARAMS ARE IMPLEMENTED YET}
 }
 \details{
-Animations are generated using a process nearly identical to \code{link{render.animation}}. However, instead of using R's plotting functions and the \code{animation} library, the relevant information is cached and written into a JSON-formatted file, embedded into a web page along with \code{ndtv-d3} player, and displayed in a web browser as an interactive HTML5 SVG animation.   
+Animations are generated using a process nearly identical to \code{\link{render.animation}}. However, instead of using R's plotting functions and the \code{animation} library, the relevant information is cached and written into a JSON-formatted file, embedded into a web page along with \code{ndtv-d3} player, and displayed in a web browser as an interactive HTML5 SVG animation.
 
 The \code{ndtv-d3} player app is not a fully-featured R plot device.  It only attempts to emulate the elements of plot normally used by \code{\link{plot.network}} and it understands the graphic elements and a somewhat higher level so that it will be able to handle interaction with edge and vertex objects.
 
@@ -81,6 +81,9 @@ However,  \code{ndtv-d3} includes several nice features to support exploring the
 \item{pan and zoom into the network using the mouse-wheel}
 \item{click on vertices and edges to reveal their ids or abitrary text attached using the \code{vertex.tooltip} and \code{edge.tooltip} properties}
 }
+
+If passed a static network, by default only a single slice will be rendered and the time slider and controllers will be disabled. 
+
 Another advantage of \code{ndtv-d3} is that it does not require installing system libraries such as \code{ffmpeg} to render out the movie. 
 
 
@@ -153,9 +156,19 @@ This is a very preliminary draft implementation. The animations preform poorly i
 See also \code{\link{render.animation}}, \code{\link{compute.animation}}.
 }
 \examples{
-# render an svg animation of short.stergm.sim and open it in a browser
+# render an interactive SVG animation of short.stergm.sim and open it in a browser
 data(short.stergm.sim)
 render.d3movie(short.stergm.sim)
+
+# render a static network as interactive SVG with lots of html tooltip info
+data(emon)
+render.d3movie(emon[[5]],
+    vertex.tooltip=paste(emon[[5]]\%v\%'vertex.names',
+      emon[[5]]\%v\%'Command.Rank.Score',
+      emon[[5]]\%v\%'Sponsorship',
+      sep="<br>"),
+    edge.tooltip=paste('Frequency:',emon[[5]]\%e\%'Frequency'),
+    edge.lwd='Frequency')
 
 \dontrun{
 # this code chunk will embed in rmarkdown
