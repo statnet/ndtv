@@ -89,6 +89,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
       'vertex.label.css.class': null, // css class name applied to node label
       'vertex.css.style': null,       // css inline-style applied to node (UNIMPLIMENTED)
       'vertex.label.css.style': null, // css inline style applied to node label (UNIMPLEMENTED)
+      'image': null,                  // background image for vertex
     },
     edge: {
       'edge.lwd': 1,                  // width of vertex border stroke
@@ -662,19 +663,15 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
 
         var startNode = d.outl[type];
         var endNode = d.inl[type];
-        var x1 = n3.xScale(startNode.coord[0]);
-        var y1 = n3.yScale(startNode.coord[1]);
-        var x2 = n3.xScale(endNode.coord[0]);
-        var y2 = n3.yScale(endNode.coord[1]);
-        var edgeX = x2;
-        var edgeY = y2;
+        var startCoords = [n3.xScale(startNode.coord[0]), n3.yScale(startNode.coord[1])];
+        var endCoords = [n3.xScale(endNode.coord[0]), n3.yScale(endNode.coord[1])];
 
-        if(usearrows) {
-          var intersection = findNodeIntersection(n3, d.inl.id, [x1, y1], 1.7+ndtvProperties.graph.edgeOffset, start)
-          edgeX = intersection[0];        
-          edgeY = intersection[1];      
+        if(usearrows || ndtvProperties.graph.edgeOffset) {
+          var arrowOffset = usearrows ? scaleArrowheads(d)*d['edge.lwd'] : 0;
+          startCoords = findNodeIntersection(n3, d.outl.id, endCoords, ndtvProperties.graph.edgeOffset, start)
+          endCoords = findNodeIntersection(n3, d.inl.id, startCoords, arrowOffset+ndtvProperties.graph.edgeOffset, start)
         }
-        return 'M '+x1.toFixed(1)+' '+y1.toFixed(1)+' L '+edgeX.toFixed(1)+' '+edgeY.toFixed(1);     
+        return 'M '+startCoords[0].toFixed(1)+' '+startCoords[1].toFixed(1)+' L '+endCoords[0].toFixed(1)+' '+endCoords[1].toFixed(1);     
       }
     })
   }
@@ -713,6 +710,9 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     }
   }
 
+  var scaleArrowheads = function(d) {
+    return 6-2.5*Math.atan(d['edge.lwd']*.6)
+  }
   /** find the point at which a line drawn from a point to the center of a node intersects with the nodes border.
   * returns the coordinate, optionally applying an offset
   * @param {n3} n3 - the n3 object
@@ -944,7 +944,15 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     */
     var styleNodes = function(selection) {
       selection.style({
-        'fill': function(d, i) {return d['vertex.col']; },
+        // 'fill': function(d, i) {return d['vertex.col']; },
+        fill: function(d) {
+          if (d.image) { 
+            return 'url(#image_'+parseInt(d.id)+')'; 
+          } else {
+            return d['vertex.col'];
+          }
+        },
+
         'fill-opacity': function(d, i) {return d['vertex.col.fill-opacity']; },
         'stroke-width': function(d) {return d['vertex.lwd']; },
         'stroke': function(d) {return d['vertex.border']; },
@@ -962,6 +970,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
         .attr({
           class: function(d) { return 'node node_'+d.id+' '+(d['vertex.css.class'] || ''); },
           opacity: 0,
+          // fill: function(d) { return 'url(#image_'+d.id+')'; }
         })
         .call(styleNodes)
         .on('click', showInfo)
@@ -980,7 +989,36 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
         .transition()
         .duration(enterExitDuration)
         .attr('opacity', 1)
+
     }
+
+    var images = n3.domTarget.select('defs').selectAll('.node-image').data(d3.values(renderData.node).filter(function(d) { return d.image; }), function(n) { return n.id; })
+      images.enter()
+        .append('pattern').attr({
+        id: function(d) { return 'image_'+d.id; },
+        class: 'node-image',
+        viewBox:"0 0 100 100",
+        // preserveAspectRatio:"none", 
+        // 'patternUnits': 'userSpaceOnUse',
+        width: 10,
+        height:10
+      }).append('image').attr({
+        'xlink:href': function(d) { return d.image; },
+        width: 10,
+        height:10        
+      })
+
+      images.select('image').transition()
+        .delay(enterExitDuration)
+        .duration(updateDuration)
+        .attr({
+          'xlink:href': function(d) { return d.image; }
+        });
+
+      images.exit()
+        .transition()
+        .duration(enterExitDuration)
+        .remove(); 
 
     var nodes = n3.container.selectAll('.node').data(d3.values(renderData.node), function(e) { return e.id; })
 
@@ -1004,23 +1042,16 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
 
     if (renderData.graph.usearrows) {
       var markers = n3.domTarget.select('defs').selectAll('.arrowhead').data(d3.values(renderData.edge), function(e) { return e.id})
-        var markerContainer = markers.enter().append('marker').attr({
+        markers.enter().append('marker').attr({
           id: function(d) { return 'arrowhead_'+d.id; },
           class: 'arrowhead',
-          viewBox: "0 -2.5 5 5",
-          refX: 3.3,
-          refY: 0,
+          viewBox: "0 -1 2 2",
+          markerWidth: scaleArrowheads,
+          markerHeight: scaleArrowheads,
           orient: "auto",
-        })
-        // markerContainer.append("svg:polygon")
-        //   .attr({
-        //     points: "-5,-5 -5,5 5,5 5,-5",
-        //     fill: renderData.graph.bg
-        //   })
-
-        markerContainer.append("svg:path")
+        }).append("svg:path")
           .attr({
-            d: "M0,-2.5L5,0L0,2.5",
+            d: "M0,-1L2,0L0,1",
             fill: 'green'
           });
 

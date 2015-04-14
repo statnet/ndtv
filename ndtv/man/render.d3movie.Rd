@@ -80,6 +80,7 @@ However,  \code{ndtv-d3} includes several nice features to support exploring the
 \item{time slider for jumping and 'scrubing' to parts of the movie}
 \item{pan and zoom into the network using the mouse-wheel}
 \item{click on vertices and edges to reveal their ids or abitrary text attached using the \code{vertex.tooltip} and \code{edge.tooltip} properties}
+\item{double-click on a vertex to highlight all of the connected edges and vertices}
 }
 
 If passed a static network, by default only a single slice will be rendered and the time slider and controllers will be disabled. 
@@ -120,7 +121,7 @@ There are a few special plot parameters that are only supported by \code{render.
 \item{\code{vertex.label.css.class} properties for adding arbitrary class attributes for use in CSS styling of vertex labels}
 }
 
-ndtv-d3 has its own configuration properties, shown below with their default properties. Values which are set to \code{NULL} or omitted will be set to the ndtv-d3 player defaults.  
+ndtv-d3 has its own configuration properties passed in via the \code{d3.options} argument list, shown below with their default properties. Values which are set to \code{NULL} or omitted will be set to the ndtv-d3 player defaults.  
 
 \itemize{
    \item{\code{animationDuration=800}}{ Duration (milliseconds) of each animation step during play or step actions}
@@ -131,7 +132,7 @@ ndtv-d3 has its own configuration properties, shown below with their default pro
    \item{\code{slider=TRUE}}{ Show the time slider control}
    \item{\code{margin=list(x=20,y=10)}}{ SVG margins - may be overridden when setting fixed aspect ratio }
    \item{\code{debugFrameInfo=FALSE}}{Show the slice timing info in corner}
-  \item{\code{debugDurationControl=FALSE}}{Show a control to change speed of animation}
+  \item{\code{durationControl=TRUE}}{Show a control to change speed of animation under the menu in the upper right corner}
 }
 
 }

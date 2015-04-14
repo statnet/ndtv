@@ -1,6 +1,7 @@
 importFrom(sna,geodist)
 import(statnet.common, network, networkDynamic, animation)
 import(jsonlite)
+import(base64)
 
 export(
 render.animation,

@@ -8,6 +8,9 @@
 #  Copyright 2014 Statnet Commons
 #######################################################################
 
+## set ndtv-d3 version number as an option for debugging
+options('ndtv-d3-version'="v0.2-9-g1e331c9")  # git describe --tags
+
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out
 #optionally save it directly to a file
@@ -319,9 +322,10 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     cacheFile<-tempfile(fileext = '.html')
     renderD3Html(cacheFile,out,d3.options,scriptType=script.type)
     # emit the html for markdown, etc
-    cat('<iframe style="width: 100%; height: 500px;" src="data:text/html;charset=utf-8,')
-    #cat(gsub('"','&quot;',readChar(cacheFile,1e6)))
-    cat(URLencode(readChar(cacheFile,1e6)))
+    cat('<iframe style="width: 100%; height: 500px;" src="data:text/html;base64,')
+    cache64<-tempfile(fileext = '.base64')
+    base64::encode(input=cacheFile,output=cache64)
+    cat(readChar(cache64,1e6))
     cat('"></iframe>') 
   }
   

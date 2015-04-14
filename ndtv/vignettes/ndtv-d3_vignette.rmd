@@ -1,7 +1,7 @@
 ---
 title: "ndtv-d3 vignette"
-author: "skyebend"
-date: "10/19/2014"
+author: "Skye Bender-deMoll (skyebend@uw.edu)"
+date: "2015-4-13"
 output:
   html_document:
     toc: true
@@ -12,7 +12,7 @@ output:
 <!-- to render out this file for preview when not using RStudio:  rmarkdown::render('vignettes/ndtv-d3_vignette.rmd') -->
 
 ## What is ndtv-d3? ##
-The `ndtv-d3` project is a d3-based HTML5 network animation player for the `ndtv` package. It makes it possible to view and share interactive network animations in a web browser, without needing to install any external tools. 
+The `ndtv-d3` project is a d3-based HTML5 network animation player for the `ndtv` R package. It makes it possible to view and share interactive network animations in a web browser, without needing to install any external tools. 
 
 ## Most basic version in browser ##
 
@@ -44,6 +44,7 @@ render.d3movie(short.stergm.sim,filename='short.stergm.html',launchBrowser=FALSE
 
 
 In general, `render.d3movie` uses the same graphics control arguments as `plot.network` and operates similarly to `render.animation`.  See `?render.d3movie` for more detailed description of supported arguments. 
+
 
 
 ## EpiModel simulation example + embedding reults in an rmarkdown document##
@@ -108,11 +109,88 @@ render.d3movie(
   output.mode='inline')
 ```
 
-The output will appear as blank pane in the RStudio viewer, but works fine when viewed in a browser (Chrome is best/fastest).   
+The output will appear as blank pane in the RStudio viewer, but works fine when viewed in a browser (Chrome is best/fastest)
 
+## Refining the layout ##
+
+Just as for the `render.animation` function, if you want more control over the layout process, you can call `compute.animation` to first cache the layout positions in the network.  For example, the MDSJ layout often gives much more stable layouts than the default KamadaKaway layout, and we can select it with the `animation.mode` argument (assuming you have java installed).  We can also step through the layouts in reverse order to try and make it so the isolates won't bounce around quite so much. 
+
+```{r}
+compute.animation(nw.sim,animation.mode = 'MDSJ', chain.direction='reverse')
+```
+
+Then we call the render command as before.  But this time, lets render it in a browser, and tell it not to embed all of the the source files and instead load them remotely.  (This means the file size will be much smaller, but a network connection will be necessary to view the web page)
+
+```{r}
+render.d3movie(
+  nw.sim,
+  render.par = render.par,
+  plot.par = plot.par,
+  vertex.cex = 0.9,
+  vertex.col = "ndtvcol",
+  edge.col = "darkgrey",
+  vertex.border = "lightgrey",
+  displaylabels = FALSE,
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')},script.type='remoteSrc')
+```
+
+## Customizing the player ##
+
+As the help page `?render.d3movie` indicates, there are several options than can be passed in to control the behavior of the player in the web browser via the `d3.options` argument list.  For example, we could set it to starting playing the movie immediately when the page loads (`animateOnLoad`), speed up the animation (`animationDuration`), and hide the timeline-slider controls (`slider`) in favor of just displaying the slice time in the lower left corner.
+
+```{r}
+render.d3movie(
+  nw.sim,
+  d3.options=list(animateOnLoad=TRUE,animationDuration=100,slider=FALSE,debugFrameInfo=TRUE),
+  render.par = render.par,
+  plot.par = plot.par,
+  vertex.cex = 0.9,
+  vertex.col = "ndtvcol",
+  edge.col = "darkgrey",
+  vertex.border = "lightgrey",
+  displaylabels = FALSE,
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')},script.type='remoteSrc')
+```
+
+Or in the opposite direction, we can slow everything down, and increase the fraction of each time step used for "enter" and "exit" animations for edges and vertices. So in this version, you should be able to clearly see new edges fade in colored green, and the "dying" edges flash red before they they fade away.
+
+```{r}
+render.d3movie(
+  nw.sim,
+  d3.options=list(animationDuration=2000,enterExitAnimationFactor=0.5),
+  render.par = render.par,
+  plot.par = plot.par,
+  vertex.cex = 0.9,
+  vertex.col = "ndtvcol",
+  edge.col = "darkgrey",
+  vertex.border = "lightgrey",
+  displaylabels = FALSE,
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')},script.type='remoteSrc')
+```
+
+Note that unless you explicitly disable it with `durationControl=FALSE`, there is an "Animation Duration" slider availible in the menu in the upper right corner of the player which will allow the user to adjust the playback speed on the fly. 
+
+## Interaction for static networks ##
+
+Why should dynamic networks have all the fun? There are certainly situations where it is nice to be able to add the zooming, clickable inspection and annotation tools to display a static network on a web page.  (See also the CRAN package `networkD3` for similar functionality).  If you pass `render.d3movie` a static network, it will go ahead and display it, but just hide the time slider and play controls (by default).
+
+```{r}
+data(emon)
+render.d3movie(emon[[5]],
+    vertex.tooltip=paste("<strong>",emon[[5]]%v%'vertex.names',"</strong><br>",
+      "Decision Rank Score:",emon[[5]]%v%'Decision.Rank.Score',"<br>",
+      "Command Rank Score:",emon[[5]]%v%'Command.Rank.Score',"<br>",
+      "Formalization:",emon[[5]]%v%'Formalization',"<br>",
+      "Location:",emon[[5]]%v%'Location',"<br>",
+      "Sponsorship:",emon[[5]]%v%'Sponsorship',"<br>"),
+    edge.tooltip=paste('Frequency:',emon[[5]]%e%'Frequency'),
+    edge.lwd='Frequency')
+```
+
+Note the use of HTML tags like `<br>` (line break)
 
 ## Some techincal notes ##
-The `ndtv-d3` player displays a copy of the dynamic network and its rendering information that have been cached in a JSON-formatted file. The network is rendered as an HTML5 SVG object and animated using the d3 (d3js.org) and JQuery Javascript libraries. 
+The `ndtv-d3` player (https://github.com/michalgm/ndtv-d3)displays a copy of the dynamic network and its rendering information that have been cached in a JSON-formatted file. The network is rendered as an HTML5 SVG object and animated using the d3 (http://d3js.org) and JQuery Javascript libraries. 
 
 The default option is to save all of the scripts, data and external javascript libraries embeded in a single html file. This means that HTML page should remain fully portable and will can be viewd without an internet connection. But we should explore better designs for including multiple animations in a single document, deploying on the web, etc. 
 

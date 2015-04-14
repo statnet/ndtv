@@ -77,3 +77,9 @@ render.d3movie(test,filename=tempfile(fileext = 'html'),edge.lwd=10,launchBrowse
 
 # test transparent edge color
 render.d3movie(test,filename=tempfile(fileext = 'html'),edge.col='#CCCCCC22',edge.lwd=10,launchBrowser=showInBrowser)
+
+
+# test static network
+testStatic<-network.initialize(4)
+testStatic[1,2:3]<-1
+render.d3movie(testStatic)
