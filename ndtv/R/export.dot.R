@@ -100,18 +100,18 @@ function(x,file="",coords=NULL,all.dyads=FALSE,vert.attrs=NULL,edge.attrs=NULL){
 # documented here: http://www.graphviz.org/content/output-formats#dplain
 
 # this function parses the output above and returns a two-column coordinate matrix
-parseCoordsFromGraphvizPlain<-function(text){
+parseCoordsFromGraphvizPlain<-function(text,dim=2){
   coords<-NULL
   # grab all the rows that start with 'node'
   nodeLines<-grep("^node",text,value=TRUE)
   # check for 0-vertex net
   if (length(nodeLines)>0){
     # split on spaces and grab the 3rd and 4th elements
-    nodeLines<-lapply(nodeLines,function(line){strsplit(line,split=" ")[[1]][3:4]})
+    nodeLines<-lapply(nodeLines,function(line){strsplit(line,split=" ")[[1]][2+seq.int(dim)]})
     # reformat into matrix
-    coords<-matrix(as.numeric(unlist(nodeLines)),ncol=2,byrow=TRUE)
+    coords<-matrix(as.numeric(unlist(nodeLines)),ncol=dim,byrow=TRUE)
   } else {
-    coords<-matrix(0,nrow=0,ncol=2)
+    coords<-matrix(0,nrow=0,ncol=dim)
   }
   
   if(is.null(coords)){

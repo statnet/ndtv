@@ -168,6 +168,13 @@ if (!is.null(ndtv:::check.mdsj()) ){
   activate.edge.attribute(wtest,'len',0.1,onset=5,terminus=10,e=3)
   
   compute.animation(wtest,animation.mode = 'MDSJ',weight.attr='len')
+
+ # dests for changing dimensions of MDSJ layout
+test<-network.initialize(10)
+dim2mat<-network.layout.animate.MDSJ(test,layout.par=list(dimensions=2))
+expect_equal(dim(dim2mat),c(10,2))
+dim1mat<-network.layout.animate.MDSJ(test,layout.par=list(dimensions=1))
+expect_equal(dim(dim1mat),c(10,1))
 }
 
 

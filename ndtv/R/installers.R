@@ -37,7 +37,7 @@ check.mdsj <-function(){
       #  how will this work during automated test?
       # "In non-interactive use the result is as if the response was RETURN and the value is ""."
       
-      n <- readline("Do you want to download and install the MDSJ Java library? (y/N): ")
+      n <- readline("Do you want to automatically download and install the MDSJ Java library? (y/N): ")
       if (n%in%c('y','Y',"Yes","yes")){
         install.mdsj(mdsj.dir)
         if(!file.exists(mdsj.path)){

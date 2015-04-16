@@ -30,7 +30,7 @@ network.layout.animate.kamadakawai <-function(net, dist.mat=NULL, default.dist=N
 # If your package is non-commercial, I see no problem in including MDSJ in your implementation.
 # Please feel free to contact me regarding technical MDS issues 
 
-network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,seed.coords=NULL, layout.par=list(max_iter=50),verbose=TRUE){
+network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,seed.coords=NULL, layout.par=list(max_iter=50,dimensions=2),verbose=TRUE){
   # check that mdsj library can be located
   mdsj.path <- check.mdsj()
   
@@ -42,6 +42,10 @@ network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,see
   
   n <- network.size(net)
   max_iter <- 50 #layout.par$max_iter
+  dim<-2  # default to two dimeions
+  if (!is.null(layout.par$dimensions)){  # if dimensions specified in layout par, grab 'em
+    dim<-as.numeric(layout.par$dimensions)
+  }
   #if seed.coord already set in layoutpar, overide
   if (is.null(dist.mat)){
     dist.mat <- layout.distance(net,default.dist=default.dist)
@@ -53,7 +57,11 @@ network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,see
   coord.file <- tempfile("coords",fileext=".txt")
   write.matrix(dist.mat,file=filename)
   if (!is.null(seed.coords)){
-    write.table(seed.coords,file=coord.file,col.names=FALSE,row.names=FALSE)
+    # limit seeds coords to the specified number of dimensions
+    if(ncol(seed.coords)!=dim){
+      warning('Dimensions of seed coord matrix does not match dimensions specified in layout.par ',dim,'. Only the first ',dim,' columns will be used.')
+    }
+    write.table(seed.coords[,seq.int(dim)],file=coord.file,col.names=FALSE,row.names=FALSE)
   } else {
     coord.file <- ""
   }
@@ -61,10 +69,15 @@ network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,see
   if (.Platform$OS.type=='windows'){
     sep<-';'
   }
+  verbosity<-0  # make a verbose flag for java
+  if(verbose){
+    verbosity<-1
+  }
+ 
   #command = paste("java -jar",mdsjpath,"-e-2",filename)
   #TODO java classpath is platform dependent, need to modify?  
   #/home/skyebend/SNA_health:/home/skyebend/SNA_health/mdsj.jar MDSJWrapper  
-  command = paste("java -cp ",paste(mdsj.path,file.path(mdsj.path,"mdsj.jar"),sep=sep),"MDSJWrapper", n,max_iter,filename,coord.file)
+  command = paste("java -cp ",paste(mdsj.path,file.path(mdsj.path,"mdsj.jar"),sep=sep),"MDSJWrapper", n,dim,verbosity,max_iter,filename,coord.file)
   #print(command)
   output <- system(command,intern=TRUE)
   if(verbose){
@@ -77,9 +90,10 @@ network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,see
   #NEED TO CHECK FOR ERROR
   #only grab the last n lines
   coords <- NULL
-  if(length(output)>n){
-    coords <- matrix(data=as.numeric(unlist(strsplit(output[(length(output)-nrow(dist.mat)+1):length(output)]," "))),ncol=2,byrow=TRUE)
+  if(length(output)>=n){
+    coords <- matrix(data=as.numeric(unlist(strsplit(output[(length(output)-nrow(dist.mat)+1):length(output)]," "))),ncol=dim,byrow=TRUE)
   } else {
+    # something must be wrong, so print the output (unless it would already have been printed)
     if (!verbose){print(output)}
     error=stop("Unable to parse coordinates returned MDSJ java code")
   }

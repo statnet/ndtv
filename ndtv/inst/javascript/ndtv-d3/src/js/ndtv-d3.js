@@ -71,8 +71,8 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
       usearrows: true,                // should arrows be drawn on edges?
       xlim: null,                     // range of x values                     
       ylim: null,                     // range of y values  
-      edgeOffset: 0,                  // range of y values  
-      tooltipOffset: 0,               // range of y values  
+      edgeOffset: 0,                  // offset of edge length to vertex borders  
+      tooltipOffset: 0,               // offset of tooltips to vertex borders 
     }, 
     node: {
       coord: null,                    // coordinates for nodes
@@ -85,6 +85,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
       'vertex.rot': 0,                // rotation for vertex polygon
       'vertex.tooltip': '',           // vertex tooltip value
       'vertex.border': '#000',        // color of vertex border stroke
+      'vertex.lwd': 1,                // width of vertex border stroke
       'vertex.css.class': null,       // css class name applied to node
       'vertex.label.css.class': null, // css class name applied to node label
       'vertex.css.style': null,       // css inline-style applied to node (UNIMPLIMENTED)
@@ -92,7 +93,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
       'image': null,                  // background image for vertex
     },
     edge: {
-      'edge.lwd': 1,                  // width of vertex border stroke
+      'edge.lwd': 1,                  // width of edge stroke
       'edge.col': '#000',             // edge stroke color
       'edge.tooltip': null,           // edge tooltip value
       'edge.css.class': null,         // css class name applied to edge
@@ -128,8 +129,8 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
       slider:null,
       nodeCoords: {},
       options: {}
-    }
-
+    
+}
     //initialize class globals
     $.extend(true, n3, globals);
 
@@ -571,6 +572,9 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
                 itemProperties[opacityProp] = rgba[2];
               }
             }
+            // if (property == 'edge.lwd') {
+              // value = id*0.2;
+            // }
             // if (property == 'edge.col' || property == 'vertex.col' || property == 'label.col') {
             //   value = type == 'edge' ? color(time) : color(time+1);
             // }
@@ -659,7 +663,6 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     selection.attr({
       d: function(d) {
         var type = start ? 'startCoords' : 'coords';
-        var pointsType = start ? 'points': 'prevPoints'; 
 
         var startNode = d.outl[type];
         var endNode = d.inl[type];
@@ -671,6 +674,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
           startCoords = findNodeIntersection(n3, d.outl.id, endCoords, ndtvProperties.graph.edgeOffset, start)
           endCoords = findNodeIntersection(n3, d.inl.id, startCoords, arrowOffset+ndtvProperties.graph.edgeOffset, start)
         }
+        d['currentCoords'] = [startCoords, endCoords];
         return 'M '+startCoords[0].toFixed(1)+' '+startCoords[1].toFixed(1)+' L '+endCoords[0].toFixed(1)+' '+endCoords[1].toFixed(1);     
       }
     })
@@ -690,6 +694,9 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
   * @param {number} - the offset amount (as length of line)
   * @private */
   var offsetLine = function(pointA, pointB, offset) {
+    pointA = pointA.map(parseFloat);
+    pointB = pointB.map(parseFloat);
+
     var xlen = pointB[0] - pointA[0];
     var ylen = pointB[1] - pointA[1];
 
@@ -986,6 +993,18 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
           n3.moveTooltip();
           d3.event.stopPropagation();
         })
+        .on('mouseover', function(d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style('stroke-width', d['vertex.lwd']+5);
+        })
+        .on('mouseout', function(d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style('stroke-width', d['vertex.lwd']);
+        })
         .transition()
         .duration(enterExitDuration)
         .attr('opacity', 1)
@@ -1087,6 +1106,24 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
         })
         .call(n3.drawEdge, n3, renderData.graph.usearrows, 1)
         .on('click', showInfo)
+        .on('mouseover', function(d) {
+          var edge = d3.select(this);
+          var line = 'M '+d.currentCoords[0][0].toFixed(1)+' '+d.currentCoords[0][1].toFixed(1)+' L '+d.currentCoords[1][0].toFixed(1)+' '+d.currentCoords[1][1].toFixed(1);
+          if (renderData.graph.usearrows) {
+            var offsetPoints = offsetLine([d.currentCoords[0][0], d.currentCoords[0][1]], [d.currentCoords[1][0], d.currentCoords[1][1]], (scaleArrowheads(d)*5));
+            line = 'M '+d.currentCoords[0][0].toFixed(1)+' '+d.currentCoords[0][1].toFixed(1)+' L '+offsetPoints[0].toFixed(1)+' '+offsetPoints[1].toFixed(1);     
+          }
+          edge.transition()
+            .duration(200)
+            .style('stroke-width', d['edge.lwd']+5)
+            .attr('d', line);
+        })
+        .on('mouseout', function(d) {
+          d3.select(this).transition()
+            .duration(200)
+            .style('stroke-width', d['edge.lwd'])
+            .call(n3.drawEdge, n3, renderData.graph.usearrows, false)
+        })
         .transition()
         .duration(enterExitDuration)
         .attr({opacity: 1})

@@ -368,17 +368,17 @@ renderD3ScriptIncludes<-function(filename,ndtvD3BaseUrl,scriptType='embedded'){
   } else if (scriptType=='remoteSrc'){
     # include links for remote web urls for scripts
     cat("<!-- css for styling the d3.slider lib -->
-      <link rel='stylesheet' href='http://michalgm.github.io/ndtv-d3/src/lib/d3.slider.css' />
+      <link rel='stylesheet' href='http://statnet.github.io/ndtv-d3/src/lib/d3.slider.css' />
       <!-- css for styling the ndtv-d3 render and components -->
-      <link rel='stylesheet' href='http://michalgm.github.io/ndtv-d3/src/css/styles.css' />
+      <link rel='stylesheet' href='http://statnet.github.io/ndtv-d3/src/css/styles.css' />
       <!-- minimized d3.js library -->
       <script src='http://d3js.org/d3.v3.min.js' charset='utf-8'></script>
       <!-- minimized jquery js library -->
       <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
       <!-- d3.slider.js library -->
-      <script src='http://michalgm.github.io/ndtv-d3/src/lib/d3.slider.js'></script>
+      <script src='http://statnet.github.io/ndtv-d3/src/lib/d3.slider.js'></script>
       <!-- ndtv-d3 js code -->
-      <script src='http://michalgm.github.io/ndtv-d3/src/js/ndtv-d3.js'></script>",file=filename,append=TRUE)
+      <script src='http://statnet.github.io/ndtv-d3/src/js/ndtv-d3.js'></script>",file=filename,append=TRUE)
   } else {
     stop('unknown script setup option, scripts not included ')
   }

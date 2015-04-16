@@ -117,7 +117,7 @@ There are a few special plot parameters that are only supported by \code{render.
 \item{\code{vertex.tooltip}}{ arbitrary text or html to be displayed when a vertex is clicked (default is the vertex id)}
 \item{\code{edge.tooltip}}{ arbitrary text or html to be displayed when an edge is clicked (default is the edge id)}
 \item{\code{vertex.css.class} properties for adding arbitrary class attributes for use in CSS styling of vertices}
-\item{\code{vertex.edge.class} properties for adding arbitrary class attributes for use in CSS styling of edges}
+\item{\code{edge.css.class} properties for adding arbitrary class attributes for use in CSS styling of edges}
 \item{\code{vertex.label.css.class} properties for adding arbitrary class attributes for use in CSS styling of vertex labels}
 }
 
@@ -142,7 +142,7 @@ If \code{output.mode='JSON'}, a JSON file will be generated including a section 
 If \code{output.mode='inline'}, HTML code for an iframe elment suitible for embedding in markdown documents will be printed, all other output supressed.  
 }
 \references{
-The github repository for the ndtv-d3 javascript library is \url{https://github.com/michalgm/ndtv-d3/}
+The github repository for the ndtv-d3 javascript library is at \url{https://github.com/statnet/ndtv-d3/} (which is the statnet release fork of \url{https://github.com/michalgm/ndtv-d3/})
 }
 \author{
 skyebend

@@ -29,12 +29,12 @@
 
 .node, .edge {
   cursor: pointer;
-  transition: stroke-width 0.2s ease;
+  /*transition: stroke-width 0.2s ease;*/
 }
 
-.node:hover, .edge:hover {
+/*.node:hover, .edge:hover {
   stroke-width: 5px !important;
-}
+}*/
 
 .edge {
   stroke: black;
