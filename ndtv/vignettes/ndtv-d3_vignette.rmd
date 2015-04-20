@@ -12,7 +12,7 @@ vignette: >
 <!-- to render out this file for preview when not using RStudio:  rmarkdown::render('vignettes/ndtv-d3_vignette.rmd') -->
 
 ## What is ndtv-d3? ##
-The `ndtv-d3` project is a d3-based HTML5 network animation player for the `ndtv` R package. It makes it possible to view and share interactive network animations in a web browser, without needing to install any external tools for rendering video. 
+The `ndtv-d3` project is a network animation player for the `ndtv` R package. It makes it possible to view and share interactive network animations in a modern web browser without needing to install any external tools for rendering video.
 
 ## Quick start: Display movie in a web browser ##
 
@@ -31,59 +31,42 @@ Render the animation as an html file, open it in an external browser window. Pas
 render.d3movie(short.stergm.sim,displaylabels=TRUE)
 ```
 
-This will call `compute.animation` to figure out the positions, and then export the animation as javascript data embedded in an HTML file. The animation should launch in new browser window displaying the ndtv-d3 player app with the animation inside it. 
+This will call `compute.animation` to figure out the positions, and then export the animation as Javascript data embedded in an HTML file. The animation should launch in new browser window displaying the ndtv-d3 player app with the animation inside it. 
 
-Notice that you can **zoom** (with the mousewheel), **pan** (drag the background) and **click** on the vertices and edges to display their ids.  **Double clicking** on a vertix will highlight that vertex and its neighbors. 
+Notice that you can **zoom** (with the mouse-wheel), **pan** (drag the background) and **click** on the vertices and edges to display their ids.  **Double clicking** on a vertex will highlight that vertex and its neighbors. 
 
-In general, `render.d3movie` uses the same graphics control arguments as `plot.network` and operates similarly to `render.animation`.  See `?render.d3movie` for more detailed description of supported arguments. 
+In general, `render.d3movie` uses the same graphics control arguments as `plot.network` and operates similarly to `render.animation`.  However, see `?render.d3movie` for more detailed description of supported arguments, as they are not all fully supported at this time.
+
+For more information on how to convert various types of data (lists of matrices, timed edge lists, etc) into `networkDynamic` objects, see the R help page `?networkDynamic` and the associated networkDynamic package vignette `browseVignettes(package='networkDynamic')`.
 
 
 ## EpiModel simulation example + embedding reults in an rmarkdown document##
 
-For a more complex example, we can set up one of Sam Jeness's basic epidemic simulation models using the EpiModel package.  Scroll all the way to the bottom for the fun stuff...
+For a more complex example, we can render the example data from one of Sam Jenness' basic epidemic simulation models create the EpiModel package.  The \code{\link{toy_epi_sim}} object is distributed with the \code{ndtv} package as an example data set.   For this version we will also set the time aggregation intervals (\code{slice.par}) and  additional rendering parameters. 
 
-### Run an EpiModel simulation ###
+### Load and configure data ###
 
 ```{r,results='hide',message=FALSE}
 
-library(EpiModel)
+# Load a toy epidemic simulation model created by EpiModel
+data(toy_epi_sim)
 
-## Network Estimation (using a tergm model)
-nw <- network.initialize(n = 100, directed = FALSE)
-formation <- ~ edges
-target.stats <- 50
-dissolution <- ~ offset(edges)
-coef.diss <- dissolution_coefs(dissolution, duration = 10)
-est <- netest(nw,
-              formation,
-              dissolution,
-              target.stats,
-              coef.diss,
-              verbose = FALSE)
-
-## Epidemic simulation
-param <- param.net(inf.prob = 0.8)
-init <- init.net(i.num = 5)
-control <- control.net(type = "SI", nsteps = 25, nsims = 1, verbose =
-                         FALSE)
-sim <- netsim(est, param, init, control)
-
-## Use some of EpiModel's default coloring functions
-nw.sim <- get_network(sim)
-nw.sim <- color_tea(nw.sim)
-
+# define time intervals for animation
 slice.par <- list(start = 1, end = 25, interval = 1,
                   aggregate.dur = 1, rule = "any")
+# define animation parameters
 render.par <- list(tween.frames = 10, show.time = FALSE)
 plot.par <- list(mar = c(0, 0, 0, 0))
 
-# compute the animation coordinates
-compute.animation(nw.sim, slice.par = slice.par)
+# pre-compute the animation coordinates
+compute.animation(toy_epi_sim, slice.par = slice.par)
 ```
 
-### Include animation output in Rmarkdown document ###
+Now we are ready to render out the animation. 
 
-The ndtv-d3 player object can be rendered inside an iframe in the rmarkdown document. The `render.d3movie` command must have `output.mod='inline'` to tell it to spit out the content directly instead of saving it to an external HTML file.  We also need to set the markdown chunk argument for to `result='asis'` so that Knitr will pass through the HTML from ndtv "as is"" without modification.  
+### Render animation output for inclusion in an Rmarkdown document ###
+
+The ndtv-d3 player object can be rendered inside an iframe in the rmarkdown document. The `render.d3movie` command must have `output.mod='inline'` to tell it to spit out the content directly instead of saving it to an external HTML file.  We also need to set the markdown chunk argument for to `result='asis'` so that Knitr will pass through the HTML from ndtv "as is" without modification.  
 
 We can pass in some standard network.plot commands, and a functional command to generate interactive html tooltips to be displayed when the vertices are clicked on. 
 
@@ -92,7 +75,7 @@ The output will appear as blank pane in the RStudio viewer, but works fine when 
 
 ```{r,results='asis'}
 render.d3movie(
-  nw.sim,
+  toy_epi_sim,
   render.par = render.par,
   plot.par = plot.par,
   vertex.cex = 0.9,
@@ -100,20 +83,27 @@ render.d3movie(
   edge.col = "darkgrey",
   vertex.border = "lightgrey",
   displaylabels = FALSE,
-  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')},
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>',
+                                         'status:', slice%v%'testatus')},
   output.mode='inline')
 ```
 
+The animation will show the vertices changing color as the "infection" gradually spreads across the network. Clicking on a vertex will give the its ID and infection status.
+
 ## Save HTML+SVG movie output in a file for online embedding ##
+
+There are additional output options to support saving and distributing the network animation. 
 
 ### Basic web embedding (i.e. blog post) 
 
 Perhaps you are working on a blog post or webpage and you would like to embed a network movie in it. Probably the best way to do this is to render out the movie HTML+SVG into a file, upload that to your server, and then include the page inside an `iframe` HTML tag. 
 
-The command below sets a specific filename (instead of `tempfile()`), avoids automatically opening the file in the web browser, and specifies that the javascript source files should not be embeded and should instead load be loaded remotely.  (This means the file size will be much smaller, of course a network connection will be necessary to view the web page)
+The command below sets a specific file name (instead of `tempfile()`), avoids automatically opening the file in the web browser, and specifies that the Javascript source files should not be embedded and should instead load be loaded remotely.  (This means the file size will be much smaller, of course a network connection will be necessary to view the web page)
 
 ```{r,results='hide',message=FALSE}
-render.d3movie(short.stergm.sim,filename='short.stergm.html',launchBrowser=FALSE, script.type='remoteSrc')
+render.d3movie(short.stergm.sim,filename='short.stergm.html',
+                                launchBrowser=FALSE, 
+                                script.type='remoteSrc')
 ```
 
 After uploading the file, you could include it in your blog post with code like this:
@@ -124,7 +114,7 @@ Hey, this is a blog post, and below is a movie illustrating my dynamic network.
 ```
 
 ### Advanced embedding (for web deveopers) ###
-If you don't want to use an `iframe`, and are buidling your own web page from scratch you should include the scripts in your page header and embed the animation in a regular `div`. 
+If you don't want to use an `iframe`, and are building your own web page from scratch you should include the scripts in your page header and embed the animation in a regular `div`. 
 
 Here is an example template for a web-accessible page.
 ```
@@ -162,26 +152,26 @@ Here is an example template for a web-accessible page.
 </html>
 ```
 
-In the example above, you would replace the value of the empty `var graphData = {}` with the JSON output produced by `render.d3movie(myMovie,filename='myFile.json',output.mode = 'JSON')`  Additional examples for using and configuring the js library are at https://github.com/statnet/ndtv-d3/.  
+In the example above, you would replace the value of the empty `var graphData = {}` with the JSON output produced by `render.d3movie(myMovie,filename='myFile.json',output.mode = 'JSON')`  Additional examples for using and configuring the Javascript library are at https://github.com/statnet/ndtv-d3/.  
 
-Don't forget that because the output is SVG and is part of the DOM, you can style it with css and directly interact with it using javascript!  The `render.d3movie` function includes special plot parameters for automatically adding arbitrary css class attributes to the graph to simplifly css styling: `vertex.css.class`, `edge.css.class`, `vertex.label.css.class`.  
+Don't forget that because the output is SVG and is part of the DOM, you can style it with CSS and directly interact with it using Javascript!  The `render.d3movie` function includes special plot parameters for automatically adding arbitrary CSS class attributes to the graph to simplify CSS styling: `vertex.css.class`, `edge.css.class`, `vertex.label.css.class`.  
 
 
 
 ## Refining the layout ##
 
-Just as for the `render.animation` function, if you want more control over the layout process, you can call `compute.animation` to first cache the layout positions in the network.  For example, the MDSJ layout often gives much more stable layouts than the default KamadaKawai layout, and we can select it with the `animation.mode` argument (assuming you have java installed, it may prompt you to install MDSJ).  We can also step through the layouts in reverse order to try and make it so the isolates won't bounce around quite so much. 
+Just as for the `render.animation` function, if you want more control over the layout process, you can call `compute.animation` to first cache the layout positions in the network.  For example, the MDSJ layout often gives much more stable layouts than the default Kamada-Kawai layout, and we can select it with the `animation.mode` argument (assuming you have java installed, it may prompt you to install MDSJ).  We can also step through the layouts in reverse order to try and make it so the isolates won't bounce around quite so much. 
 
-```{r,message=FALSE,warning=FALSE}
-compute.animation(nw.sim,animation.mode = 'MDSJ', chain.direction='reverse')
+```{r,eval=FALSE}
+compute.animation(toy_epi_sim,animation.mode = 'MDSJ', chain.direction='reverse',verbose=FALSE)
 ```
 
 
 Then we call the render command as before.  But this time, lets render it in a browser.
 
-```{r, message=FALSE}
+```{r, eval=FALSE}
 render.d3movie(
-  nw.sim,
+  toy_epi_sim,
   render.par = render.par,
   plot.par = plot.par,
   vertex.cex = 0.9,
@@ -189,7 +179,8 @@ render.d3movie(
   edge.col = "darkgrey",
   vertex.border = "lightgrey",
   displaylabels = FALSE,
-  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')})
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>',
+                                         'status:', slice%v%'testatus')})
 ```
 
 ## Customizing the player ##
@@ -198,7 +189,7 @@ As the help page `?render.d3movie` indicates, there are several options than can
 
 ```{r, message=FALSE}
 render.d3movie(
-  nw.sim,
+  toy_epi_sim,
   d3.options=list(animateOnLoad=TRUE,animationDuration=100,slider=FALSE,debugFrameInfo=TRUE),
   render.par = render.par,
   plot.par = plot.par,
@@ -207,14 +198,15 @@ render.d3movie(
   edge.col = "darkgrey",
   vertex.border = "lightgrey",
   displaylabels = FALSE,
-  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')})
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>',
+                                         'status:', slice%v%'testatus')})
 ```
 
 Or in the opposite direction, we can slow everything down, and increase the fraction of each time step used for "enter" and "exit" animations for edges and vertices. So in this version, you should be able to clearly see new edges fade in colored green, and the "dying" edges flash red before they they fade away.
 
 ```{r, message=FALSE}
 render.d3movie(
-  nw.sim,
+  toy_epi_sim,
   d3.options=list(animationDuration=2000,enterExitAnimationFactor=0.5),
   render.par = render.par,
   plot.par = plot.par,
@@ -223,16 +215,17 @@ render.d3movie(
   edge.col = "darkgrey",
   vertex.border = "lightgrey",
   displaylabels = FALSE,
-  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>','status:', slice%v%'testatus')})
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>',
+                                         'status:', slice%v%'testatus')})
 ```
 
-Note that unless you explicitly disable it with `durationControl=FALSE`, there is an "Animation Duration" slider availible in the menu in the upper right corner of the player which will allow the user to adjust the playback speed on the fly. 
+Note that unless you explicitly disable it with `durationControl=FALSE`, there is an "Animation Duration" slider available in the menu in the upper right corner of the player which will allow the user to adjust the playback speed on the fly. 
 
 ## Interaction for static networks ##
 
 Why should dynamic networks have all the fun? There are certainly situations where it is nice to be able to add the zooming, clickable inspection and annotation tools to display a static network on a web page.  (See also the CRAN package `networkD3` for similar functionality).  If you pass `render.d3movie` a static network, it will go ahead and display it, but just hide the time slider and play controls (by default).
 
-In the example below, we display one of the "Emergent Multi-Organizational" (`?emon') networks of communication among organizations engaged in search and rescue activities. We will construct a tooltip label for the vertices from the vertex attribute data, size the vertices proportional to their membership and edges proportional to communication frequency.  We also add some transparency to the colors to make it a bit prettier and more readable. 
+In the example below, we display one of the "Emergent Multi-Organizational" (`?emon`) networks of communication among organizations engaged in search and rescue activities. We will construct a tooltip label for the vertices from the vertex attribute data, size the vertices proportional to their membership and edges proportional to communication frequency.  We also add some transparency to the colors to make it a bit prettier and more readable. 
 
 ```{r,results='asis'}
 data(emon)
@@ -257,8 +250,10 @@ render.d3movie(emon[[5]],
 Note the use of HTML tags like `<br>` (line break) and `<strong>..</strong>` when formatting the text for the `vertex.tooltip`.  For the `vertex.col` we used the `adjustcolor` function to make them semi-transparent instead of just passing in the name of the attribute `'Sponsorship'`.  
 
 ## Some techincal notes ##
-The `ndtv-d3` player (https://github.com/michalgm/ndtv-d3)displays a copy of the dynamic network and its rendering information that have been cached in a JSON-formatted file. The network is rendered as an HTML5 SVG object and animated using the d3 (http://d3js.org) and JQuery Javascript libraries. 
+The `ndtv-d3` player (https://github.com/statnet/ndtv-d3) displays a copy of the dynamic network and its rendering information that have been cached in a JSON-formatted file. The network is rendered as an HTML5 SVG object and animated using the d3 (http://d3js.org) and JQuery (https://jquery.com/) Javascript libraries.
 
-The default option is to save all of the scripts, data and external javascript libraries embeded in a single html file. This means that HTML page should remain fully portable and will can be viewd without an internet connection. 
+This is accomplished by stepping through the network in a series of time steps and "rendering" the appropriate view of the network at that time.  The processes is nearly identical to that described for ndtv's `render.animation` function, except that instead of drawing the network to an R plot device, the coordinates and color information describing the positions of the elements of the network as stored as JSON-formatted arrays in a file.  This file is then passed to the ndtv-d3 player app in the browser, which renders out corresponding SVG vector graphics.  Transitioning the positions (as well as attributes) of the elements between time points are handled by the d3 library. 
+
+The default option is to save all of the scripts, data and external Javascript libraries embedded in a single html file. This means that HTML page should remain fully portable and will can be viewed without an internet connection, but the file size will be much larger than strictly necessary.  
 
 The library was created by Greg Michalec and Skye Bender-deMoll for the statnet project http://statnet.org funded by NICHD grant R01HD068395.

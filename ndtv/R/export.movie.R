@@ -65,7 +65,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
   if (is.null(slice.par)){
     slice.par <- guessSlicePar(net)
     if(verbose){
-      print('No slice.par found, using')
+      message('No slice.par found, using')
       .print.slice.par(slice.par)
     }
   }
@@ -104,7 +104,7 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
     yrange <-c(min(coords[,2]),max(coords[,2]))
     
     if(verbose){
-      print(paste("Calculating layout for network slice from time ",starts[s],"to",ends[s]))
+      message(paste("Calculating layout for network slice from time ",starts[s],"to",ends[s]))
     }
     #only compute the layout involving active nodes and edges
     activev <- is.active(net,starts[s],ends[s], rule=if(slice.par$rule!='all'){'any'},v=seq_len(network.size(net)))
@@ -292,7 +292,7 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   }
   #move through frames to render them out
   for(s in 1:length(starts)){
-    if (verbose){print(paste("rendering",render.par$tween.frames,"frames for slice",s-1))}
+    if (verbose){message(paste("rendering",render.par$tween.frames,"frames for slice",s-1))}
     slice <- network.collapse(net,starts[s],ends[s],rule=slice.par$rule,rm.time.info=FALSE)
     activev <- is.active(net,starts[s],ends[s],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
    

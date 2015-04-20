@@ -45,4 +45,3 @@ This is a very minimal implementation, mostly used for testing layout algorithms
 
 
 \keyword{ IO }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
