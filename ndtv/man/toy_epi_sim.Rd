@@ -60,6 +60,25 @@ See also \code{\link{short.stergm.sim}} for another basic Stergm simulation outp
 data(toy_epi_sim)
 timeline(toy_epi_sim)
 \dontrun{
+
+
+# set up layout to draw plots under timeline
+layout(matrix(c(1,1,1,2,3,4),nrow=2,ncol=3,byrow=TRUE))
+# plot a proximity.timeline illustrating infection spread
+proximity.timeline(toy_epi_sim,vertex.col = 'ndtvcol',
+                  spline.style='color.attribute',
+                  mode = 'sammon',default.dist=100,
+                  chain.direction='reverse')
+# plot 3 static cross-sectional networks 
+# (beginning, middle and end) underneath for comparison
+plot(network.collapse(toy_epi_sim,at=1),vertex.col='ndtvcol',
+       main='toy_epi_sim network at t=1')
+plot(network.collapse(toy_epi_sim,at=17),vertex.col='ndtvcol',
+       main='toy_epi_sim network at=17')
+plot(network.collapse(toy_epi_sim,at=25),vertex.col='ndtvcol',
+       main='toy_epi_sim network at t=25')
+
+
 # render an animation of the network
 render.animation(toy_epi_sim,vertex.col='ndtvcol',displaylabels=FALSE)
 ani.replay()

@@ -1,9 +1,14 @@
 ChangeLog for ndtv
 v0.6
+ - proximity.timeline has deprecated draw.inactive argument in favor of spline.style
+ - proximity.timeline has additional args and features, and supports coloring vertex lines with vertex.col argument (slow)
+ - added toy_epi_sim data object, example output of basic EpiModel simulation
  - timeline function better supports xlim() paramter for zooming in on a time range
  - timeline function can now specificy graphic paramters using network attributes as is done by plot.network
  - added render.d3movie function to export HTML5 web animation using ndtv-d3 library
- - java source and .class files now stored in /java and /inst/java instead of /exec subdirectory
+ - added example vignette for render.d3movie() ndtv-d3 functionaltiy
+ - java source (MDSJ) and .class files now stored in /java and /inst/java instead of /exec subdirectory
+ - MDSJ layouts now support 1D layouts and disabling output with verbose = FALSE
  - updates to Graphviz layout and export.dot to be able pass through additional parameters. Now supports including edge weights
 v0.5
  - render.animation now caches and restores original plotting 'par()' params

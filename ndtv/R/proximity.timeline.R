@@ -18,13 +18,21 @@
 
 proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL, 
                              onsets=NULL, termini=NULL, default.dist=NULL,
-                             vertex.col='#55555555',labels.at=NULL,vertex.cex=2,
-                             splines=-.2,grid=TRUE,mode=c('isoMDS','sammon','cmdscale'),
-                             draw.inactive=c('default','ghost','no','yes'),...){
+                             vertex.col='#55555555',label=network.vertex.names(nd),
+                             labels.at=NULL,vertex.cex=2,
+                             splines=-.2,grid=TRUE,mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
+                             draw.inactive=NULL, spline.style=c('default','inactive.ghost','inactive.gaps','inactive.ignore','color.attribute'),
+                             chain.direction=c('forward','reverse'),verbose=TRUE,...){
   if (!is.networkDynamic(nd)) {
     stop("proximity.timeline requires that the first argument be a networkDynamic object")
   }
   mode<-match.arg(mode)
+  if(!is.null(draw.inactive)){
+    stop("the 'draw.inactive' argument has been deprecated. Use 'spline.style' instead.")
+  }
+  spline.style<-match.arg(spline.style)
+  chain.direction<-match.arg(chain.direction)
+  
   if (!is.null(onsets) && (!is.vector(onsets) || !is.numeric(onsets))) 
     stop("Onset times must be a numeric vector \n")
   if (!is.null(termini) && (!is.vector(termini) || !is.numeric(termini))) 
@@ -71,13 +79,28 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
     onsets<-get.change.times(nd)
     termini<-onsets
   }
+  if (verbose){
+    message('collapsing slice networks ...')
+  }
   slices<-get.networks(nd,retain.all.vertices=TRUE,onsets=onsets,termini=termini,...) 
   ycoords<-matrix(0,nrow=network.size(nd),ncol=length(slices)+1)
   # set up initial starting coords
   # have to jitter to make sure no coords are the same
   prev_ycoord<-matrix(jitter(cmdscale(layout.distance(slices[[1]],default.dist=default.dist),k=1)),ncol=1)
   hasGaps<-FALSE # for tracking if there are any empty spells, useful later
-  for (s in seq_along(slices)){
+  if (verbose){
+    message('computing vertex positions using 1D ',mode, ' layout ...')
+  }
+  # determine which direction the slices should be evaluated
+  if (chain.direction=='reverse'){
+   computeSequence<-seq.int(from=length(slices),to=1)
+  }else{
+    computeSequence<-seq_along(slices)
+  }
+  for (s in computeSequence){
+    if (verbose){
+      message('  computing positions for slice ',s)
+    }
     slice<-slices[[s]]
     onset<-onsets[s]
     terminus<-termini[s]
@@ -88,7 +111,9 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
         sammon=MASS::sammon(mat,y=prev_ycoord,k=1,trace=FALSE,tol=1e-9)$points,
         isoMDS=MASS::isoMDS(mat,y=prev_ycoord,k=1,maxit=500,tol=1e-9,trace=FALSE)$points,
         #smacofSym=smacof::smacofSym(mat,ndim=1,init=prev_ycoord,metric=TRUE)$conf,
-        cmdscale=cmdscale(mat,k=1)
+        cmdscale=cmdscale(mat,k=1),
+        gvNeato=network.layout.animate.Graphviz(net = slice,dist.mat = mat,seed.coords = cbind(0,prev_ycoord),layout.par = list(gv.engine='neato',gv.args='-Gdim=2',gv.len.mode='ndtv.distance.matrix'))[,2],
+        MDSJ=network.layout.animate.MDSJ(net=slice,dist.mat = mat,seed.coords = prev_ycoord,layout.par=list(dimensions=1),verbose=verbose)
       )       
       prev_ycoord<-ycoords[,s,drop=FALSE]
     } else {
@@ -105,96 +130,159 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   #copy the last coord to bound the last spline
   ycoords[,ncol(ycoords)]<-ycoords[,ncol(ycoords)-1]
   
-  # TODO: add label processing
+  #---- BEGIN RENDERING PROCESS ----
   
-  # if vertex.cex is an attribute name, use that
-  if (is.character(vertex.cex) & (length(vertex.cex == 1))) {
-    temp <- vertex.cex
-    vertex.cex <- rep(get.vertex.attribute(nd, vertex.cex), 
-                      length = network.size(nd))
-    if (all(is.na(vertex.cex))) 
-      stop("Attribute '", temp, "' had illegal missing values for vertex.cex or was not present in input network for the time range ",onset,'-',terminus)
-  } else {
-    vertex.cex<-rep(vertex.cex,length=network.size(nd))
+  # adjust spline style if mode was default and gaps found
+  if (spline.style=='default' & hasGaps){
+    spline.style<-'inactive.ghost'
   }
   
-  # if vertex.col is an attribute name, use that
+  #add label processing
+  label<-plotArgs.network(nd,argName = 'label',argValue=label)
+  
+  # expand vertex.cex (if it is an  attribute name, use that, otherwise replicate)
+  vertex.cex<-plotArgs.network(nd,argName = 'vertex.cex',argValue=vertex.cex)
+  
+  # determine if vertex colors will be dynamic or not
   vattrnames<-list.vertex.attributes(nd)
-  if ((is.character(vertex.col) & (length(vertex.col) == 1)) & (vertex.col%in%vattrnames | paste(vertex.col,'.active',sep='')%in%vattrnames)) {
-    temp <- vertex.col
-    vertex.col <- rep(get.vertex.attribute(slice, vertex.col), 
-                      length = network.size(nd))
-    if (all(is.na(vertex.col))){
-      #vertex.col <- rep(temp, length = network.size(nd))
-      stop("Attribute '", temp, "' had illegal missing values for vertex.col or was not present in input network for the time range ",onset,'-',terminus)
-    } else {
-      if (!all(is.color(vertex.col), na.rm = TRUE)){
-        vertex.col <- as.color(vertex.col)
+  if (is.character(vertex.col) & (length(vertex.col) == 1)){ # TODO: what if the network only has one vertex?!!!
+      # is it an attribute name?
+     # if it is dynamic the name won't match the .active version, so check later
+      if (vertex.col%in%vattrnames) { 
+        # static colors
+        vertex.col<-plotArgs.network(nd,argName='vertex.col',argValue=vertex.col)
+      } else if( paste(vertex.col,'active',sep='.')%in%vattrnames) {
+        # dynamic clors but non function
+        # if we are not doing dynamic colors spline mode, this will be a problem
+        if (spline.style!='color.attribute' & !is.color(vertex.col)){
+          stop("Dynamic color attributes can only be used with spline.style='color.attribute'")
+        }
+        # we will be doing dynamic colors, so deal with later
+        if (verbose){
+          message('assuming dynamic colors')
+        }
+      } else { # assume it is (or should be) a vector of colors and replicate to appropriate length
+        vertex.col<-rep(as.color(vertex.col),length=network.size(nd))
       }
-      
-    }
-  } else { # just replicate the color strings for vertices
+  } else if (is.function(vertex.col)){
+    # if we are coloring segments ignore it, because will expand it later
+    if (spline.style!='color.attribute'){
+       stop("setting the vertex.col as a function only works when coloring spline segments by attributes")
+      }
+  } else { # color is not an attribute, so just replicate the color strings for vertices
     vertex.col<-rep(as.color(vertex.col),length=network.size(nd))
   }
-  # figure out draw.inactive setting
-  draw.inactive<-match.arg(draw.inactive)
-  if (draw.inactive=='default' & hasGaps){
-    draw.inactive<-'ghost'
-  }
+  
   # create a new plot
   plot(NA,NA,xlim=c(onsets[1],termini[length(termini)]),ylim=range(ycoords,na.rm=TRUE),xlab='time',ylab=paste('approx. distance among vertices of',substitute(nd)))
-  
+  if (verbose){
+    message('rendering splines for each vertex ...')
+  }
   # loop over vertices, drawing splines
-  for (v in seq_len(nrow(mat))){
+  for (v in seq_len(nrow(ycoords))){
     
-    if (draw.inactive=='ghost'){
+    if (spline.style=='inactive.ghost'){
       # 'ghost' in light background line to connect active spells
       xspline(c(onsets,termini[length(termini)]),ycoords[v,],shape=splines,border='#55555555',lwd=1,repEnds=TRUE,lty=3)
     }  
     
-    if (draw.inactive%in%c('ghost','no')){ # should we render as continuous splines or in vertex activity chunks
-      # render spells in segments to avoid slices where vertex is inactive
-      # figure out contiguous set of slices
+    if (spline.style%in%c('inactive.ghost','inactive.gaps','color.attribute')){ # should we render as continuous splines or in vertex activity chunks
+      actives<-list() # to hold determine the activespells we will actually render
+      segmentColors<-character(0)
       
-      actives<-list()
-      lastactive<- 0
-      startSlice<-NA
-      endSlice<-NA
-      for (s in seq_along(slices)){
-        if(is.active(nd,v=v,onset=onsets[s],terminus=termini[s])){
-          if(s-lastactive >= 1 & is.na(startSlice)){
-            # record the value of the start
-            startSlice<-s
-          } 
-          endSlice<-s
-          lastactive<-s
-          # if its the last slice, record the range
-          if(s==length(slices)){
-            actives[[length(actives)+1]]<-c(startSlice,endSlice)
-          }
-        } else { # v not active
-          if(lastactive>0 && s-lastactive == 1){
-            # record a spell
-            actives[[length(actives)+1]]<-c(startSlice,endSlice)
-            startSlice<-NA
-            startSlice<-NA
+      if (spline.style=='color.attribute'){
+        # we will use vertex attribute activity chunks to determine breaks instead of vertex activity
+        # for now, hard-coded to color
+        
+        # grab the color spells at each slice
+        sliceColors<-sapply(seq_along(slices), function(s){
+          getSegmentColor(nd,slices[[s]],v,s,onset=onsets[s],termini[s],vertex.col=vertex.col)
+        })
+        # figure out contiguous sets of values
+        changes<-which(c(sliceColors,Inf) != c(Inf, sliceColors))
+        actives<-lapply(seq_len(length(changes)-1),function(index){
+          c(changes[index],changes[index+1]-1)
+        })
+        segmentColors<-sliceColors[changes]
+        
+        
+      } else {  # all other segment drawing modes
+        
+        # render spells in segments to avoid slices where vertex is inactive
+        # figure out contiguous set of slices
+        
+        lastactive<- 0
+        startSlice<-NA
+        endSlice<-NA
+        for (s in seq_along(slices)){
+          if(is.active(nd,v=v,onset=onsets[s],terminus=termini[s])){
+            
+            if(s-lastactive >= 1 & is.na(startSlice)){
+              # record the value of the start
+              startSlice<-s
+            } 
+            endSlice<-s
+            lastactive<-s
+            # if its the last slice, record the range
+            if(s==length(slices)){
+              actives[[length(actives)+1]]<-c(startSlice,endSlice)
+            }
+          } else { # v not active
+            if(lastactive>0 && s-lastactive == 1){
+              # record a spell
+              actives[[length(actives)+1]]<-c(startSlice,endSlice)
+              startSlice<-NA
+              startSlice<-NA
+            }
           }
         }
-      }
+        
+        
+      } # end segment finding
+      
+      # now render the chunks
       for(r in seq_len(length(actives))){
-        sliceIndicies<-seq(from=actives[[r]][1],to=actives[[r]][2])
+        sliceIndices<-seq(from=actives[[r]][1],to=actives[[r]][2])
         # if onset==terminus, can't draw a spline because not enough control points
-        duration <-termini[sliceIndicies[1]]-onsets[sliceIndicies[1]]
-        if(length(sliceIndicies)<2){
-          lines(c(onsets[sliceIndicies],onsets[sliceIndicies]+duration),
-                c(ycoords[v,sliceIndicies],ycoords[v,sliceIndicies]),col=vertex.col[v],lwd=vertex.cex[v])
+        duration <-termini[sliceIndices[1]]-onsets[sliceIndices[1]]
+        
+        # determine the color for the vertex segment to be drawn if it hasn't been set
+        if( length(segmentColors)==0){
+          vCol<-getSegmentColor(nd,slice=slices[[sliceIndices[1]]],v,s=r,onset=onsets[sliceIndices[1]],termini[max(sliceIndices)],vertex.col=vertex.col)
         } else {
-          # smoothness controlled by shape param, mapped from splines
-          # =0 straight segments
-          # >0 approx control points
-          # <0 pass through control points
-          xspline(c(onsets[sliceIndicies],onsets[max(sliceIndicies)]+duration),ycoords[v,c(sliceIndicies,max(sliceIndicies))],shape=splines,border=vertex.col[v],lwd=vertex.cex[v],repEnds=TRUE)
+          vCol<-segmentColors[r]
         }
+          
+        xControlP<-onsets[sliceIndices]
+        yControlP<-ycoords[v,sliceIndices]
+        
+        # smoothness controlled by shape param, mapped from splines
+        # =0 straight segments
+        # >0 approx control points
+        # <0 pass through control points
+        # because we will draw the spline with repEnds=FALSE, we need to add aditional 
+        # control points at each end (but the spline will now be drawn to them)
+        if(r==1){
+          # replicate the first value 
+          xControlP<-c(xControlP[1],xControlP)
+          yControlP<-c(yControlP[1],yControlP)
+          #TODO: if inf value, should extend off chart by -duration?
+        } else { # this isn't the first spell
+          # use add the coords one step previous as control pointxControlP<-c(xControlP[1],xControlP)
+          xControlP<-c(onsets[sliceIndices[1]-1],xControlP)
+          yControlP<-c(ycoords[v,sliceIndices[1]-1],yControlP)
+        }
+        if(r==length(actives)){
+          # extend one more unit with the same values
+          xControlP<-c(xControlP,onsets[max(sliceIndices)]+duration,onsets[max(sliceIndices)]+duration*2)
+          yControlP<-c(yControlP,yControlP[length(yControlP)],yControlP[length(yControlP)])
+        } else { # this is not the last spell
+          # use a control point from the next segment so they will match
+          xControlP<-c(xControlP,onsets[max(sliceIndices)]+duration,onsets[max(sliceIndices)]+duration*2)
+          yControlP<-c(yControlP,ycoords[v,max(sliceIndices)+1],ycoords[v,max(sliceIndices)+2])
+        }
+        xspline(xControlP,yControlP,shape=splines,border=vCol,lwd=vertex.cex[v],repEnds=FALSE)
+       
       }
       
     } else {
@@ -221,11 +309,49 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   # do labels if requeted
   if(!is.null(labels.at)){
     for (i in seq_along(labels.at)){
-      labels<-network.vertex.names(nd)
       # find the closest slice start
       ycoord<-ycoords[,max(which(onsets<=labels.at[i]))]
-      text(rep(labels.at[i],length(labels)),ycoord,labels=labels)
+      text(rep(labels.at[i],length(label)),ycoord,labels=label)
     }
   }
 }
 
+# convert a 2 column matrix of spells into a list of 2-element vectors
+splMatrixToList<-function(spls){
+  lapply(1:nrow(spls),function(r){spls[r,]})
+}
+
+# determine the appropriate colors for the vertex segment
+getSegmentColor<-function(net,slice,v,s,onset,terminus,vertex.col){
+  vCol<- ''
+  if (is.character(vertex.col) & length(vertex.col)==1){
+    vCol<-get.vertex.attribute.active(net,vertex.col,at=onset)[v]
+    vCol <-ifelse(is.na(vCol),'#FFFFFF00',vCol)
+    vCol<-as.color(vCol)
+  } else if (is.function(vertex.col)){
+    # get the names of the funtions arguments
+    argnames<-names(as.list(args(vertex.col)))
+    argnames <- argnames[-length(argnames)] # trim off last element
+    # construct an argument list by mapping of values to function params
+    args<-list()
+    for (arg in argnames){
+      if (arg=='net'){
+        args<-c(args,list(net=net))
+      } else if (arg=='slice'){
+        args<-c(args,list(slice=slice))
+      } else if (arg=='s'){
+        args<-c(args,list(s=s))
+      } else if (arg=='onset'){
+        args<-c(args,list(onset=onset))
+      } else if (arg=='terminus'){
+        args<-c(args,list(terminus=terminus))
+      } else {
+        stop('unknown argument name "',arg,'" in function provided for vertex.col graphic parameter:',deparse(vertex.col))
+      }
+    }
+    vCol<-do.call(vertex.col,args=args)[v]
+  } else {
+    vCol<-vertex.col[v]
+  }
+  return(vCol)
+}

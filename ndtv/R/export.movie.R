@@ -412,8 +412,13 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     
 #common function called to construct the distance matrix for mds-based layouts
 layout.distance <-function(net,default.dist=NULL,weight.attr=NULL,weight.dist=FALSE){
+  
   if (is.null(default.dist)){
     default.dist=sqrt(network.size(net))
+  } else {
+    if(!is.numeric(default.dist) | length(default.dist)>1){
+      stop('default.dist must be a numeric value of length 1')
+    }
   }
   # if there are no edges, don't worry about the edge value
   if (network.edgecount(net)<1){

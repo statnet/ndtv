@@ -24,7 +24,7 @@ check.java <-function(){
   return(FALSE)
 }
 
-check.mdsj <-function(){
+check.mdsj <-function(ask=TRUE){
   #check that java is installed and working
   java <-check.java()
   #TODO: assumes mdsj is in package, which assumes package dir is writable, need to add alternate
@@ -36,8 +36,12 @@ check.mdsj <-function(){
       # ask user if the want to download
       #  how will this work during automated test?
       # "In non-interactive use the result is as if the response was RETURN and the value is ""."
-      
-      n <- readline("Do you want to automatically download and install the MDSJ Java library? (y/N): ")
+      if (ask){
+        n <- readline("Do you want to automatically download and install the MDSJ Java library? (y/N): ")
+      } else {
+        # if not ask, just try to install
+        n<-'Yes'
+      }
       if (n%in%c('y','Y',"Yes","yes")){
         install.mdsj(mdsj.dir)
         if(!file.exists(mdsj.path)){
