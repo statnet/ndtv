@@ -145,7 +145,7 @@ If \code{output.mode='inline'}, HTML code for an iframe elment suitible for embe
 The github repository for the ndtv-d3 javascript library is at \url{https://github.com/statnet/ndtv-d3/} (which is the statnet release fork of \url{https://github.com/michalgm/ndtv-d3/})
 }
 \author{
-skyebend
+skyebend@uw.edu
 }
 \note{
 This is a very preliminary draft implementation. The animations preform poorly in the Linux Firefox browser, but are ok in Firefox on other platforms and excellent in the Chrome web browser. 
@@ -154,7 +154,7 @@ This is a very preliminary draft implementation. The animations preform poorly i
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-See also \code{\link{render.animation}}, \code{\link{compute.animation}}.
+See also the ndtv-d3 vignette \code{vignette('ndtv-d3 animation examples',package='ndtv')}, \code{\link{render.animation}}, \code{\link{compute.animation}}.
 }
 \examples{
 # render an interactive SVG animation of short.stergm.sim and open it in a browser

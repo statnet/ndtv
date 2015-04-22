@@ -81,7 +81,10 @@ Simple right? Yes, but that is because most of the difficult parts happened unde
 Of course, using defaults doesn't give much control of what should be rendered and how it should look. For more precise control of the processes, layout algorithms, etc, we can call each of the steps in sequence. 
 
 \section{A tergm simulation example}
-Lets look at a more realistic example using output from the simulation of a crude dynamic model. This uses the statnet \verb@tergm@ package to estimate the parameters for an edge formation and dissolution process which produces a network similar to the Florentine business network (\verb@?ergm::flobusiness@) given as input.  Once the model has been estimated, we can take a number of sequential draws from it to see how the network might ``evolve'' over time.  When we generate the movie, we can include the model statistics on screen to see how they are influenced by edge additions and deletions.  This example also assumes you have some of the external libraries working (Java and FFmpeg) so you run into problems, try skipping to Dependencies (section \ref{sec:dependencies}) and come back. 
+Lets look at a more realistic example using output from the simulation of a crude dynamic model. This uses the statnet \verb@tergm@ package to estimate the parameters for an edge formation and dissolution process which produces a network similar to the Florentine business network (\verb@?ergm::flobusiness@) given as input.  Once the model has been estimated, we can take a number of sequential draws from it to see how the network might ``evolve'' over time.  When we generate the movie, we can include the model statistics on screen to see how they are influenced by edge additions and deletions.  This example also assumes you have some of the external libraries working (Java and FFmpeg) so you run into problems, try skipping to Dependencies (section \ref{sec:dependencies}) and come back.
+
+If you are not interested in running the model, you can just load a corresponding example data object with \verb@data(stergm.sim.1)@.
+
 \subsection{Data Setup}
 
 First load in the main necessary libraries (each of which loads a bunch of additional R libraries). 
@@ -178,7 +181,7 @@ render.d3movie(stergm.sim.1,render.par=render.par,
                 filename='stergm.sim1.html')
 @
 
-This should open web browser displaying the page with a javascript animation player and an interactive version of the network.   There is an additional vignette demoing the features (such as interactive tooltips, and embedding in rmarkdown documents) of the ndtv-d3 player included in the ndtv package.  
+This should open web browser displaying the page with a javascript animation player and an interactive version of the network.   There is an additional vignette demoing the features (such as interactive tooltips, and embedding in rmarkdown documents) of the ndtv-d3 player included in the ndtv package.  For an example, see \url{http://statnet.github.io/ndtv-d3/}
 
 \subsection{Other views}
 
@@ -238,7 +241,7 @@ ani.replay()
 
 Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the \verb@rule@ element of the \verb@slice.par@ argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally \verb@rule='latest'@ gives resonable results, returning the most recent value found within the query spell. 
 
-\section{Layout algorithms}
+\section{Layout algorithms for animations}
 Producing ``good'' (for an admittedly ambiguous definition of good) layouts of networks is generally a computationally difficult problem. There are a wide variety of algorithms and approaches being developed. Doing layouts for animations adds additional challenges because it is usually desirable that the layouts remain stable over time. Ideally this means that the layouts don't change much unless the network structure changes, and that small changes in the network structure should lead to small changes in the layouts.  Many otherwise excellent static layout algorithms are not stable in this sense, or they may require very specific parameter settings to improve their results for animation applications. 
 
 The \verb@network.layout.animate.*@ layouts included in \verb@ndtv@ are adaptations or wrappers for existing static layout algorithms with some appropriate parameter presets. They all accept the coordinates of the previous layout as an argument so that they can try to construct a suitably smooth sequence of node positions. They also include the \verb@default.dist@ parameter which can be tweaked to increase or decrease the spacing between isolates and disconnected components. The default value for \verb@default.dist@ is \verb@sqrt(network.size(net))@, see \verb@?layout.dist@ for more information. 
@@ -407,8 +410,82 @@ render.animation(wheel,
 ani.replay()
 @
 
+\section{Exploring proximity with timelines}
 
-\section{Dependencies}
+We've already introduced the \verb@timeline@ function in the section of slicing time.  Although it can be helpful for debugging and revealing the over density of events in a dynamic network, it is difficult to understand what those events imply for changes in network structure and connectivity.  The movies do a resonably good job (at least for sparse networks) of illustrating the moment-to-moment changes in structure, but it is often hard to grasp the overall shifts without rewinding and replaying the movie over-and-over.
+
+The \verb@proximity.timeline@ attempts a sort of compromise.  It collapses all the momentary structure information down to a single verticle dimension, and uses the horizontal axis for time.  More precisely, the network is extracted at each time bin and the geodesic distances are computed. But instead of creating a 2-dimensional layout as  \verb@compute.animation@ does, the network layout is a single dimension indicating how relatively `close' or `far' the vertices are from each other. Each vertex's positions in the the timesteps are linked together by a spline.  So, like the timeline, each vertex traces out a horizontal trajectory, but in this case it can swerve diagonally up and down as it moves from group to group.
+
+For example, if we return to the Stergm simulation example, we can contrast the (entirely fictional, simulated) histories of the Tornabouni and Strozzi family marriage alliances as a blue and green lines on the proximity timeline.  First we load in a short example dataset of the flomarriage simulation. 
+
+
+<<short_stergm_prox, fig=TRUE>>=
+data(short.stergm.sim)  # load a short example dataset of the flomarriage simulation
+proximity.timeline(short.stergm.sim,mode='sammon',
+                   default.dist=10,
+                   labels.at=c(1,16,25),
+                   label.cex=0.7,
+                   vertex.col=c(rep('gray',14),'green','blue') )
+@
+
+Initially, Tornabouni is part of the component many of the other families.  Around t=9, they split off and become isolated, but then pair up with Laberteschi at t=21, and then rejoin one of the groups from the big component (which itself split in half at t=19).  For most of the simulation the Strozzi (green),  trace out a relatively horizontal existence as an isolate, but eventually connect with the Acciaiuoli near the end. 
+
+
+Perhaps another way to illustrate how the \verb@proximity.timeline@ works is to combine it with several static snapshots of the network (like those produced by \verb@filmstrip@).  
+
+The \verb@toy_epi_sim@ dataset is an example network of a trivial simulated disease process spreading over a simulated dynamic contact network among 100 individuals for 25 discrete time steps.  It was produced by the EpiModel package, and it includes an attribute named 'ndtvcol' corresponding to the simulated infection status of the vertices.  The infection status changes over time. 
+
+
+<<toy_epi_sim_prox, fig=TRUE>>=
+data(toy_epi_sim)
+# set up layout to draw plots under timeline
+layout(matrix(c(1,1,1,2,3,4),nrow=2,ncol=3,byrow=TRUE))
+# plot a proximity.timeline illustrating infection spread
+proximity.timeline(toy_epi_sim,vertex.col = 'ndtvcol',
+                   spline.style='color.attribute',
+                   mode = 'sammon',default.dist=100,
+                   chain.direction='reverse')
+# plot 3 static cross-sectional networks 
+# (beginning, middle and end) underneath for comparison
+plot(network.collapse(toy_epi_sim,at=1),vertex.col='ndtvcol',
+     vertex.cex=2,main='toy_epi_sim network at t=1')
+plot(network.collapse(toy_epi_sim,at=17),vertex.col='ndtvcol',
+     vertex.cex=2,main='toy_epi_sim network at=17')
+plot(network.collapse(toy_epi_sim,at=25),vertex.col='ndtvcol',
+     vertex.cex=2,main='toy_epi_sim network at t=25')
+layout(1)
+@
+
+This plot can be hard to read as a small image, it is worth rendering it in a big plot window. In the first network snapshot we see a few scattered infections (in red), some small components and a medium size component. These groups show up in the the beginning of the timeline as bundles of lines, with larger bundles corresponding to the larger components.  There are several red lines indicating the infections mixed in with the blue threads.  As time progresses, the bundles untwist and braid as vertices split off to join other components. Some vertices become isolates and tend to fly off to the top and bottom of the chart.
+
+The number of red lines grows as the infection spreads. By t=17 (the second snapshot) the network has briefly formed a large component, viable in the timeline as a fat bundle in the center.   At the end of the simulation (t=25) most of the network has become infected, and the large component has broken up again into multiple medium-sized components.
+
+Of course there are quite a few vertices (100) so it it is difficult to see exactly what is going on in detail, especially when they cross over each other.   But the proximity timeline is sometimes able to illustrate the features of the forward reachable paths and changes in overall network structure in ways that can be missed when viewing a movie. 
+
+Naturally the proximity.timeline plots suffer from some of the same noise and reproduce-ability problems that challenge the network layouts.  The geodesic distance information is tightly compressed onto a single dimension, so the exact ordering of the vertices in any specific region may be due to chance, just as the rotation and relative positions of components in a network plot are not directly meaningful.   This is also a fairly experimental tool, so getting good results still requires playing around a bit with the various algorithms and adjusting \verb@default.dist@ to a value larger enough to force clusters close enough together without making them overlap too much. 
+
+\subsection{Examining missingness}
+
+This plot shows the timeline view vertex activity spells for the ``windsurfer'' dataset.   
+<<windsurfer_timeline, fig=TRUE>>=
+timeline(windsurfers,plot.edge.spells = FALSE)
+@
+
+Notice that in contrast to the McFarland classroom dataset we saw earlier, many of the vertices are almost entirely unobserved.  The \verb@proximity.timeline@ function uses the \verb@spline.style@ argument to control how the spline segments corresponding to vertex inactivity should be rendered. 
+<<windsurfer_prox_gaps, fig=TRUE>>=
+proximity.timeline(windsurfers,start=20,end=31,mode='sammon',
+                   spline.style='inactive.gaps')
+proximity.timeline(windsurfers,start=20,end=31,
+                   mode='sammon',spline.style='inactive.ignore')
+proximity.timeline(windsurfers,start=20,end=31,mode='sammon',
+                   spline.style='inactive.ghost')
+
+@
+
+The gost version (which is the default) offers a compromise by linking the observed spells with a faint dotted line, making it possible to trace the trajectories across time without it appearing that there is much more data availible than is actually the case.  Notice also the use of the \verb@start@ and \verb@end@ paramter to zoom in and render only a portion of the time range. 
+
+
+\section{Dependencies for Animations}
 \label{sec:dependencies}
 \subsection{Java (for MDSJ)}
 In order to use the MDSJ layout algorithm, you must have Java installed on your system.  Java should be already installed by default on most Mac and Linux systems. If it is not installed, you can download it from \url{http://www.java.com/en/download/index.jsp}. On Windows, you may need to edit your `Path' environment variable to make Java executable from the command-line.
@@ -432,7 +509,7 @@ For each time slice, new coordinates are only computed for the active set of ver
 The other parameters are as follows
 \begin{itemize}
 \item \verb@seed.coords@ an (optional) array of initial coordinates to be used for the very first layout in the sequence or when vertices first pop into existance.
-\item \verb@weight.attr@ can provide the name of a numeric edge attribute defining weights for edges to be interpreted by the layout alogirthm. The values \verb@activity.duration@ or \verb@activity.count@ can be used to weight edges by the duration or count of the edge's activity spells in the time slice. the \verb@weight.dist@ parameter determines if the weights should be treated as similarities (larger values means closer vertices) or distances.
+\item \verb@weight.attr@ can provide the name of a numeric edge attribute defining weights for edges to be interpreted by the layout algorithm. The values \verb@activity.duration@ or \verb@activity.count@ can be used to weight edges by the duration or count of the edge's activity spells in the time slice. the \verb@weight.dist@ parameter determines if the weights should be treated as similarities (larger values means closer vertices) or distances.
 \item \verb@chain.direction@ a value of 'forward' indicates the chain of layouts should be computes in forward temporal order. A value 'reverse' runs the chain backwards. For some layouts, reverse-chaining means that isolated vertices are more likely to have positions close to the partners they will be tied to.
 \end{itemize}
 
@@ -466,6 +543,9 @@ The \verb@animation@ package provides several neat tools for storing animations 
 \item \verb@saveLatex()@ creates an animation embedded in a pdf (didn't work for me...)
 \end{itemize}
 Please see \verb@?animation@ and each function's help files for more details. With the exception of \verb@ani.replay()@ each of these requires the presence of some external library software which may need to be installed on your system as described in Dependencies (section \ref{sec:dependencies}).  
+
+\subsection{render.d3movie}
+The \verb@render.d3movie@ can save out a network animation an interactive HTML5 SVG to display in a web browser. Animations are generated using a process nearly identical to \verb@render.animation@. However, instead of using R's plotting functions and the animation library, the relevant information is cached and written into a JSON-formatted file, embedded into a web page along with ndtv-d3 player, and displayed in a web browser.  Details and additional examples are included in the ndtv-d3 vignette: \verb@vignette('ndtv-d3 animation examples',package='ndtv')@
 
 \section{Limitations}
 \subsection{Size limits}
@@ -556,6 +636,7 @@ Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).
 McFarland, Daniel A. (2001) ``Student Resistance: How the Formal and Informal Organization of Classrooms Facilitate Everyday Forms of Student Defiance.'' 
 \emph{American Journal of Sociology} \textbf{107} (3): 612-78.
 
+\bibitem[Michalec, G., et al. (2014)]{ndtv-d3} Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) ``ndtv-d3: an HTML5 network animation player for the ndtv package'' The statnet project. http://statnet.org
 
 \bibitem[Newcomb(1961)]{newcomb} 
 Newcomb T. (1961)

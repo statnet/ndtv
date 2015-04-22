@@ -77,6 +77,7 @@ plot(network.collapse(toy_epi_sim,at=17),vertex.col='ndtvcol',
        main='toy_epi_sim network at=17')
 plot(network.collapse(toy_epi_sim,at=25),vertex.col='ndtvcol',
        main='toy_epi_sim network at t=25')
+layout(1) # reset the layout
 
 
 # render an animation of the network

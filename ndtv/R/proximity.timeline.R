@@ -19,7 +19,7 @@
 proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL, 
                              onsets=NULL, termini=NULL, default.dist=NULL,
                              vertex.col='#55555555',label=network.vertex.names(nd),
-                             labels.at=NULL,vertex.cex=2,
+                             labels.at=NULL,label.cex=1,vertex.cex=2,
                              splines=-.2,grid=TRUE,mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
                              draw.inactive=NULL, spline.style=c('default','inactive.ghost','inactive.gaps','inactive.ignore','color.attribute'),
                              chain.direction=c('forward','reverse'),verbose=TRUE,...){
@@ -137,8 +137,9 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
     spline.style<-'inactive.ghost'
   }
   
-  #add label processing
+  # label processing
   label<-plotArgs.network(nd,argName = 'label',argValue=label)
+  label.cex<-plotArgs.network(nd,argName='label.cex',argValue=label.cex)
   
   # expand vertex.cex (if it is an  attribute name, use that, otherwise replicate)
   vertex.cex<-plotArgs.network(nd,argName = 'vertex.cex',argValue=vertex.cex)
@@ -308,10 +309,12 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   
   # do labels if requeted
   if(!is.null(labels.at)){
-    for (i in seq_along(labels.at)){
+    for (t in seq_along(labels.at)){
       # find the closest slice start
-      ycoord<-ycoords[,max(which(onsets<=labels.at[i]))]
-      text(rep(labels.at[i],length(label)),ycoord,labels=label)
+      ycoord<-ycoords[,max(which(onsets<=labels.at[t]))]
+      text(rep(labels.at[t],length(label)),ycoord,labels=label,cex=label.cex)
+      
+      
     }
   }
 }

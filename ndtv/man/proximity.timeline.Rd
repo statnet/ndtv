@@ -19,8 +19,8 @@ This a DRAFT version of the function, parameters are likely to change. Creates a
 \usage{
 proximity.timeline(nd,  start = NULL, end = NULL, time.increment = NULL,
   onsets = NULL, termini = NULL, default.dist = NULL, vertex.col = "#55555555", 
-  label = network.vertex.names(nd), labels.at = NULL, vertex.cex = 2, 
-  splines = -0.2, grid = TRUE, 
+  label = network.vertex.names(nd), labels.at = NULL, label.cex = 1,
+  vertex.cex = 2, splines = -0.2, grid = TRUE, 
   mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
   draw.inactive=NULL, 
   spline.style=c('default','inactive.ghost','inactive.gaps',
@@ -48,6 +48,7 @@ either a character color value, a vector of values of length equal to the size o
   \item{label}{character vector of labels for vertices or name of vertex attribute to be expanded. Default is network.vertex.names.  Labels only drawn if \code{labels.at} argument has a value.
   
   }
+  \item{label.cex}{numeric character expansion factor for vertex labels}
   \item{vertex.cex}{either a numeric value, a vector of values of length equal to the size of the network, or the name of a vertex attribute containing numeric values to be used to scale the width of the lines (\code{lwd}) for each vertex. 
 }
   \item{splines}{ numeric. value controls how tightly the splines meet their control points. A value of 0 draws straight lines and sharp corners, values less than zero cause the spline to pass through the control point, values greater than zero will approximate the point. See the \code{shape} argument of \code{\link{xspline}}.
