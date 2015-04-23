@@ -465,15 +465,13 @@ Of course there are quite a few vertices (100) so it it is difficult to see exac
 
 Naturally the proximity.timeline plots suffer from some of the same noise and reproduceability problems that challenge the network layouts.  The geodesic distance information is tightly compressed onto a single dimension, so the exact ordering of the vertices in any specific region may be due to chance, just as the rotation and relative positions of components in a network plot are not directly meaningful.   This is also a fairly experimental tool, so getting good results still requires playing around a bit with the various algorithms and adjusting \verb@default.dist@ to a value larger enough to force clusters close enough together without making them overlap too much. 
 
-\subsection{Examining missingness}
-
-This plot shows the timeline view vertex activity spells for the ``windsurfer'' dataset.   
+This inactive vertex spells present a challenge when tracing out the vertex trajectories. This plot shows the timeline view vertex activity spells for the ``windsurfer'' dataset.   
 <<windsurfer_timeline, fig=TRUE>>=
 timeline(windsurfers,plot.edge.spells = FALSE)
 @
 
 
-Notice that in contrast to the McFarland classroom dataset we saw earlier, many of the vertices are almost entirely unobserved (have very short activity spells).  This presents a challenge when tracing out the trajectories.
+Notice that in contrast to the McFarland classroom dataset we saw earlier, many of the vertices are almost entirely unobserved (have very short activity spells).  
 
 The \verb@proximity.timeline@ function uses the \verb@spline.style@ argument to control how the spline segments corresponding to vertex inactivity should be rendered.  To help make the plot more legible, we can use the \verb@start@ and \verb@end@ paramter to zoom in and render only a portion of the time range. 
 
@@ -491,7 +489,7 @@ proximity.timeline(windsurfers,start=20,end=31,mode='sammon',
 
 @
 
-The ghost version (which is the default when gaps in vertex activity are detected) offers a compromise by linking the observed spells with a faint dotted line, making it possible to trace the trajectories across time without it appearing that there is much more data availible than is actually the case.  The \code{'inactive.ignore'} option -- the default when vertex activity gaps are not detected -- will always be the fastest because it isn't necesary to break the splies up into segments.
+The ghost version (which is the default when gaps in vertex activity are detected) offers a compromise by linking the observed spells with a faint dotted line, making it possible to trace the trajectories across time without it appearing that there is much more data availible than is actually the case.  The \verb@'inactive.ignore'@ option (the default when vertex activity gaps are not detected) will always be the fastest because it isn't necesary to break the splines up into segments.
 
 
 \section{Dependencies for Animations}
