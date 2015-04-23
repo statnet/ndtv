@@ -18,6 +18,7 @@
 \DefineVerbatimEnvironment{Soutput}{Verbatim}{formatcom = {\color{Soutput}}}
 \DefineVerbatimEnvironment{Scode}{Verbatim}{formatcom = {\color{Scode}}} 
 \renewenvironment{Schunk}{}{}
+\setkeys{Gin}{width=\linewidth} % try to set plots to scale full width
 
 \SweaveOpts{concordance=TRUE}
 
@@ -172,7 +173,7 @@ This should produce a movie\footnote{\url{http://statnet.csde.washington.edu/mov
 
 \subsection{Viewing animation as a web page}
 
-An alternate way to view the animation is to render it out as an HTML5 animation embedded in a web page.  This has the advantage of not requiring any external libraries, but does need a modern web browser to display properly. \verb@render.d3movie@ operates similarly to \verb@render.animation@, using the same coordinates stored by \verb@compute.animation@. 
+An alternate way to view the animation is to render it out as an HTML5 animation embedded in a web page using the ndtv-d3 player \citep{ndtv-d3}.  This has the advantage of not requiring any external libraries, but does need a modern web browser to display properly. \verb@render.d3movie@ operates similarly to \verb@render.animation@, using the same coordinates stored by \verb@compute.animation@. 
 
 <<save_html >>=
 render.d3movie(stergm.sim.1,render.par=render.par,
@@ -181,7 +182,7 @@ render.d3movie(stergm.sim.1,render.par=render.par,
                 filename='stergm.sim1.html')
 @
 
-This should open web browser displaying the page with a javascript animation player and an interactive version of the network.   There is an additional vignette demoing the features (such as interactive tooltips, and embedding in rmarkdown documents) of the ndtv-d3 player included in the ndtv package.  For an example, see \url{http://statnet.github.io/ndtv-d3/}
+This should open web browser displaying the page with a Javascript animation player and an interactive version of the network.   There is an additional vignette demoing the features (such as interactive tooltips, and embedding in Rmarkdown documents) of the ndtv-d3 player included in the ndtv package.  For an example, see \url{http://statnet.github.io/ndtv-d3/}
 
 \subsection{Other views}
 
@@ -239,7 +240,7 @@ render.animation(cls33_10_16_96,
 ani.replay()
 @
 
-Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the \verb@rule@ element of the \verb@slice.par@ argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally \verb@rule='latest'@ gives resonable results, returning the most recent value found within the query spell. 
+Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the \verb@rule@ element of the \verb@slice.par@ argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally \verb@rule='latest'@ gives reasonable results, returning the most recent value found within the query spell. 
 
 \section{Layout algorithms for animations}
 Producing ``good'' (for an admittedly ambiguous definition of good) layouts of networks is generally a computationally difficult problem. There are a wide variety of algorithms and approaches being developed. Doing layouts for animations adds additional challenges because it is usually desirable that the layouts remain stable over time. Ideally this means that the layouts don't change much unless the network structure changes, and that small changes in the network structure should lead to small changes in the layouts.  Many otherwise excellent static layout algorithms are not stable in this sense, or they may require very specific parameter settings to improve their results for animation applications. 
@@ -264,9 +265,9 @@ Please note that the MDSJ library is released under Creative Commons License ``b
 The \verb@useAttribute@ layout is useful if you already know exactly where each vertex should be drawn at each timestep, and you just want to render out the network.  It just needs to know the names of the dynamic attribute holding the x coordinate and the y coordinate for each time step. 
 
 \subsection{Graphviz}
-The Graphviz layout is a wrapper for the Graphviz \url{http://http://www.graphviz.org} software library \citep{graphviz}. If the library is installed on your system (see verb@?install.graphviz@), it provides a number of additional high-quality layouts. When layout is called it checks for a working Graphviz installation (falling back to KamadaKawai if Graphviz cannot be found) and writes the network to a temp file using \verb@export.dot@. Then the appropriate Graphviz layout engine (default is \verb@neato@) is executed via a \verb@system@ call, and the coordinates of the vertices are parsed from the output.
+The Graphviz layout is a wrapper for the Graphviz \url{http://http://www.graphviz.org} software library \citep{graphviz}. If the library is installed on your system (see verb@?install.graphviz@), it provides a number of additional high-quality layouts. When layout is called it checks for a working Graphviz installation (falling back to Kamada-Kawai if Graphviz cannot be found) and writes the network to a temp file using \verb@export.dot@. Then the appropriate Graphviz layout engine (default is \verb@neato@) is executed via a \verb@system@ call, and the coordinates of the vertices are parsed from the output.
 
-Currently, the arguments to \verb@layout.par@ can be used to specify the Graphviz layout engine to use (i.e. \verb@gv.engine='neato'@ for stress-minimized, \verb@gv.engine='dot'@ for hierarchal, \verb@gv.engine='fdp'@ for force-directed, etc) and additional command-line control parameters can be passed in via \verb@gv.args@. For example, to use the 'dot' layout, but change layout rank direction to Left-Right: 
+Currently, the arguments to \verb@layout.par@ can be used to specify the Graphviz layout engine to use (i.e. \verb@gv.engine='neato'@ for stress-minimized, \verb@gv.engine='dot'@ for hierarchical, \verb@gv.engine='fdp'@ for force-directed, etc) and additional command-line control parameters can be passed in via \verb@gv.args@. For example, to use the 'dot' layout, but change layout rank direction to Left-Right: 
 <<gv_options>>=
 layout.par=list(gv.engine='dot',gv.args='-Grankdir=LR') 
 @
@@ -359,7 +360,7 @@ activate.vertex.attribute(wheel,'color','blue',onset=7,terminus=8,v=6)
 activate.vertex.attribute(wheel,'color','pink',onset=8,terminus=9,v=7)
 @
 
-Finally we render it, giving the names of the dynamic attributes to be used to control the plotting paramters for edge with, vertex size, and vertex color. 
+Finally we render it, giving the names of the dynamic attributes to be used to control the plotting parameters for edge with, vertex size, and vertex color. 
 
 <<color_wheel4>>=
 render.animation(wheel,edge.lwd='width',vertex.cex='mySize',
@@ -371,7 +372,7 @@ The attribute values for the time points are defined using \verb@network.collaps
 
 \subsection{Functional plot arguments}
 
-Sometimes it is awkward or inefficient to pre-generate dynamic attribute values.  Why create and another attribute for color if it is just a simple transformation of an existing attribute or measure? The \verb@render.animation@ function has the ability to accept the \verb@plot.network@ arguments as functions with special arguments to be evaluated on the fly at each time point as the network is rendered. So, for example, if we wanted to use our previously created ``width'`'' attribute to control the color of edges along with their width:
+Sometimes it is awkward or inefficient to pre-generate dynamic attribute values.  Why create and another attribute for color if it is just a simple transformation of an existing attribute or measure? The \verb@render.animation@ function has the ability to accept the \verb@plot.network@ arguments as functions with special arguments to be evaluated on the fly at each time point as the network is rendered. So, for example, if we wanted to use our previously created ``width'' attribute to control the color of edges along with their width:
 
 <<wheel_color_function>>=
 render.animation(wheel,edge.lwd=3, 
@@ -382,14 +383,14 @@ ani.replay()
 
 Notice the use of the \verb@slice@ argument to the function instead of the original name of the network. The arguments of plot control functions must draw from a specific set of named arguments which will be substituted in and evaluated at each time point before plotting.  The set of valid argument names is:
 \begin{itemize}
-  \item \verb@net@ is the original (uncollapsed) network
+  \item \verb@net@ is the original (un-collapsed) network
   \item \verb@slice@ is the network collapsed to be rendered with the appropriate onset and terminus
   \item \verb@s@ is the slice number in the sequence to be rendered
   \item \verb@onset@ is the onset (start time) of the slice to be rendered
   \item \verb@terminus@ is the terminus (end time) of the slice to be rendered
 \end{itemize}
 
-So in the example above, at each time point the edge attribute ``width'' is extracted and used to control the red component of the rgb color. We can also define functions based on network measures such as betweenness: 
+So in the example above, at each time point the edge attribute ``width'' is extracted and used to control the red component of the RGB color. We can also define functions based on network measures such as betweenness: 
 
 <<wheel_betweeness_function>>=
 require(sna)
@@ -412,9 +413,9 @@ ani.replay()
 
 \section{Exploring proximity with timelines}
 
-We've already introduced the \verb@timeline@ function in the section of slicing time.  Although it can be helpful for debugging and revealing the over density of events in a dynamic network, it is difficult to understand what those events imply for changes in network structure and connectivity.  The movies do a resonably good job (at least for sparse networks) of illustrating the moment-to-moment changes in structure, but it is often hard to grasp the overall shifts without rewinding and replaying the movie over-and-over.
+We've already introduced the \verb@timeline@ function in the section of slicing time.  Although it can be helpful for debugging and revealing the over density of events in a dynamic network, it is difficult to understand what those events imply for changes in network structure and connectivity.  The movies do a reasonably good job (at least for sparse networks) of illustrating the moment-to-moment changes in structure, but it is often hard to grasp the overall shifts without rewinding and replaying the movie over-and-over.
 
-The \verb@proximity.timeline@ attempts a sort of compromise.  It collapses all the momentary structure information down to a single verticle dimension, and uses the horizontal axis for time.  More precisely, the network is extracted at each time bin and the geodesic distances are computed. But instead of creating a 2-dimensional layout as  \verb@compute.animation@ does, the network layout is a single dimension indicating how relatively `close' or `far' the vertices are from each other. Each vertex's positions in the the timesteps are linked together by a spline.  So, like the timeline, each vertex traces out a horizontal trajectory, but in this case it can swerve diagonally up and down as it moves from group to group.
+The \verb@proximity.timeline@ attempts a sort of compromise.  It collapses all the momentary structure information down to a single vertical dimension, and uses the horizontal axis for time.  More precisely, the network is extracted at each time bin and the geodesic distances are computed. But instead of creating a 2-dimensional layout as  \verb@compute.animation@ does, the network layout is a single dimension indicating how relatively `close' or `far' the vertices are from each other. Each vertex's positions in the the time steps are linked together by a spline.  So, like the timeline, each vertex traces out a horizontal trajectory, but in this case it can swerve diagonally up and down as it moves from group to group.
 
 For example, if we return to the Stergm simulation example, we can contrast the (entirely fictional, simulated) histories of the Tornabouni and Strozzi family marriage alliances as a blue and green lines on the proximity timeline.  First we load in a short example dataset of the flomarriage simulation. 
 
@@ -462,7 +463,7 @@ The number of red lines grows as the infection spreads. By t=17 (the second snap
 
 Of course there are quite a few vertices (100) so it it is difficult to see exactly what is going on in detail, especially when they cross over each other.   But the proximity timeline is sometimes able to illustrate the features of the forward reachable paths and changes in overall network structure in ways that can be missed when viewing a movie. 
 
-Naturally the proximity.timeline plots suffer from some of the same noise and reproduce-ability problems that challenge the network layouts.  The geodesic distance information is tightly compressed onto a single dimension, so the exact ordering of the vertices in any specific region may be due to chance, just as the rotation and relative positions of components in a network plot are not directly meaningful.   This is also a fairly experimental tool, so getting good results still requires playing around a bit with the various algorithms and adjusting \verb@default.dist@ to a value larger enough to force clusters close enough together without making them overlap too much. 
+Naturally the proximity.timeline plots suffer from some of the same noise and reproduceability problems that challenge the network layouts.  The geodesic distance information is tightly compressed onto a single dimension, so the exact ordering of the vertices in any specific region may be due to chance, just as the rotation and relative positions of components in a network plot are not directly meaningful.   This is also a fairly experimental tool, so getting good results still requires playing around a bit with the various algorithms and adjusting \verb@default.dist@ to a value larger enough to force clusters close enough together without making them overlap too much. 
 
 \subsection{Examining missingness}
 
@@ -471,18 +472,26 @@ This plot shows the timeline view vertex activity spells for the ``windsurfer'' 
 timeline(windsurfers,plot.edge.spells = FALSE)
 @
 
-Notice that in contrast to the McFarland classroom dataset we saw earlier, many of the vertices are almost entirely unobserved.  The \verb@proximity.timeline@ function uses the \verb@spline.style@ argument to control how the spline segments corresponding to vertex inactivity should be rendered. 
+
+Notice that in contrast to the McFarland classroom dataset we saw earlier, many of the vertices are almost entirely unobserved (have very short activity spells).  This presents a challenge when tracing out the trajectories.
+
+The \verb@proximity.timeline@ function uses the \verb@spline.style@ argument to control how the spline segments corresponding to vertex inactivity should be rendered.  To help make the plot more legible, we can use the \verb@start@ and \verb@end@ paramter to zoom in and render only a portion of the time range. 
+
 <<windsurfer_prox_gaps, fig=TRUE>>=
 proximity.timeline(windsurfers,start=20,end=31,mode='sammon',
                    spline.style='inactive.gaps')
+@
+<<windsurfer_prox_ignore, fig=TRUE>>=
 proximity.timeline(windsurfers,start=20,end=31,
                    mode='sammon',spline.style='inactive.ignore')
+@
+<<windsurfer_prox_ghost, fig=TRUE>>=
 proximity.timeline(windsurfers,start=20,end=31,mode='sammon',
                    spline.style='inactive.ghost')
 
 @
 
-The gost version (which is the default) offers a compromise by linking the observed spells with a faint dotted line, making it possible to trace the trajectories across time without it appearing that there is much more data availible than is actually the case.  Notice also the use of the \verb@start@ and \verb@end@ paramter to zoom in and render only a portion of the time range. 
+The ghost version (which is the default when gaps in vertex activity are detected) offers a compromise by linking the observed spells with a faint dotted line, making it possible to trace the trajectories across time without it appearing that there is much more data availible than is actually the case.  The \code{'inactive.ignore'} option -- the default when vertex activity gaps are not detected -- will always be the fastest because it isn't necesary to break the splies up into segments.
 
 
 \section{Dependencies for Animations}
@@ -549,7 +558,7 @@ The \verb@render.d3movie@ can save out a network animation an interactive HTML5 
 
 \section{Limitations}
 \subsection{Size limits}
-Like most network algorithms, the layouts tend to scale quite badly. We generally have only had enough patience to generate moves for networks of less than 1000 vertices.  There also seems to be quite a bit of overhead in the \verb@animation@ package, so the generation process seems to slow down considerably for longer duration networks or when slice or render parameters cause lots of slices to be generated. 
+Like most network algorithms, the time to compute layouts for animations tends to scale quite badly with network size. We generally have only had enough patience to generate movies for networks of less than 1000 vertices.  There also seems to be quite a bit of overhead in the \verb@animation@ package, so the generation process seems to slow down considerably for longer duration networks or when slice or render parameters cause lots of slices to be generated. 
 
 \begin{thebibliography}{}
 
