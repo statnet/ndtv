@@ -997,7 +997,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
           d3.select(this)
             .transition()
             .duration(200)
-            .style('stroke-width', d['vertex.lwd']+5);
+            .style('stroke-width', parseFloat(d['vertex.lwd'])+5);
         })
         .on('mouseout', function(d) {
           d3.select(this)
@@ -1115,7 +1115,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
           }
           edge.transition()
             .duration(200)
-            .style('stroke-width', d['edge.lwd']+5)
+            .style('stroke-width', parseFloat(d['edge.lwd'])+5)
             .attr('d', line);
         })
         .on('mouseout', function(d) {
