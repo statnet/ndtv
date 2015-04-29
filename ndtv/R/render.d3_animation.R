@@ -9,7 +9,7 @@
 #######################################################################
 
 ## set ndtv-d3 version number as an option for debugging
-options('ndtv-d3-version'="v0.2-9-g1e331c9")  # git describe --tags
+options('ndtv-d3-version'="v0.2-14-gc3128cf")  # git describe --tags
 
 #go through the sets of coordinates attached to the network
 #compute interpolation frames, and actually draw it out

@@ -154,7 +154,7 @@ This is a very preliminary draft implementation. The animations preform poorly i
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-See also the ndtv-d3 vignette \code{vignette('ndtv-d3 animation examples',package='ndtv')}, \code{\link{render.animation}}, \code{\link{compute.animation}}.
+See also the ndtv-d3 vignette \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html}, \code{\link{render.animation}}, \code{\link{compute.animation}}.
 }
 \examples{
 # render an interactive SVG animation of short.stergm.sim and open it in a browser
