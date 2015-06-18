@@ -86,7 +86,7 @@ print(short.stergm.sim)
 @
 The print command for \verb@networkDynamic@ objects includes some additional info about the time range of the network and then the normal output from \verb@print.network@.
 
-\subsubsection{Render a network animation}
+\subsubsection{Render a network animation as a video}
 Or if we wanted to get a quick visual summary of how the structure changes over time, we could render the network as an animation.
 
 <<shortTergAnimation,results=hide>>=
@@ -97,6 +97,14 @@ And then play it back in the R plot window
 <<shortTergmAniPlayback>>=
 ani.replay()
 @
+
+\subsection{Render a network animation as an interactive web page}
+We can also present a similar animation as an interactive HTML5 animation in a web browser. 
+<<shortTergWebAnimation,results=hide>>=
+render.d3movie(short.stergm.sim)
+@
+This should bring up a browser window displaying the animation.  In addition to playing and pausing the movie, it is possible to click on vertices and edges to show their ids, double-click to highlight neighbors, and zoom into the network at any point in time. 
+
 
 \subsubsection{Plot a static ``filmstrip'' sequence}
 
@@ -149,7 +157,7 @@ spls[spls$duration==25,]
 \section{The basics}
 
 \subsection{Installing ndtv and its external dependencies}
-The \verb@ndtv@ \citep{ndtv} package relies on many other packages to do much of the heavy lifting, especially \verb@animation@ \citep{animation} and \verb@networkDynamic@. It also requires external libraries (FFmpeg) to save movies out of the R environment, and Java to be able to some of the better layout algorithms. 
+The \verb@ndtv@ \citep{ndtv} package relies on many other packages to do much of the heavy lifting, especially \verb@animation@ \citep{animation} and \verb@networkDynamic@. Web animations can be created and viewed on computers with modern web browsers without additional components.  However, \verb@ndtv@ does requires external libraries (FFmpeg) to save movies as video files, and Java to be able to some of the better layout algorithms. 
 
 \subsubsection{Installing ndtv and its R package dependencies}
 R can automatically install the packages \verb@ndtv@ depends on when \verb@ndtv@ is installed. So open up your R console, and run the following command:
