@@ -12,7 +12,7 @@ vignette: >
 <!-- to render out this file for preview when not using RStudio:  rmarkdown::render('vignettes/ndtv-d3_vignette.rmd') -->
 
 ## What is ndtv-d3? ##
-The `ndtv-d3` project is a network animation player for the `ndtv` R package. It makes it possible to view and share interactive network animations in a modern web browser without needing to install any external tools for rendering video.
+The `ndtv-d3` project is a network animation player for the `ndtv` R package (http://cran.r-project.org/package=ndtv). It makes it possible to view and share interactive network animations in a modern web browser without needing to install any external tools for rendering video.
 
 ## Quick start: Display movie in a web browser ##
 

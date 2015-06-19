@@ -1,14 +1,14 @@
 ---
-title: "Workshop materials for learning ndtv: Network Dynamic Temporal Visualization"
+title: 'Workshop materials for learning ndtv: Network Dynamic Temporal Visualization'
 author: "Skye Bender-deMoll"
-date: "06/15/2015"
+date: "06/19/2015"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     fig_width: 8
     highlight: kate
     theme: cosmo
-    toc: yes
-  pdf_document:
     toc: yes
 ---
 ```{r setup, include=FALSE}
@@ -23,9 +23,9 @@ ani.options(ffmpeg='avconv') #ffmpeg missing on my platform
 ## What is ndtv?
 The Network Dynamic Temporal Visualization (`ndtv`) package provides tools for visualizing changes in network structure and attributes over time.
 
-  * Uses network information encoded in `networkDynamic` \citep{networkDynamic} objects as its input
+  * Uses network information encoded in `networkDynamic` (Butts et. al. 2012) objects as its input
   * Outputs animated movies, timelines and other types of dynamic visualizations of evolving relational structures.
-  * The core use-case for development is examining the output of statistical network models (such as those produced by the `tergm` \citep{tergm} package in `statnet` \citep{statnet}) and simulations of disease spread across networks. 
+  * The core use-case for development is examining the output of statistical network models (such as those produced by the `tergm` (Krivitsky and Handcock 2015) package in `statnet` (Handcock et. al. 2003b) and simulations of disease spread across networks. 
   * Easy to do basic things, but lots of ability to customize.
 
 
@@ -41,7 +41,7 @@ The Network Dynamic Temporal Visualization (`ndtv`) package provides tools for v
   * Functioning R installation and basic statnet packages already installed. (Instructions on installing R and statnet are located here https://statnet.org/trac/wiki/Installation.)
   * Familiarity with general network and SNA concepts
   * Experience with statnet packages and `network` data structures preferred but not necessary. (A tutorial providing "An Introduction to Network Analysis with R and statnet"" is located here: https://statnet.org/trac/wiki/Resources)
-  * A working internet connection (we will install some libraries and download datasets)
+  * A working internet connection (we will install some libraries and download data sets)
 
 ## A Quick Demo
 
@@ -139,7 +139,7 @@ spls[spls$duration==25,]
 # The basics
 
 ## Installing ndtv and its external dependencies
-The `ndtv` \citep{ndtv} package relies on many other packages to do much of the heavy lifting, especially `animation` \citep{animation} and `networkDynamic`. Web animations can be created and viewed on computers with modern web browsers without additional components.  However, `ndtv` does require some non-R external dependencies (FFmpeg) to save movies as video files, and Java to be able to use some of the better quality layout algorithms. 
+The `ndtv` (Bender-deMoll 2013) package relies on many other packages to do much of the heavy lifting, especially `animation` (Xie Y 2012) and `networkDynamic` (Butts et. al. 2012). Web animations can be created and viewed on computers with modern web browsers without additional components.  However, `ndtv` does require some non-R external dependencies (FFmpeg) to save movies as video files, and Java to be able to use some of the better quality layout algorithms. 
 
 ### Installing ndtv and its R package dependencies
 R can automatically install the packages `ndtv` depends on when `ndtv` is installed. So open up your R console, and run the following command:
@@ -177,7 +177,7 @@ FFmpeg http://www.ffmpg.org is a cross-platform tool for converting and renderin
   * Tell the animation library to use 'avconv' inplace of ffmpeg by typing `ani.options(ffmpeg='avconv')` in your R session
 
 ### Installing Java and MDSJ setup
-To use the MDSJ layout algorithm, you must have Java installed on your system.  Java should be already installed by default on most Mac and Linux systems. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
+To use the MDSJ (Algorithmics Group, University of Konstanz 2009) layout algorithm, you must have Java installed on your system.  Java should be already installed by default on most Mac and Linux systems. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
 
 When java is installed correctly the following command should print out the version information:
 ```{r}
@@ -392,7 +392,7 @@ See the help page for each function for detailed listing of parameters. We will 
 Since we just rendered the "wheel" example movie, it is already cached and we can capture the output of `ani.replay()` into a movie file. Try out the various output options below.
 
 #### Saving video
-Save out an animation, providing a non-default filename for the video file:
+Save out an animation, providing a non-default file name for the video file:
 
 ```{r,message=FALSE}
 saveVideo(ani.replay(),video.name="wheel_movie.mp4")
@@ -441,20 +441,20 @@ saveLatex(render.animation(wheel,vertex.col='blue',
 
 ### HTML5 / SVG video files
 
-As we saw earlier, `ndtv` includes the `render.d3movie` that, instead of using R's plotting functions and the animation library, embedds the animation information into a web page along with "ndtv-d3 player"" as an interactive HTML5 SVG animation for display in a moden web browser.
+As we saw earlier, `ndtv` includes the `render.d3movie` that, instead of using R's plotting functions and the animation library, embeds the animation information into a web page along with "ndtv-d3 player"" as an interactive HTML5 SVG animation for display in a modern web browser.
 
 
 ```{r,message=FALSE}
 render.d3movie(wheel,vertex.col='blue', edge.col='gray')
 ```
 
-The `render.d3movie` supports most (but not all) of the same commonly used plot arguments as `render.animation`.  For a list of exactly which arguments, see `?render.d3Movie`.  There are also some additional arguments that can be used to configure HTML styling and interaction properties such as tooltips. We've provided a tutorial devoted just to the ndtv-d3 features available at http://statnet.org/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html  It demonstrates great features such as embedding animations in Rmarkdown documents.
+The `render.d3movie` supports most (but not all) of the same commonly used plot arguments as `render.animation`.  For a list of exactly which arguments, see `?render.d3Movie`.  There are also some additional arguments that can be used to configure HTML styling and interaction properties such as tool-tips. We've provided a tutorial devoted just to the ndtv-d3 features available at http://statnet.org/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html  It demonstrates great features such as embedding animations in Rmarkdown documents (Allaire, et. al. 2015).
 
 
 
 
 *****
-**Exercise:** Using the list of options from the help page ?ani.options, locate the option to control the time delay interval of the animation, and use it to render a video where each frame stays on screen for 2 seconds.
+**Exercise:** Using the list of options from the help page `?ani.options`, locate the option to control the time delay interval of the animation, and use it to render a video where each frame stays on screen for 2 seconds.
 
 ```{r,message=FALSE,results='hide'}
 saveVideo(render.animation(wheel,vertex.col='blue',
@@ -470,7 +470,7 @@ saveVideo(render.animation(wheel,vertex.col='blue',
 Some additional tips, tricks, and helpful information.
 
 ## Animated Layout Algorithms
-First some background about graph layouts.  Producing layouts of dynamic networks is generally a computationally difficult problem. And the definition of what makes a layout "good" is often ambiguous or very specific to the domain of the data being visualized. The ndtv package aims for the folowing sometimes conflicting animation goals:
+First some background about graph layouts.  Producing layouts of dynamic networks is generally a computationally difficult problem. And the definition of what makes a layout "good" is often ambiguous or very specific to the domain of the data being visualized. The ndtv package aims for the following sometimes conflicting animation goals:
 
 * Similar layout goals as static layouts (minimize edge crossing, vertex overlap, etc)
 * Changes in network structure should be reflected in changes in the vertex positions in the layout.
@@ -488,7 +488,7 @@ The `network.layout.animate.*` layouts included in `ndtv` are adaptations or wra
 The Fruchterman-Reingold algorithm has been one of the most popular layout algorithms for graph layouts (it is the default for `plot.network`).  For larger networks it can be tuned to run much more quickly than most MDS algorithms.  Unfortunately, its default optimization technique introduces a lot of randomness, so the "memory" of previous positions is usually erased each time the layout is run, producing very unstable layouts when used for animations. Various authors have had useful animation results by modifying FR to explicitly include references to vertices' positions in previous time points. Hopefully we will be able to include such algorithms in future releases of ndtv.
 
 ### Kamada-Kawai adaptation
-The Kamada-Kawai network layout algorithm is often described as a "force-directed" or "spring embedder" simulation, but it is mathematically equivalent to some forms of MDS (Kamada-Kawai uses Newton-Raphson optimization instead of SMACOF stress-majorization). The function `network.layout.animate.kamadakawai` is essentially a wrapper for `network.layout.kamadakawai`. It computes a symmetric geodesic distance matrix from the input network using `layout.distance` (replacing infinite values with `default.dist`), and seeds the initial coordinates for each slice with the results of the previous slice in an attempt to find solutions that are as close as possible to the previous positions. It is not as fast as MDSJ, and the layouts it produces are not as smooth. Isolates often move around for no clear reason. But it has the advantage of being written entirely in R, so it doesn't have the pesky external dependencies of MDSJ. For this reason it is the default layout algorithm. 
+The Kamada-Kawai network layout algorithm is often described as a "force-directed" or "spring embedded" simulation, but it is mathematically equivalent to some forms of MDS (Kamada-Kawai uses Newton-Raphson optimization instead of SMACOF stress-majorization). The function `network.layout.animate.kamadakawai` is essentially a wrapper for `network.layout.kamadakawai`. It computes a symmetric geodesic distance matrix from the input network using `layout.distance` (replacing infinite values with `default.dist`), and seeds the initial coordinates for each slice with the results of the previous slice in an attempt to find solutions that are as close as possible to the previous positions. It is not as fast as MDSJ, and the layouts it produces are not as smooth. Isolates often move around for no clear reason. But it has the advantage of being written entirely in R, so it doesn't have the pesky external dependencies of MDSJ. For this reason it is the default layout algorithm. 
 
 ```{r,message=FALSE,results='hide'}
 compute.animation(short.stergm.sim,animation.mode='kamadakawai')
@@ -512,7 +512,7 @@ saveVideo(render.animation(short.stergm.sim,render.cache='none',
 
 ### Graphviz layouts
 
-The Graphviz \citep{graphviz} external layout library includes a number of excellent algorithms for graph layout, including `neato`, an stress-optimization variant, and `dot` a hierarchical layout (for trees and Directed Acyclic Graph (DAG) networks). As Graphviz is not an R package, you must first install the the software on your computer following the instructions at `?install.graphviz` before you can use the layouts. The layout uses the `export.dot` function to write out a temporary file which it then passes to Graphviz.
+The Graphviz (Gansner and North 2000)  external layout library includes a number of excellent algorithms for graph layout, including `neato`, an stress-optimization variant, and `dot` a hierarchical layout (for trees and Directed Acyclic Graph (DAG) networks). As Graphviz is not an R package, you must first install the the software on your computer following the instructions at `?install.graphviz` before you can use the layouts. The layout uses the `export.dot` function to write out a temporary file which it then passes to Graphviz.
 
 ```{r,message=FALSE}
 compute.animation(short.stergm.sim,animation.mode='Graphviz')
@@ -588,9 +588,9 @@ However, even for some data-sets that are collected as panels, the time units ma
 
 ### Slicing streaming data
 
-Slicing up a dynamic network created from discrete panels may appear to be fairly straightforward but it is much less clear how to do it when working with continuous time or "streaming" relations where event are recorded as a single time point. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The `slice.par` parameters make it possible to experiment with various aggregation options. In many situations we have even found \citep{sonia} it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale. 
+Slicing up a dynamic network created from discrete panels may appear to be fairly straightforward but it is much less clear how to do it when working with continuous time or "streaming" relations where event are recorded as a single time point. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The `slice.par` parameters make it possible to experiment with various aggregation options. In many situations we have even found it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale (Bender-deMoll and McFarland 2006). 
 
-As an example, lets look at the McFarland \citep{mcfarland} data-set of streaming classroom interactions and see what happens when we chop it up in various ways. 
+As an example, lets look at the McFarland (2001) data of streaming classroom interactions and see what happens when we chop it up in various ways. 
 ```{r}
 data(McFarland_cls33_10_16_96)
 ```
@@ -632,7 +632,7 @@ ani.replay()
 To reveal slower structural patterns we can make the aggregation period even longer, and let the slices overlap (by making `interval` less than `aggregate.dur`) so that the same edge may appear in sequential slices and the changes will be less dramatic between successive views. See http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v3.mp4 for the corresponding movie.
 
 *****
-**Question:** How would measurements of a network's structual properties (degree, etc.) at each time point likely differ in each of the aggregation scenarios?
+**Question:** How would measurements of a network's structural properties (degree, etc.) at each time point likely differ in each of the aggregation scenarios?
 
 *****
 
@@ -657,7 +657,7 @@ Ideally we might want to aggregate the edges in some way, perhaps adding the wei
 *****
 
 ## Vertex dynamics
-Edges are not the only things that can change in networks. In some dynamic network data the vertices may also enter or leave the network (become active or inactive, birth/death).  Lin Freeman's windsurfer social interaction data-set \citep{windsurfers} is a good example of this. In this data there are different people present on the beach on successive days, and there is even a day of missing data.
+Edges are not the only things that can change in networks. In some dynamic network data the vertices may also enter or leave the network (become active or inactive, birth/death).  Lin Freeman's windsurfer social interaction data-set (Almquist and Butts 2011) is a good example of this. In this data there are different people present on the beach on successive days, and there is even a day of missing data.
 
 
 ```{r,fig.show='hide'}
@@ -735,7 +735,7 @@ get.edge.attribute.active(wheel,'width', at=2)
 get.edge.attribute.active(wheel,'width', at=2,require.active=TRUE)
 ```
 
-When using an attribute to control a plot parameter we must make sure the attributes are always defined for every time period that the network will be plotted or else an error will occur. So it is often good practice first set a default value from `-Inf` to `Inf`  before overwritting with later commands defining which elements we wanted to take a special value. 
+When using an attribute to control a plot parameter we must make sure the attributes are always defined for every time period that the network will be plotted or else an error will occur. So it is often good practice first set a default value from `-Inf` to `Inf`  before overwriting with later commands defining which elements we wanted to take a special value. 
 ```{r}
 activate.vertex.attribute(wheel,'mySize',1, onset=-Inf,terminus=Inf)
 activate.vertex.attribute(wheel,'mySize',3, onset=5,terminus=10,v=4:8)
@@ -1012,7 +1012,7 @@ Notice that in addition to the labels on the bottom of the plot indicating which
 ## Constructing a movie from external data in matrix form
 At this point you might be thinking: "All of this dynamic stuff is well and good, but my data were collected in panels and stored as matrices. Can I still make a network animation?"
 
-The answer is yes! We will use the example Harry Potter Support Networks of Goele Bossaert and Nadine Meidert \citep{hpdata}. They have coded the peer support ties between 64 characters appearing in the text of each of the well-known fictional J. K. Rowling novels and made the data available for general use in the form of 6 text formatted adjacency matrices and several attribute files.  You can download and unzip the data files from http://www.stats.ox.ac.uk/~snijders/siena/HarryPotterData.html, or use the R code below to load in directly from the zip file.  The dataset is also included along with a number of other interesting examples in the `networkDynamic` object in the `networkDynamicData` \citep{networkDynamicData} package.
+The answer is yes! We will use the example Harry Potter Support Networks of Goele Bossaert and Nadine Meidert (2013). They have coded the peer support ties between 64 characters appearing in the text of each of the well-known fictional J. K. Rowling novels and made the data available for general use in the form of 6 text formatted adjacency matrices and several attribute files.  You can download and unzip the data files from http://www.stats.ox.ac.uk/~snijders/siena/HarryPotterData.html, or use the R code below to load in directly from the zip file.  The dataset is also included along with a number of other interesting examples in the `networkDynamic` object in the `networkDynamicData` (Bender-deMoll 2014) package.
 
 ```{r}
 # tmp filename for the data
@@ -1060,7 +1060,7 @@ hpList<-lapply(hpList,as.network.matrix,matrix.type='adjacency')
 harry_potter_support<-networkDynamic(network.list=hpList)
 ```
 
-Next we will read in the names from the auxillary file and attach them to the network as vertex names.
+Next we will read in the names from the auxiliary file and attach them to the network as vertex names.
 ```{r}
 # read in and assign the names
 names<-read.table(unz(temp_hp.zip, "hpnames.txt"),
@@ -1127,7 +1127,7 @@ One challenge of constructing movies from matrices is that (as the authors of th
 
 For this example we will simulate a fictitious rumor transmission network using code from the "Making Lin Freeman's windsurfers gossip" section of the `networkDynamic` vignette, and then examine various ways to look at the transmission. Finally, we will construct a new movie and animated transition using the output of several networks and algorithms.
 
-The code below defines a function to run the simulation, sets initial seeds (starts the rumor) and then runs the simulation. The EpiModel package \citep{EpiModel} includes much better utilities for simulating transmission networks with various realistic properties.  If you don't care about the details of the simulation, just execute the entire block of code below to load in the funciton. 
+The code below defines a function to run the simulation, sets initial seeds (starts the rumor) and then runs the simulation. The EpiModel package (Jenness, et. al. 2014) includes much better utilities for simulating transmission networks with various realistic properties.  If you don't care about the details of the simulation, just execute the entire block of code below to load in the function. 
 
 ```{r}
 # function to simulate transmission
@@ -1195,7 +1195,7 @@ list.vertex.attributes(windsurfers)
 list.edge.attributes(windsurfers)
 ```
 
-Lets plot the time-aggregate network with the infected vertices and edges highlighted by their status in the last timepoint
+Lets plot the time-aggregate network with the infected vertices and edges highlighted by their status in the last time point
 ```{r}
 # plot the aggregate network, hiliting infected
 plot(windsurfers,
@@ -1447,4 +1447,71 @@ Before we create unreasonable expectations, we should be clear that you can't ju
 * Good results may require considering how the weights and measures of your input data can be translated meaningfully to the implicit "space" you are embedding your data in.
 
 As the `ndtv` package is still very much under development, we would greatly appreciate your suggestions and feedback: `skyebend@skyeome.net`
+
+# Bibliography
+
+Algorithmics Group, University of Konstanz (2009)
+*MDSJ: Java Library for Multidimensional Scaling (Version 0.2)*. http://www.inf.uni-konstanz.de/algo/software/mdsj/  
+
+JJ Allaire, Joe Cheng, Yihui Xie, Jonathan McPherson, Winston Chang, Jeff Allen, Hadley Wickham and Rob Hyndman (2015).
+  *rmarkdown: Dynamic Documents for R. R package* version 0.5.1. http://CRAN.R-project.org/package=rmarkdown
+
+Almquist, Zack W. and Butts, Carter T. (2011). "Logistic Network Regression for Scalable Analysis of Networks with Joint Edge/Vertex Dynamics." 
+*IMBS Technical Report MBS 11-03*, University of California, Irvine.
+
+
+Bender-deMoll, Skye and McFarland, Daniel A. (2006) 
+"The Art and Science of Dynamic Network Visualization"
+*Journal of Social Structure*. Volume 7, Number 2 http://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/
+
+Bender-deMoll, S., Morris, M. and Moody, J. (2008)
+"Prototype Packages for Managing and Animating Longitudinal Network Data: dynamicnetwork and rSoNIA"
+*Journal of Statistical Software* 24:7.
+
+Bender-deMoll, Skye (2013).
+*ndtv: Network Dynamic Temporal Visualizations*.
+R package version 0.6.1, http://CRAN.R-project.org/package=ndtv.
+
+Bender-deMoll, Skye (2014). *networkDynamicData: dynamic network datasets*. R package version 0.1.0.
+http://CRAN.R-project.org/package=networkDynamicData
+
+Bossaert, G. and Meidert, N. (2013) 
+"'We are only as strong as we are united, as weak as we are divided'. A dynamic analysis of the peer support networks in the Harry Potter books". 
+*Open Journal of Applied Sciences*, Vol. 3 No. 2, pp. 174-185.
+DOI: http://dx.doi.org/10.4236/ojapps.2013.32024
+
+Butts CT (2008). 
+"network: A Package for Managing Relational Data in R". 
+*Journal of Statistical Software*, 24(2). http://www.jstatsoft.org/v24/i02/. 
+
+Butts C, Leslie-Cook A, Krivitsky P and Bender-deMoll S (2012).
+*networkDynamic: Dynamic Extensions for Network Objects*.
+R package version 0.8, http://statnet.org.
+
+Emden R. Gansner and Stephen C. North (2000) "An open graph visualization system and its applications to software engineering". *SOFTWARE -- PRACTICE AND EXPERIENCE*, Volume 30, Number 11, pp 1203--1233 http://www.graphiz.org
+
+Handcock MS, Hunter DR, Butts CT, Goodreau SM, Morris M (2003b). 
+*statnet: Software tools for the Statistical Modeling of Network Data*. 
+Statnet Project, Seattle, WA. Version 3, http://www.statnetproject.org.
+
+Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b). 
+"ergm: A Package to Fit, Simulate and Diagnose Exponential-Family Models for Networks". 
+*Journal of Statistical Software*, 24(3). http://www.jstatsoft.org/v24/i03/. 
+
+Jenness S, Goodreau S, Wang L and Morris M (2014). 
+*EpiModel: Mathematical Modeling of Infectious Disease*. The Statnet Project
+(http://www.statnet.org). R package version 0.95, http://CRAN.R-project.org/package=EpiModel.
+
+Krivitsky P and Handcock M (2015).
+*tergm: Fit, Simulate and Diagnose Models for Network Evolution Based on Exponential-Family Random Graph Models*.
+The Statnet Project (http://www.statnet.org).
+R package version 3.2.5-13652-13653.1-2015.04.10-16.29.16, \url{http://CRAN.R-project.org/package=tergm}.
+
+McFarland, Daniel A. (2001) "Student Resistance: How the Formal and Informal Organization of Classrooms Facilitate Everyday Forms of Student Defiance."
+*American Journal of Sociology* **107** (3): 612-78.
+
+Xie Y (2012).
+"animation: An R Package for Creating Animations and Demonstrating Statistical Methods."
+*Journal of Statistical Software*, **53**(1), pp. 1--27.
+http://www.jstatsoft.org/v53/i01/.
 

@@ -9,7 +9,7 @@ Authors@R:c(
 Depends: R (>= 3.0), network (>= 1.12),networkDynamic (>= 0.7),animation (>= 2.3),sna
 Imports: MASS, statnet.common, jsonlite, base64
 Suggests:tergm (>= 3.1), testthat, knitr
-Description: Renders dynamic network data from "networkDynamic" objects as animated movies or other representations of relational structure and node attributes that change over time.
+Description: Renders dynamic network data from 'networkDynamic' objects as animated movies or other representations of relational structure and node attributes that change over time.
 License: GPL-3 + file LICENSE
 URL: http://statnet.org
 VignetteBuilder: knitr
