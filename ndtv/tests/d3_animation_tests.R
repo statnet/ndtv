@@ -83,3 +83,9 @@ render.d3movie(test,filename=tempfile(fileext = 'html'),edge.col='#CCCCCC22',edg
 testStatic<-network.initialize(4)
 testStatic[1,2:3]<-1
 render.d3movie(testStatic)
+
+# test passing in coord to static network
+testStatic<-network.initialize(4)
+testStatic[1,2:3]<-1
+render.d3movie(testStatic,coord=matrix(1:8,ncol=2))
+

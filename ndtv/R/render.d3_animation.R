@@ -78,6 +78,13 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     net<-as.networkDynamic(net)
     # set a dummy slice.par to avoid warning
     net%n%'slice.par'<-list(start=0,end=0,interval=0, aggregate.dur=0,rule='latest')
+    # if 'coord' plotting argument is included, use it instead of doing a layout computation
+    if (!is.null(list(...)$coord)){
+      coord<-list(...)$coord
+      activate.vertex.attribute(net,'animation.x',coord[,1,drop=FALSE],at=0)
+      activate.vertex.attribute(net,'animation.y',coord[,2,drop=FALSE],at=0)
+    }
+    
     
   }
   

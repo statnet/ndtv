@@ -36,7 +36,7 @@ Key features:
 
 To view package vignettes and extended examples, see \code{browseVignettes(package='ndtv')}.
 
-For a more indpeth tutorial, see \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.pdf}
+For a more indpeth tutorial, see \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html}
 
 The package includes several example datasets:
 

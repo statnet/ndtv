@@ -83,7 +83,7 @@ However,  \code{ndtv-d3} includes several nice features to support exploring the
 \item{double-click on a vertex to highlight all of the connected edges and vertices}
 }
 
-If passed a static network, by default only a single slice will be rendered and the time slider and controllers will be disabled. 
+If passed a static network, by default only a single slice will be rendered and the time slider and controllers will be disabled. For consistency with \code{\link{plot.network}} the static mode also supports passing in a matrix of coordinates via \code{coord} argument which will prevent the default call to \code{compute.animation}.
 
 Another advantage of \code{ndtv-d3} is that it does not require installing system libraries such as \code{ffmpeg} to render out the movie. 
 
