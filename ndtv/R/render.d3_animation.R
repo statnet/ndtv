@@ -209,19 +209,34 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   ends <- seq(from=slice.par$start+slice.par$aggregate.dur,to=slice.par$end+slice.par$aggregate.dur,by=slice.par$interval)
   
   #compute coordinate ranges to know how to scale plots
-  xmin <- aggregate.vertex.attribute.active(net,"animation.x",min)
-  xmax <- aggregate.vertex.attribute.active(net,"animation.x",max)
-  ymin <- aggregate.vertex.attribute.active(net,"animation.y",min)
-  ymax <- aggregate.vertex.attribute.active(net,"animation.y",max)
+  xmin <- min(aggregate.vertex.attribute.active(net,"animation.x",min),na.rm=TRUE)
+  xmax <- max(aggregate.vertex.attribute.active(net,"animation.x",max),na.rm=TRUE)
+  ymin <- min(aggregate.vertex.attribute.active(net,"animation.y",min),na.rm=TRUE)
+  ymax <- max(aggregate.vertex.attribute.active(net,"animation.y",max),na.rm=TRUE)
   if (is.null(plot_params$xlim)){
+    # deal with Inf or NA
+    if(is.na(xmin) | is.infinite(xmin)){
+      xmin<--1
+    } 
+    if(is.na(xmax) | is.infinite(xmax)){
+      xmax<-1
+    }
     # deal with case of only one coord, so no range
     if(xmin==xmax){
+      
       xmax<-xmin+1
       xmin<-xmin-1
     }
     plot_params$xlim<-c(xmin,xmax)
   }
   if(is.null(plot_params$ylim)){
+    # deal with Inf or NA
+    if(is.na(ymin) | is.infinite(ymin)){
+      ymin<--1
+    } 
+    if(is.na(ymax) | is.infinite(ymax)){
+      ymax<-1
+    }
     # deal with case of only one coord, so no range
     if(ymin==ymax){
       ymax<-ymin+1
