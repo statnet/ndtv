@@ -1,0 +1,22 @@
+# (uncomment to add a dependency)
+ dependencies:
+  - name: jquery
+    version: 2.1.1
+    src: javascript/ndtv-d3/src/lib/jquery/dist
+    script: jquery.min.js
+  - name: d3
+    version: 0
+    src: javascript/ndtv-d3/src/lib/d3
+    script: d3.min.js
+  - name: d3.slider.js
+    version: 0
+    src: javascript/ndtv-d3/src/lib
+    script: d3.slider.js
+    stylesheet: d3.slider.css
+  - name: ndtv-d3
+    version: 0.2-14
+    src: javascript/ndtv-d3/src
+    script: js/ndtv-d3.js
+    stylesheet: css/styles.css
+
+

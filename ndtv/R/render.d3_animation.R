@@ -22,7 +22,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
                                            initial.coords=0),
                            plot.par=list(bg='white'),
                            d3.options, 
-                           output.mode=c('HTML','JSON','inline'),
+                           output.mode=c('HTML','JSON','inline','htmlWidget'),
                            script.type=c('embedded','remoteSrc'),
                            launchBrowser=TRUE,
                            verbose=TRUE,...){
@@ -349,6 +349,13 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     base64::encode(input=cacheFile,output=cache64)
     cat(readChar(cache64,1e6))
     cat('"></iframe>') 
+  } else if(output.mode=='htmlWidget'){
+    # convert the animation data ('out') and the options into JSON and pass it to the widget creation function
+    #ndtvAnimationWidget(minify(toJSON(out,pretty=FALSE)),minify(toJSON(d3.options,pretty=FALSE,auto_unbox = TRUE)))
+    # for some reason this needs the ndtv::: prefix, I guess 
+    #ndtv:::ndtvAnimationWidget(out,d3.options)
+    requireNamespace('htmlwidgets')
+    return(ndtvAnimationWidget(out,d3.options))
   }
   
   # reset the graphics params back

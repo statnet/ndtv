@@ -16,7 +16,7 @@ render.d3movie(net, filename=tempfile(fileext = '.html'),
                                            initial.coords=0),
                            plot.par=list(bg='white'),
                            d3.options, 
-                           output.mode=c('HTML','JSON','inline'),
+                           output.mode=c('HTML','JSON','inline','htmlWidget'),
                            script.type=c('embedded','remoteSrc'),
                            launchBrowser=TRUE,
                            verbose=TRUE,...)
@@ -56,7 +56,7 @@ list of `high-level' plotting control arguments to be passed to \code{\link{par}
                            )} See Details below for explanations
 }
   \item{output.mode}{
-character string, one of \code{'HTML'},\code{'JSON'} or \code{'inline'}.  The first exports an HTML file with embedded javascript player app including the JSON data structure describing the animation. The second just exports the JSON data structure (for loading into an existing page).  The 3rd renders the HTML inside an iframe tag and supresses all other output in an attempt to make it embedable in rmarkdown documents.
+character string, one of \code{'HTML'},\code{'JSON'} or \code{'inline'}.  The first exports an HTML file with embedded javascript player app including the JSON data structure describing the animation. The second just exports the JSON data structure (for loading into an existing page).  The 3rd renders the HTML inside an iframe tag and supresses all other output in an attempt to make it embedable in rmarkdown documents. The 4th generates a \code{htmlWidget} suitable for displaying in an RStudio plot window or Shiny app. 
 }
  \item{script.type}{if \code{script.type='embedded'}, the scripts will be embedded directly in the output html page. This option is the most portable, but will require large file sizes. If \code{script.type='remoteSrc'}, only the links to the scripts will be included, so the page will require an active internet connection to play the animation. 
  }
@@ -140,6 +140,7 @@ ndtv-d3 has its own configuration properties passed in via the \code{d3.options}
 If \code{output.mode='HTML'}, a file will be generated including the necessary javascript and JSON data structures
 If \code{output.mode='JSON'}, a JSON file will be generated including a section describing all of the rendered slices, and a seperate section including the entire networkDynamic object.
 If \code{output.mode='inline'}, HTML code for an iframe elment suitible for embedding in markdown documents will be printed, all other output supressed.  
+If \code{output.mode='htmlWidget'}, a \code{\link{htmlWidget}} object will be returned which, will produce appropriate html when 'printed' or emedded in a Shiny app
 }
 \references{
 The github repository for the ndtv-d3 javascript library is at \url{https://github.com/statnet/ndtv-d3/} (which is the statnet release fork of \url{https://github.com/michalgm/ndtv-d3/})
@@ -176,6 +177,11 @@ render.d3movie(emon[[5]],
 ```{r,results='asis'}
 render.d3movie(short.stergm.sim,output.mode='inline')
 ```
+# but this works even better!
+```{r}
+render.d3movie(short.stergm.sim,output.mode='htmlWidget')
+```
+
 }
 
 }
