@@ -51,7 +51,7 @@ toy_epi_sim <- color_tea(toy_epi_sim)
 Samuel Jenness, Steven M. Goodreau and Martina Morris (2015). EpiModel: Mathematical Modeling of Infectious
   Disease. R package version 1.1.4. \url{http://CRAN.R-project.org/package=EpiModel}
   
-Statnet EpiModel Tutorial \url{http://statnet.org/EpiModel/vignette/Tutorial.pdf}  
+Statnet EpiModel Tutorial \url{http://www.epimodel.org/}  
 }
 \seealso{ 
 See also \code{\link{short.stergm.sim}} for another basic Stergm simulation output, and \code{\link{msm.sim}} for a larger and more complex simulation without an infection process.  

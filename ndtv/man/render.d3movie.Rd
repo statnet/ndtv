@@ -140,7 +140,7 @@ ndtv-d3 has its own configuration properties passed in via the \code{d3.options}
 If \code{output.mode='HTML'}, a file will be generated including the necessary javascript and JSON data structures
 If \code{output.mode='JSON'}, a JSON file will be generated including a section describing all of the rendered slices, and a seperate section including the entire networkDynamic object.
 If \code{output.mode='inline'}, HTML code for an iframe elment suitible for embedding in markdown documents will be printed, all other output supressed.  
-If \code{output.mode='htmlWidget'}, a \code{\link{htmlWidget}} object will be returned which, will produce appropriate html when 'printed' or emedded in a Shiny app
+If \code{output.mode='htmlWidget'}, a \code{\link[htmlwidget]{htmlWidget}} object will be returned which, will produce appropriate html when 'printed' or emedded in a Shiny app
 }
 \references{
 The github repository for the ndtv-d3 javascript library is at \url{https://github.com/statnet/ndtv-d3/} (which is the statnet release fork of \url{https://github.com/michalgm/ndtv-d3/})
