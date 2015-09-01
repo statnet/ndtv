@@ -26,7 +26,13 @@ ndtvAnimationWidget <- function(out,options, width = NULL, height = NULL) {
     x,
     width = width,
     height = height,
-    package = 'ndtv'
+    package = 'ndtv',
+    sizingPolicy = htmlwidgets::sizingPolicy(
+      padding = 0,
+      #defaultWidth = 500,
+      #defaultHeight = 500
+      #browser.fill = TRUE
+    )
   )
 }
 

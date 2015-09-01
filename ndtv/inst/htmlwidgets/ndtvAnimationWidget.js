@@ -7,7 +7,7 @@ HTMLWidgets.widget({
 
   initialize: function(el, width, height) {
     // append the div into the DOM that ndtv_d3 will renderinto
-    d3.select(el).append('div').attr('id','ndtvAnimation').attr("width", width).attr("height", height);
+    d3.select(el).append('div').attr('id','ndtvAnimation').style('width',width+'px').style('height',height+'px');
     return{};
   },
 
@@ -19,6 +19,8 @@ HTMLWidgets.widget({
   },
 
   resize: function(el, width, height, instance) {
+    d3.select('#ndtvAnimation').style('width',width+'px').style('height',height+'px');
+    graph.resizeGraph();  
 
   }
 
