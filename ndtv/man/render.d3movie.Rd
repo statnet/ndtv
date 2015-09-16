@@ -140,7 +140,7 @@ ndtv-d3 has its own configuration properties passed in via the \code{d3.options}
 If \code{output.mode='HTML'}, a file will be generated including the necessary javascript and JSON data structures
 If \code{output.mode='JSON'}, a JSON file will be generated including a section describing all of the rendered slices, and a seperate section including the entire networkDynamic object.
 If \code{output.mode='inline'}, HTML code for an iframe elment suitible for embedding in markdown documents will be printed, all other output supressed.  
-If \code{output.mode='htmlWidget'}, a \code{\link[htmlwidget]{htmlWidget}} object will be returned which, will produce appropriate html when 'printed' or emedded in a Shiny app
+If \code{output.mode='htmlWidget'}, a \code{\link[htmlwidgets]{htmlwidgets}} object will be returned which, will produce appropriate html when 'printed' or emedded in a Shiny app
 }
 \references{
 The github repository for the ndtv-d3 javascript library is at \url{https://github.com/statnet/ndtv-d3/} (which is the statnet release fork of \url{https://github.com/michalgm/ndtv-d3/})
@@ -162,6 +162,11 @@ See also the ndtv-d3 vignette \url{http://statnet.csde.washington.edu/workshops/
 data(short.stergm.sim)
 render.d3movie(short.stergm.sim)
 
+# render interactive widget in rmarkdown or RStudio plot window
+```{r}
+render.d3movie(short.stergm.sim,output.mode='htmlWidget')
+```
+
 # render a static network as interactive SVG with lots of html tooltip info
 data(emon)
 render.d3movie(emon[[5]],
@@ -173,14 +178,11 @@ render.d3movie(emon[[5]],
     edge.lwd='Frequency')
 
 \dontrun{
-# this code chunk will embed in rmarkdown
+# alternate code for embeding in rmarkdown
 ```{r,results='asis'}
 render.d3movie(short.stergm.sim,output.mode='inline')
 ```
-# but this works even better!
-```{r}
-render.d3movie(short.stergm.sim,output.mode='htmlWidget')
-```
+
 
 }
 
