@@ -21,6 +21,7 @@ timeline(x, v = seq_len(network.size(x)), e = seq_along(x$mel),
         plot.vertex.spells = TRUE, plot.edge.spells = TRUE,
         slice.par = NULL,
         displaylabels = TRUE, e.label=TRUE, e.label.col='purple',
+        edge.lwd=1,
         v.label, v.label.col='blue',
         vertex.cex=1, cex, adj=0,
         edge.col = rgb(0.5, 0.2, 0.2, 0.5), 
@@ -64,6 +65,9 @@ character vector of vertex labels or vertex attribute name. Default is \code{net
   }
   \item{vertex.cex}{
   numeric scaling factor, vector of numeric scaling factors or attribute name.  Translated width of line (\code{lwd}) corresponding to each vertex. 
+  }
+  \item{edge.lwd}{
+    numeric scale factor, numeric vector, or character edge attribute name providing a numeric value for the width of the lines corresponding to each edge.  Note that this does not behave exactly as \code{edge.lwd} in \code{\link{plot.network}} as it does not perform scaling based on attribute values. 
   }
   \item{cex}{
   text size scaling for both vertex and edge labels (see \code{\link{plot.default}})

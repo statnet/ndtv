@@ -67,8 +67,11 @@ timeline(stergm.sim.1,e.label='my_color')
 timeline(stergm.sim.1,vertex.cex=stergm.sim.1%v%'priorates'/5,plot.edge.spells = FALSE)
 
 
-
-
+# test edge line size
+timeline(windsurfers,edge.lwd=5,xlim=c(0,1),plot.vertex.spells = FALSE)  # this will only work with update to network
+set.edge.attribute(windsurfers,'value',1:5)
+timeline(windsurfers,edge.lwd='value',xlim=c(0,1),plot.vertex.spells = FALSE)
+timeline(windsurfers,edge.lwd=windsurfers%e%'value',xlim=c(0,1),plot.vertex.spells = FALSE)
 
 # test plotting spell bounds
 slice.par<-list(start=0,end=24,interval=6, aggregate.dur=5,rule="any")
