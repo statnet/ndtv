@@ -163,9 +163,7 @@ data(short.stergm.sim)
 render.d3movie(short.stergm.sim)
 
 # render interactive widget in rmarkdown or RStudio plot window
-```{r}
 render.d3movie(short.stergm.sim,output.mode='htmlWidget')
-```
 
 # render a static network as interactive SVG with lots of html tooltip info
 data(emon)
@@ -178,6 +176,8 @@ render.d3movie(emon[[5]],
     edge.lwd='Frequency')
 
 \dontrun{
+
+
 # alternate code for embeding in rmarkdown
 ```{r,results='asis'}
 render.d3movie(short.stergm.sim,output.mode='inline')

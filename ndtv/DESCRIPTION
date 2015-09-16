@@ -8,7 +8,7 @@ Authors@R:c(
     person("Martina", "Morris", role=c("ctb"), email="morrism@u.washington.edu"))
 Depends: R (>= 3.0), network (>= 1.12),networkDynamic (>= 0.7),animation (>= 2.3),sna
 Imports: MASS, statnet.common, jsonlite, base64
-Suggests:tergm (>= 3.1), testthat, knitr, htmlwidgets
+Suggests:tergm (>= 3.1), testthat, knitr, htmlwidgets, scatterplot3d
 Description: Renders dynamic network data from 'networkDynamic' objects as animated movies or other representations of relational structure and node attributes that change over time.
 License: GPL-3 + file LICENSE
 URL: http://statnet.org
