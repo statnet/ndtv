@@ -174,16 +174,27 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   if (!is.function(options()$device)){
     if (names(dev.cur())=="RStudioGD" & doRStudioHack){
       message("RStudio's graphics device is not well supported by ndtv, attempting to open another type of plot window")
-      # try to open a new platform-appropriate plot window
-      if (.Platform$OS.type=='windows'){
-        windows()
-      } else if(length(grep(R.version$platform,pattern='apple'))>0)  # is it mac?
-      {
-        quartz()
-      } else {  # must be unix
-        x11()
+      # check if user allready specified something with R_DEFAULT_DEVICE
+      defaultDev<-Sys.getenv('R_DEFAULT_DEVICE')
+      if (identical(defaultDev,'')){
+        # try to open a new platform-appropriate plot window
+        if (.Platform$OS.type=='windows'){
+          #windows()
+          defaultDev<-'windows'
+        } else if(length(grep(R.version$platform,pattern='apple'))>0)  # is it mac?
+        {
+          #quartz()
+          defaultDev= 'quartz'
+        } else {  # must be unix
+          #x11()
+          defaultDev='x11'
+        }
+        Sys.setenv(R_DEFAULT_DEVICE=defaultDev)
       }
+      dev.new(noRStudioGD = TRUE)
       externalDevice<-TRUE
+      # don't forget to set the R_DEFAULT_DEVICE back to '' or R CMD Check will balk
+      Sys.setenv(R_DEFAULT_DEVICE='')
     }
   }
   
@@ -408,7 +419,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
       } else if (arg=='terminus'){
         args<-c(args,list(terminus=terminus))
       } else {
-        stop('unknown argument name "',arg,'" in function provided for ',names(fun_params)[[fun_index]],' graphic parameter:',deparse(plot_params[[fun_index]]))
+        #stop('unknown argument name "',arg,'" in function provided for ',names(fun_params)[[fun_index]],' graphic parameter:',deparse(plot_params[[fun_index]]))
+        # copy in the original argument corresponding to the argument name
+        args[[arg]]<-as.list(args(plot_params[[fun_index]]))[[arg]]
       }
     }
     # replace the function on the list with the results of its evaluation

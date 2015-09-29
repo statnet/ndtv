@@ -81,6 +81,10 @@ If no \code{slice.par} network attribute is found to define the time range to re
 If no dynamic coordinate information has been stored, \code{\link{compute.animation}} will be called with default values to try to do the layout before giving up. 
 
 Additional plot commands passed in via the \code{extraPlotCmds} argument will be  passed to \code{eval()} after each frame is rendered and can be used to add extra annotations to the plot. 
+
+One some installations, the default output from \verb{saveVideo()} (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the argument \verb{other.opts='-pix_fmt yuv420p"} to \verb{saveVideo} corrects the problem. Recent versions of the \verb{animation} library will include this argument by default.  
+
+To avoid performance issues with the RStudio graphics device, RStudio users will see a message that ndtv is attempting to open another type of plot window.  It will try to guess a platform-appropriate device type, but specific device can be pre-specified by the user by setting the \code{R_DEFAULT_DEVICE} environment variable
 }
 
 \note{
@@ -93,12 +97,11 @@ A few of the network drawing arguments have slightly different interpretations t
 }
 If the background color is transparent and not explicitly set, it will be reset to white to prevent unintentional behavior when exporting movies via ffmpeg. 
 
-One some installations, the default output from \verb{saveVideo()} (really ffmpeg) produces videos in a slightly non-standard .mp4 format that won't play in Windows Media Player or QuickTime.  Users have reported that adding the argument \verb{other.opts='-pix_fmt yuv420p"} to \verb{saveVideo} corrects the problem. Recent versions of the \verb{animation} library will include this argument by default.  
+
 }
 
 \value{
-A sequence of plots will be generated on the active plot device. If \code{render.cache='plot.list'} the recorded plots are stored as a list in \code{.ani.env$.images}.
-}
+A sequence of plots will be generated on the active plot device. If \code{render.cache='plot.list'} the recorded plots are stored as a list in \code{.ani.env$.images}. }
 \references{
 Skye Bender-deMoll and McFarland, Daniel A. (2006) The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{http://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
 }
@@ -109,7 +112,7 @@ Skye Bender-deMoll, and the statnet team.
 
 
 \seealso{
-\link{compute.animation},\link{ani.record}, \link{plot.network} and the package vignette \code{vignette('ndtv')}
+\code{\link{compute.animation}} for generating the movie coordinates, \code{\link{ani.replay}}, \code{\link{plot.network}} and the package vignette \code{vignette('ndtv')}. Also \code{\link{render.d3movie}} for displaying movies as interactive HTML5 animations in a web browser
 }
 \examples{
 
