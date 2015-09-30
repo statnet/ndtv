@@ -254,7 +254,7 @@ The function \verb@network.layout.animate.kamadakawai@ is essentially a wrapper 
 
 \subsection{MDSJ (Multidimensional Scaling for Java)}
 According to its authors: 
-\begin{quote}MDSJ \citep{mdsj} is a free Java library for Multidimensional Scaling (MDS). It is a free, non-graphical, self-contained, lightweight implementation of basic MDS algorithms and intended to be used both as a standalone application and as a building block in Java based data analysis and visualization software.
+\begin{quote}MDSJ \citep{mdsj} is a free Java library for Multidimensional Scaling (MDS). It is a free, non-graphical, self-contained, lightweight implementation of basic MDS algorithms and intended to be used both as a standalone application and as a building block in Java-based data analysis and visualization software.
 \end{quote}
 
 MDSJ is a very efficient implementation of MDS so \verb@network.layout.animate.MDSJ@ gives the best performance of any of the algorithms tested so far -- despite the overhead of writing matrices out to a Java program and reading coordinates back in. Like all of the MDS-variants, MDSJ will check and give errors if you try to call it with a non-symmetric distance matrix.  Currently \verb@max_iter@ is the only user argument that is passed through to the Java wrapper.  It controls the maximum number of optimization steps.  The default value is 50 which is usually sufficient.  But it can be increased for layouts that appear to be not entirely converging, or perhaps decreased to save some speed on simpler layouts. 
@@ -495,7 +495,7 @@ The ghost version (which is the default when gaps in vertex activity are detecte
 \section{Dependencies for Animations}
 \label{sec:dependencies}
 \subsection{Java (for MDSJ)}
-In order to use the MDSJ layout algorithm, you must have Java installed on your system.  Java should be already installed by default on most Mac and Linux systems. If it is not installed, you can download it from \url{http://www.java.com/en/download/index.jsp}. On Windows, you may need to edit your `Path' environment variable to make Java executable from the command-line.
+In order to use the MDSJ layout algorithm, you must have Java installed on your system. If it is not installed, you can download it from \url{http://www.java.com/en/download/index.jsp}. On Windows, you may need to edit your `Path' environment variable to make Java executable from the command-line.
 
 \subsection{FFmpeg}
 FFmpeg \url{http://ffmpg.org} is a cross-platform tool for converting and rendering video content in various formats. It is used as an external library by the \verb@animation@ package to save out the animation as a movie file on disk. (see \verb@?saveVideo@ for more information.) Since FFmpeg is not part of R, you will need to install it separately on your system for the save video functionality to work.  The instructions for how to do this will be different on each platform.  You can also access these instructions using \verb@?install.ffmpeg@

@@ -177,7 +177,7 @@ FFmpeg http://www.ffmpg.org is a cross-platform tool for converting and renderin
   * Tell the animation library to use 'avconv' inplace of ffmpeg by typing `ani.options(ffmpeg='avconv')` in your R session
 
 ### Installing Java and MDSJ setup
-To use the MDSJ (Algorithmics Group, University of Konstanz 2009) layout algorithm, you must have Java installed on your system.  Java should be already installed by default on most Mac and Linux systems. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
+To use the MDSJ (Algorithmics Group, University of Konstanz 2009) layout algorithm, you must have Java installed on your system. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
 
 When java is installed correctly the following command should print out the version information:
 ```{r}
@@ -1383,6 +1383,25 @@ saveVideo(
 **Exercise:** Choose one of the dynamic dataset (perhaps one from the networkDynamicData package) and construct an animation.
 
 *****
+
+### Proximity timeline of an infection
+
+Most of the example so far have focused on creating animations, but ndtv supports other types of static visualizations as well.
+
+```{r}
+data(toy_epi_sim)
+```
+
+```{r,message=FALSE}
+proximity.timeline(toy_epi_sim,
+                   vertex.col = 'ndtvcol',
+                   spline.style='color.attribute',
+                   mode='sammon',
+                   default.dist=20,
+                   chain.direction='reverse')
+```
+
+When using `spline.style='color.attribute'` the plot has to generate lots of spline segments, so rendering to the plot device can be slow. 
 
 # Miscelaneous topics
 ## Compressing video output
