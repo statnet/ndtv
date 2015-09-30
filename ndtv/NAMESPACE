@@ -27,5 +27,8 @@ layout.normalize,
 timeline,
 proximity.timeline,
 filmstrip,
-timePrism
+timePrism,
+diffusionTimeline
+#effect,
+#effect.edgeAgeColor
 )
