@@ -39,9 +39,11 @@ Here are some all-too-brief instructions for the various platforms. After you ha
  }
 }
 
-\subsection{Installing in Linux/Unix}{
+\subsection{Installing in Linux/Unix (ffmpeg or avconv)}{
 \itemize{
 \item FFmpeg is a standard package on many linux systems.  You can check if it is installed with a command like \code{dpkg -s ffmpeg}. If it is not installed, you should be able to install with your system's package manager.  i.e. \code{sudo apt-get install ffmpeg}  or search 'ffmpeg' in the Software Center on Ubuntu.
+
+\item Ubuntu and Debian systems may use an alternate program named "avconv" which can be installed with \code{sudo apt-get install libav-tools} or by searching 'libav-tools' in Ubuntu's Software Center. Verify that R knows where to find it by typing `Sys.which('avconv')` in the R terminal. You many need to first restart R after the install. The \code{animation} library should automatically use 'avconv' if it sees it instead of 'ffmpeg'. If it doesn't, you can tell it to by typing \code{ani.options(ffmpeg='avconv')} in your R session
 }
 }
 

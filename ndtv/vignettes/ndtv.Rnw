@@ -162,7 +162,7 @@ Notice that in addition to the labels on the bottom of the plot indicating which
 
 \subsection{Saving an animation as video}
 
-We can also use the \verb@animation@ library to save out the movie in \verb@.mp4@ format (assuming that the FFmpeg library is installed on your machine).
+We can also use the \verb@animation@ library to save out the movie in \verb@.mp4@ format (assuming that the FFmpeg or avconv library is installed on your machine).
 
 <<save_test,eval=TRUE>>=
 saveVideo(ani.replay(),video.name="stergm.sim.1.mp4", 
@@ -498,7 +498,7 @@ The ghost version (which is the default when gaps in vertex activity are detecte
 In order to use the MDSJ layout algorithm, you must have Java installed on your system. If it is not installed, you can download it from \url{http://www.java.com/en/download/index.jsp}. On Windows, you may need to edit your `Path' environment variable to make Java executable from the command-line.
 
 \subsection{FFmpeg}
-FFmpeg \url{http://ffmpg.org} is a cross-platform tool for converting and rendering video content in various formats. It is used as an external library by the \verb@animation@ package to save out the animation as a movie file on disk. (see \verb@?saveVideo@ for more information.) Since FFmpeg is not part of R, you will need to install it separately on your system for the save video functionality to work.  The instructions for how to do this will be different on each platform.  You can also access these instructions using \verb@?install.ffmpeg@
+FFmpeg \url{http://ffmpg.org} (or Libab \url{https://libav.org/}) are a cross-platform tools for converting and rendering video content in various formats. It is used as an external library by the \verb@animation@ package to save out the animation as a movie file on disk. (see \verb@?saveVideo@ for more information.) Since FFmpeg is not part of R, you will need to install it separately on your system for the save video functionality to work.  The instructions for how to do this will be different on each platform.  You can also access these instructions using \verb@?install.ffmpeg@
 
 \section{Compressing video}
 \label{sec:compressing}

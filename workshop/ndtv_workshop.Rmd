@@ -15,7 +15,6 @@ output:
 library(knitr)
 knitr::opts_chunk$set(comment='')
 library(animation)
-ani.options(ffmpeg='avconv') #ffmpeg missing on my platform
 ```
 
 # Introduction to workshop
@@ -139,7 +138,7 @@ spls[spls$duration==25,]
 # The basics
 
 ## Installing ndtv and its external dependencies
-The `ndtv` (Bender-deMoll 2013) package relies on many other packages to do much of the heavy lifting, especially `animation` (Xie Y 2012) and `networkDynamic` (Butts et. al. 2012). Web animations can be created and viewed on computers with modern web browsers without additional components.  However, `ndtv` does require some non-R external dependencies (FFmpeg) to save movies as video files, and Java to be able to use some of the better quality layout algorithms. 
+The `ndtv` (Bender-deMoll 2013) package relies on many other packages to do much of the heavy lifting, especially `animation` (Xie Y 2012) and `networkDynamic` (Butts et. al. 2012). Web animations can be created and viewed on computers with modern web browsers without additional components.  However, `ndtv` does require some non-R external dependencies (FFmpeg or avconv) to save movies as video files, and Java to be able to use some of the better quality layout algorithms. 
 
 ### Installing ndtv and its R package dependencies
 R can automatically install the packages `ndtv` depends on when `ndtv` is installed. So open up your R console, and run the following command:
@@ -150,7 +149,7 @@ library(ndtv) # also loads animation and networkDynamic
 ```
 
 ### Installing FFmpeg for saving animations
-FFmpeg http://www.ffmpg.org is a cross-platform tool for converting and rendering video content in various formats. It is used as an external library by the `animation` package to save out the animation as a movie file on disk. (see `?saveVideo` for more information.) The install instructions are somewhat different on each platform.  You can also access these instructions using `?install.ffmpeg`
+FFmpeg http://www.ffmpg.org  (or Libab https://libav.org/) are cross-platform tools for converting and rendering video content in various formats. It is used as an external library by the `animation` package to save out the animation as a movie file on disk. (see `?saveVideo` for more information.) The install instructions are somewhat different on each platform.  You can also access these instructions using `?install.ffmpeg`
 ```{r}
 ?install.ffmpeg   # help page for installing ffmpeg
 ```
@@ -169,12 +168,12 @@ FFmpeg http://www.ffmpg.org is a cross-platform tool for converting and renderin
   * Verify that R knows where to find it by typing `Sys.which('ffmpeg')` in the R terminal. You many need to first restart R after the install.
   
 #### Linux/Unix FFmpeg instructions
-  * FFmpeg is a standard package on many Linux systems. You can check if it is installed with a command like `dpkg -s ffmpeg`. If it is not installed, you should be able to install with your system's package manager. i.e. `sudo apt-get install ffmpeg`.  
+  * FFmpeg is a standard package on many Linux systems  will be installed instead.. You can check if it is installed with a command like `dpkg -s ffmpeg`. If it is not installed, you should be able to install with your system's package manager. i.e. `sudo apt-get install ffmpeg`.  
   * Verify that R knows where to find it by typing `Sys.which('ffmpeg')` in the R terminal. You many need to first restart R after the install.
   **OR**
   * Ubuntu and Debian systems may use an alternate program named "avconv" which can be installed with `sudo apt-get install libav-tools` or by searching 'libav-tools' in Ubuntu's Software Center.
   * Verify that R knows where to find it by typing `Sys.which('avconv')` in the R terminal. You many need to first restart R after the install.
-  * Tell the animation library to use 'avconv' inplace of ffmpeg by typing `ani.options(ffmpeg='avconv')` in your R session
+  * The `animation` library should automatically use 'avconv' if it sees it instead of 'ffmpeg'. If it doesn't, you can tell it to by typing `ani.options(ffmpeg='avconv')` in your R session
 
 ### Installing Java and MDSJ setup
 To use the MDSJ (Algorithmics Group, University of Konstanz 2009) layout algorithm, you must have Java installed on your system. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
