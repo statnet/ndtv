@@ -22,20 +22,23 @@ diffusionTimeline<-function(x,time.attr,
     if('transmat'%in%class(x)){
       time.attr<-'at'
     } else if ('tPath'%in%class(x)){
+      requireNamespace('tsna')
       time.attr<-'tdist'
     } else {
       stop('time.attr argument must be given')
     }
   }
-  if (!time.attr%in%list.vertex.attributes(net)){
+ 
+ net<-as.network(x)
+   
+ if (!time.attr%in%list.vertex.attributes(net)){ # or is it an attribute name?
     stop("time.attr ",time.attr,' is not a vertex attribute of the network')
   }
-  
   el<-as.edgelist(net)
   times<-get.vertex.attribute(net,time.attr)
   coords<-matrix(0,nrow=network.size(net),ncol=2)
   yBin<-0
-  if(is.tPath(x)){
+  if('tPath'%in%class(x)){  # not using is.tpath, because have not decided on dependency structure yet
     # assume tPath for now
     yBin<-net%v%'gsteps'
     coords<-cbind(times,yBin)

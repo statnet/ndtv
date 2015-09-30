@@ -1,6 +1,6 @@
 # tests for diffusion timeline
 require(testthat)
-
+require(ndtv)
 #require(tsna)
 #data(moodyContactSim)
 #v10path<-tPath(moodyContactSim,v=10,start=0)
