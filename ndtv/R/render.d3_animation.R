@@ -49,14 +49,14 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   if (is.null(render.par)){
     stop("render.d3movie is missing the 'render.par' argument (a list of rendering parameters).")
   }
-  if (is.null(render.par$tween.frames)){
-    render.par$tween.frames<-10 
+  if (is.null(render.par[['tween.frames']])){
+    render.par[['tween.frames']]<-10 
   }
-  if (is.null(render.par$show.time)){
-    render.par$show.time<-TRUE
+  if (is.null(render.par[['show.time']])){
+    render.par[['show.time']]<-TRUE
   }
-  if (is.null(render.par$initial.coords)){
-    render.par$initial.coords<-matrix(0,ncol=2,nrow=network.size(net))
+  if (is.null(render.par[['initial.coords']])){
+    render.par[['initial.coords']]<-matrix(0,ncol=2,nrow=network.size(net))
   }
   
   if (missing(d3.options)){
@@ -67,20 +67,20 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   # convert to network dynamic before calling compute animation
   if(!is.networkDynamic(net)){
     message('input network is not networkDynamic object and does not have temporal info so output animation controls disabled by default')
-    if(is.null(d3.options$'slider')){
-      d3.options$'slider'<-FALSE
+    if(is.null(d3.options[['slider']])){
+      d3.options[['slider']]<-FALSE
     }
-    if(is.null(d3.options$'playControls')){
-      d3.options$'playControls'<-FALSE
+    if(is.null(d3.options[['playControls']])){
+      d3.options[['playControls']]<-FALSE
     }
     # turn off the time plot
-    render.par$show.time<-FALSE
+    render.par[['show.time']]<-FALSE
     net<-as.networkDynamic(net)
     # set a dummy slice.par to avoid warning
     net%n%'slice.par'<-list(start=0,end=0,interval=0, aggregate.dur=0,rule='latest')
     # if 'coord' plotting argument is included, use it instead of doing a layout computation
-    if (!is.null(list(...)$coord)){
-      coord<-list(...)$coord
+    if (!is.null(list(...)[['coord']])){
+      coord<-list(...)[['coord']]
       activate.vertex.attribute(net,'animation.x',coord[,1,drop=FALSE],at=0)
       activate.vertex.attribute(net,'animation.y',coord[,2,drop=FALSE],at=0)
     }
@@ -90,7 +90,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   
   # set the ndtv version.  This is not read by javascript, but is included to make the
   # json library convert it correctly
-  d3.options$ndtv.version=paste(packageDescription("ndtv")$Version,packageDescription("ndtv")$Date,sep=',')
+  d3.options[['ndtv.version']]<-paste(packageDescription("ndtv")[['Version']],packageDescription("ndtv")[['Date']],sep=',')
   
   
   # check d3 params
@@ -118,8 +118,8 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   }
   
   # make sure background color is not transparent unless set that way explicitly
-  if (par("bg")=="transparent" & is.null(plot.par$'bg')){
-    plot.par$'bg'<-'white'
+  if (par("bg")=="transparent" & is.null(plot.par[['bg']])){
+    plot.par[['bg']]<-'white'
   }
   # set high-level plot attributes (bg color, margins, etc)
   # and cache initial graphics par settings
@@ -172,34 +172,34 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   
   # define some defaults for ploting args
   # label defaults to vertex names
-  if(is.null(plot_params$label)){
-    plot_params$label<-function(slice){network.vertex.names(slice)}
+  if(is.null(plot_params[['label']])){
+    plot_params[['label']]<-function(slice){network.vertex.names(slice)}
   }
   # xlab defaults to time
-  if(is.null(plot_params$xlab) & render.par$show.time){
-    plot_params$xlab <- function(onset,terminus){ifelse(onset==terminus,paste("t=",onset,sep=''),paste("t=",onset,"-",terminus,sep=''))}
+  if(is.null(plot_params[['xlab']]) & render.par[['show.time']]){
+    plot_params[['xlab']] <- function(onset,terminus){ifelse(onset==terminus,paste("t=",onset,sep=''),paste("t=",onset,"-",terminus,sep=''))}
   }
   # but if show stats, use that instead 
   # TODO: deprecate show.stats in favor of passing in directly for evaluation?
-  if(!is.null(render.par$show.stats) && render.par$show.stats!=FALSE){
+  if(!is.null(render.par[['show.stats']]) && render.par[['show.stats']]!=FALSE){
     # evaluate a eqn string giving the stats formual
     # TODO: this requires that tergm be loaded! give informative warning if not
-    if(render.par$show.time){
+    if(render.par[['show.time']]){
       # include the time string in the summary
-      plot_params$xlab <- eval(parse(text=paste("function(slice,onset,terminus){stats<-summary.statistics.network(slice",render.par$show.stats,")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
+      plot_params[['xlab']] <- eval(parse(text=paste("function(slice,onset,terminus){stats<-summary.statistics.network(slice",render.par[['show.stats']],")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
     } else {
-      plot_params$xlab <- eval(parse(text=paste("function(slice){stats<-summary.statistics.network(slice",render.par$show.stats,")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+      plot_params[['xlab']] <- eval(parse(text=paste("function(slice){stats<-summary.statistics.network(slice",render.par[['show.stats']],")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
     }
   }
   
   #disable jitter by default because it messes things up
-  if(is.null(plot_params$jitter)){
-    plot_params$jitter<-FALSE
+  if(is.null(plot_params[['jitter']])){
+    plot_params[['jitter']]<-FALSE
   }
   
   # if network is undirected, disable arrows
   if(!is.directed(net)){
-    plot_params$usearrows<-FALSE
+    plot_params[['usearrows']]<-FALSE
   }
   
   #TODO: how are we doing interpolation?
@@ -212,15 +212,15 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   render<-list()
   
   # compute lists of times that networks will be collapsed
-  starts <- seq(from=slice.par$start,to=slice.par$end,by=slice.par$interval)
-  ends <- seq(from=slice.par$start+slice.par$aggregate.dur,to=slice.par$end+slice.par$aggregate.dur,by=slice.par$interval)
+  starts <- seq(from=slice.par[['start']],to=slice.par[['end']],by=slice.par[['interval']])
+  ends <- seq(from=slice.par[['start']]+slice.par[['aggregate.dur']],to=slice.par[['end']]+slice.par[['aggregate.dur']],by=slice.par[['interval']])
   
   #compute coordinate ranges to know how to scale plots
   xmin <- min(aggregate.vertex.attribute.active(net,"animation.x",min),na.rm=TRUE)
   xmax <- max(aggregate.vertex.attribute.active(net,"animation.x",max),na.rm=TRUE)
   ymin <- min(aggregate.vertex.attribute.active(net,"animation.y",min),na.rm=TRUE)
   ymax <- max(aggregate.vertex.attribute.active(net,"animation.y",max),na.rm=TRUE)
-  if (is.null(plot_params$xlim)){
+  if (is.null(plot_params[['xlim']])){
     # deal with Inf or NA
     if(is.na(xmin) | is.infinite(xmin)){
       xmin<--1
@@ -234,9 +234,9 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
       xmax<-xmin+1
       xmin<-xmin-1
     }
-    plot_params$xlim<-c(xmin,xmax)
+    plot_params[['xlim']]<-c(xmin,xmax)
   }
-  if(is.null(plot_params$ylim)){
+  if(is.null(plot_params[['ylim']])){
     # deal with Inf or NA
     if(is.na(ymin) | is.infinite(ymin)){
       ymin<--1
@@ -249,17 +249,17 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
       ymax<-ymin+1
       ymin<-ymin-1
     }
-    plot_params$ylim<-c(ymin,ymax)
+    plot_params[['ylim']]<-c(ymin,ymax)
   }
   
   #set up default coords.  If not specified, default will be zero
-  if(is.numeric(render.par$initial.coords)){
-    coords<-matrix(render.par$initial.coords,ncol=2,nrow=network.size(net))
+  if(is.numeric(render.par[['initial.coords']])){
+    coords<-matrix(render.par[['initial.coords']],ncol=2,nrow=network.size(net))
   }
   
   #compute some starting coords  
-  slice <- network.collapse(net,starts[1],ends[1],rule=slice.par$rule,rm.time.info=FALSE) 
-  activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
+  slice <- network.collapse(net,starts[1],ends[1],rule=slice.par[['rule']],rm.time.info=FALSE) 
+  activev <- is.active(net,starts[1],ends[1],v=seq_len(network.size(net)),rule=if(slice.par[['rule']]!='all'){'any'})
   
   # start from the coords of the first slice
   if (length(slice)>0 & network.size(slice)>0){ 
@@ -270,10 +270,10 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
 
   #move through frames to render them out
   for(s in 1:length(starts)){
-    if (verbose){message(paste("caching",render.par$tween.frames,"properties for slice",s-1))}
-    slice <- network.collapse(net,starts[s],ends[s],rule=slice.par$rule,rm.time.info=FALSE)
-    activev <- is.active(net,starts[s],ends[s],v=seq_len(network.size(net)),rule=if(slice.par$rule!='all'){'any'})
-    activeE<-valid.eids(net)[is.active(net,starts[s],ends[s],e=valid.eids(net),rule=if(slice.par$rule!='all'){'any'})]
+    if (verbose){message(paste("caching",render.par[['tween.frames']],"properties for slice",s-1))}
+    slice <- network.collapse(net,starts[s],ends[s],rule=slice.par[['rule']],rm.time.info=FALSE)
+    activev <- is.active(net,starts[s],ends[s],v=seq_len(network.size(net)),rule=if(slice.par[['rule']]!='all'){'any'})
+    activeE<-valid.eids(net)[is.active(net,starts[s],ends[s],e=valid.eids(net),rule=if(slice.par[['rule']]!='all'){'any'})]
     
     #need to update plot params with slice-specific values
     evald_params<-.evaluate_plot_params(plot_params=plot_params,net=net,slice=slice,s=s,onset=starts[s],terminus=ends[s])
@@ -289,7 +289,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     render<-cachePlotValues(slice,render,plot_args,onset=starts[s],terminus=ends[s],
                             vertices=which(activev),edges=activeE)
     # check if user has passed in extra plotting commands that need to be rendered
-    if (!is.null(render.par$extraPlotCmds)){
+    if (!is.null(render.par[['extraPlotCmds']])){
       warning("extraPlotCmds not supported by d3 render")
       # TODO: could render this as an SVG and attach it? but would be slow. 
       #eval(render.par$extraPlotCmds)
@@ -327,7 +327,7 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
         # filename may be relative, so expand to full path for url
         animationUrl<-normalizePath(filename)
         #if we are on windows, need to conver the local file backslashes to forward slashes
-        if (.Platform$file.sep=='\\'){
+        if (.Platform[['file.sep']]=='\\'){
           animationUrl<-gsub('\\\\','/',animationUrl)
         }
         animationUrl<-paste('file://',animationUrl,sep='')
@@ -483,7 +483,7 @@ cachePlotValues<-function(slice,renderList,plotArgs,onset,terminus,vertices,edge
       # any color-related elements need to be translated to rgba spec for html
       if (arg%in%c('vertex.col','label.col','vertex.border','label.border', 'label.bg','edge.col','edge.label.col','bg')){
         # if the value '0' is present, it needs to be translated to background color
-        dataVals[as.character(dataVals)=="0"]<-par()$bg
+        dataVals[as.character(dataVals)=="0"]<-par()[['bg']]
         dataVals<-col2rgbaString(dataVals)
       }
       # copy the data element into the array

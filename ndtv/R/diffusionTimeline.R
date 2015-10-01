@@ -17,12 +17,13 @@ diffusionTimeline<-function(x,time.attr,
                           xlab='time',
                           ylab='generation',
                           ...){
-  net<-as.network(x)
+  
   if(missing(time.attr)){
     if('transmat'%in%class(x)){
       time.attr<-'at'
     } else if ('tPath'%in%class(x)){
       requireNamespace('tsna')
+      # this loads the tsna namespace so that as.network.tPath will be called below
       time.attr<-'tdist'
     } else {
       stop('time.attr argument must be given')

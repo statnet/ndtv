@@ -1159,7 +1159,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
         .style({
           'fill': function(d) {return d['label.col']; },
           'fill-opacity': function(d) {return d['label.col.fill-opacity']; },
-          'font-size': function(d) { return n3.options.baseFontSize * d['label.cex'];}
+          'font-size': function(d) { return n3.options.baseFontSize * d['label.cex']+'pt';}
         })
         .transition()
         .delay(0)
