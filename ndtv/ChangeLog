@@ -1,4 +1,15 @@
 ChangeLog for ndtv
+v0.7
+ - timeline plot now expands its arguments using plotArgs.network
+ - added a timePrisim 2.5D orthagonal projection of networks in time along a z (time) axis
+ - added a diffusionTimeline plot to illustrate a spreading tree from a network
+ - render.d3movie now has output.mode='htmlWidget' to export animation as an htmlwidget for viewing in RStudio or Shiny app
+ - added "special effects functions" for coloring by age of edges/vertices see ?effectFun
+ - work-around for explicit device opening for RStudio plot device work-around
+ - fixes to ndtvd3 HTML5 animation player (vertex.cex, play button)
+ - when rendering a static network with render.d3movie, the layout computation can now be disabled by passing in a 'coord' argument.
+ - fixed rendering and layout.normalize to be more tolerant of NA in coordinate matrices
+ - various CRAN-requested tweaks and documentation fixes  
 v0.6
  - proximity.timeline has deprecated draw.inactive argument in favor of spline.style
  - proximity.timeline has additional args and features, and supports coloring vertex lines with vertex.col argument (slow)

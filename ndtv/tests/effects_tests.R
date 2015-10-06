@@ -13,6 +13,9 @@ expect_true(is.function(effFun))
 # check argument substitution
 expect_equal(names(formals(effFun)),c("net", "onset", "fade.dur", "start.color", "end.color", "na.color" ))
 
+# check for warning for non matching arg
+expect_warning(effectFun('edgeAgeColor',fade.dur=5, foo=6),regexp = 'does not match with any arguments')
+
 # test for color interpolation
 test<-network.initialize(2)
 add.edges.active(test,tail=1,head=2,onset=0,terminus=10)

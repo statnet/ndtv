@@ -8,6 +8,8 @@ effectFun<-function(name,...){
   for(argname in names(topargs)){
     if (argname%in%names(funargs)){
       funargs[[argname]]<-topargs[[argname]]
+    } else {
+      warning("argument '",argname,"' does not match with any arguments to function ",name )
     }
   }
   formals(effect.fun)<-funargs

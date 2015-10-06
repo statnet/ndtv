@@ -130,13 +130,13 @@ timeline <-function(x,v=seq_len(network.size(x)),
     e.label<-plotArgs.network(x,argName = 'edge.label',argValue = e.label,edgetouse = e)
     e.label.col<-plotArgs.network(x,argName = 'edge.label.col',argValue=e.label.col,edgetouse=e)
     edge.col<-plotArgs.network(x,argName = 'edge.col',argValue=edge.col,edgetouse=e)
-    edge.lwd<-plotArgs.network(x,argName = 'edge.lwd',argValue=edge.col,edgetouse=e)
+    edge.lwd<-plotArgs.network(x,argName = 'edge.lwd',argValue=edge.lwd,edgetouse=e)
     # loop over all the edge spells to be drawn
 		for(i in seq_len(length(e.rows))){
 		  eid<-tel$edge.id[e.rows[i]]# this eid
       eid.index<-which(e==eid)  # where along the index of e is this eid located
 			y<-which(e.plot.rows.eid==eid) # what is the vertical index on y-axis where eid is drawn
-			lines(c(tel$onset[e.rows[i]],tel$terminus[e.rows[i]]),c(y,y),col=edge.col[eid.index],lwd=edge.lwd[e.rows[i]],...)
+			lines(c(tel$onset[e.rows[i]],tel$terminus[e.rows[i]]),c(y,y),col=edge.col[eid.index],lwd=edge.lwd[eid.index],...)
 			if (displaylabels){
         # compute start position for spell in case xlim is viewing part of graph
         label.start<-max(tel$onset[e.rows[i]],xlim[1])

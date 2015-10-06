@@ -34,7 +34,9 @@ foo <- packageDescription("ndtv")
 \tableofcontents
 
 \section{Introduction}
-The Network Dynamic Temporal Visualization (\verb@ndtv@) package provides tools for visualizing changes in network structure and attributes over time.  It works with dynamic network information encoded in \verb@networkDynamic@ \citep{networkDynamic} objects as its input, and outputs animated movies. The package will eventually include timelines and other types of dynamic visualizations of evolving relational structures. The core use-case for development is examining the output of statistical network models (such as those produced by the \verb@tergm@ \citep{tergm} package in \verb@statnet@ \citep{statnet}) and simulations of disease spread across networks. The \verb@ndtv@ \citep{ndtv} package relies on many other packages to do much of the heavy lifting, especially \verb@animation@ \citep{animation} and \verb@networkDynamic@ and requires external libraries (FFmpeg) to save movies out of the R environment. To use \verb@ndtv@ effectively you must be already familiar with the functionality and assumptions of \verb@networkDynamic@. This package is intended to eventually replace much of the functionality in the \verb@rSoNIA@ package \citep{dynamicNetwork}.
+The Network Dynamic Temporal Visualization (\verb@ndtv@) package provides tools for visualizing changes in network structure and attributes over time.  It works with longitudinal network information encoded in \verb@networkDynamic@ \citep{networkDynamic} objects as its input, and outputs animated movies. The package includes timelines and other types of dynamic visualizations of evolving relational structures. The core use-case for development is examining the output of statistical network models (such as those produced by the \verb@tergm@ \citep{tergm} package in \verb@statnet@ \citep{statnet}) and simulations of disease spread across networks. The \verb@ndtv@ \citep{ndtv} package relies on many other packages to do much of the heavy lifting, especially \verb@animation@ \citep{animation} and \verb@networkDynamic@ and optionally relies external libraries (FFmpeg) to save movies out of the R environment. To use \verb@ndtv@ effectively you must be already familiar with the functionality and assumptions of \verb@networkDynamic@.  
+
+A more in-depth tutorial is located at \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html}
 
 This work was supported by grant R01HD68395 from the National Institute of Health.
 
@@ -171,7 +173,7 @@ saveVideo(ani.replay(),video.name="stergm.sim.1.mp4",
 
 This should produce a movie\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/stergm.sim.1.mp4}} in an R working directory on disk. The \verb@other.opts@ parameter is set here to generate a higher-quality video than the default, but this will result in a large file size. For more information on compressing videos for the web, see Compressing Video (section \ref{sec:compressing}).
 
-\subsection{Viewing animation as a web page}
+\subsection{Viewing animation as an interactive web page}
 
 An alternate way to view the animation is to render it out as an HTML5 animation embedded in a web page using the ndtv-d3 player \citep{ndtv-d3}.  This has the advantage of not requiring any external libraries, but does need a modern web browser to display properly. \verb@render.d3movie@ operates similarly to \verb@render.animation@, using the same coordinates stored by \verb@compute.animation@. 
 
@@ -184,12 +186,28 @@ render.d3movie(stergm.sim.1,render.par=render.par,
 
 This should open web browser displaying the page with a Javascript animation player and an interactive version of the network.   There is an additional vignette demoing the features (such as interactive tooltips, and embedding in Rmarkdown documents) of the ndtv-d3 player included in the ndtv package.  For an example, see \url{http://statnet.github.io/ndtv-d3/}
 
+\subsection{Viewing interactive animation in RStudio}
+
+If you use the RStudio IDE, you can view the interactive animation on the built in viewer with
+
+<<view_Rstudio >>=
+render.d3movie(stergm.sim.1,render.par=render.par,
+                 edge.col="darkgray",displaylabels=TRUE,
+                 label.cex=.6,label.col="blue",
+                output.mode = 'htmlWidget')
+@
+
 \subsection{Other views}
 
 There is also a \verb@filmstrip()@ function that will create a ``small multiple'' plot using frames of the animation to construct a visual summary of the network changes as a static plot.
 
 <<filmstrip,fig=TRUE>>=
 filmstrip(stergm.sim.1,displaylabels=FALSE)
+@
+
+Or plot the filmstrip frames in an orthagonal projection with time
+<<timeprism,fig=TRUE>>=
+timePrism(stergm.sim.1,at = c(75,87,100))
 @
 
 \section{Slicing time}
@@ -265,7 +283,7 @@ Please note that the MDSJ library is released under Creative Commons License ``b
 The \verb@useAttribute@ layout is useful if you already know exactly where each vertex should be drawn at each timestep, and you just want to render out the network.  It just needs to know the names of the dynamic attribute holding the x coordinate and the y coordinate for each time step. 
 
 \subsection{Graphviz}
-The Graphviz layout is a wrapper for the Graphviz \url{http://http://www.graphviz.org} software library \citep{graphviz}. If the library is installed on your system (see verb@?install.graphviz@), it provides a number of additional high-quality layouts. When layout is called it checks for a working Graphviz installation (falling back to Kamada-Kawai if Graphviz cannot be found) and writes the network to a temp file using \verb@export.dot@. Then the appropriate Graphviz layout engine (default is \verb@neato@) is executed via a \verb@system@ call, and the coordinates of the vertices are parsed from the output.
+The Graphviz layout is a wrapper for the Graphviz \url{http://http://www.graphviz.org} software library \citep{graphviz}. If the library is installed on your system (see \verb@?install.graphviz@), it provides a number of additional high-quality layouts. When layout is called it checks for a working Graphviz installation (falling back to Kamada-Kawai if Graphviz cannot be found) and writes the network to a temp file using \verb@export.dot@. Then the appropriate Graphviz layout engine (default is \verb@neato@) is executed via a \verb@system@ call, and the coordinates of the vertices are parsed from the output.
 
 Currently, the arguments to \verb@layout.par@ can be used to specify the Graphviz layout engine to use (i.e. \verb@gv.engine='neato'@ for stress-minimized, \verb@gv.engine='dot'@ for hierarchical, \verb@gv.engine='fdp'@ for force-directed, etc) and additional command-line control parameters can be passed in via \verb@gv.args@. For example, to use the 'dot' layout, but change layout rank direction to Left-Right: 
 <<gv_options>>=
@@ -410,6 +428,18 @@ render.animation(wheel,
       verbose=FALSE)
 ani.replay()
 @
+\subsection{Special effects functions}
+
+The package also includes some pre-written ``special effects'' functions that can be used for common plotting tasks, such as coloring edges by their age.  For example, we can have an animation where edges start out red and fade to green as they age. 
+<<wheel_effect>>=
+render.animation(wheel,
+      edge.col=effectFun('edgeAgeColor',fade.dur=5,
+                      start.color='red',end.color='green'),
+      edge.lwd=4,
+      verbose=FALSE)
+ani.replay()
+@
+
 
 \section{Exploring proximity with timelines}
 
