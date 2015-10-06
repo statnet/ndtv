@@ -66,9 +66,32 @@ Now we are ready to render out the animation.
 
 ### Render animation output for inclusion in an Rmarkdown document ###
 
-The ndtv-d3 player object can be rendered inside an iframe in the rmarkdown document. The `render.d3movie` command must have `output.mod='inline'` to tell it to spit out the content directly instead of saving it to an external HTML file.  We also need to set the markdown chunk argument for to `result='asis'` so that Knitr will pass through the HTML from ndtv "as is" without modification.  
+#### htmlwidget version
+
+The animation can be exported as an `htmlwidget` object for display in an Rmarkdown document, the RStudio plot window, or a Shiny app by setting ` output.mode='htmlWidget'`.
 
 We can pass in some standard network.plot commands, and a functional command to generate interactive html tooltips to be displayed when the vertices are clicked on. 
+
+```{r,fig.width=7,fig.height=7,message=FALSE}
+render.d3movie(
+  toy_epi_sim,
+  render.par = render.par,
+  plot.par = plot.par,
+  vertex.cex = 0.9,
+  vertex.col = "ndtvcol",
+  edge.col = "darkgrey",
+  vertex.border = "lightgrey",
+  displaylabels = FALSE,
+  vertex.tooltip = function(slice){paste('name:',slice%v%'vertex.names','<br>',
+                                         'status:', slice%v%'testatus')},
+  output.mode='htmlWidget')
+```
+
+The animation above will show the vertices changing color as the "infection" gradually spreads across the network. Clicking on a vertex will give the its ID and infection status.
+
+#### iframe version
+
+Alternatively, The ndtv-d3 player object can be rendered inside an iframe in the rmarkdown document. The `render.d3movie` command must have `output.mod='inline'` to tell it to spit out the content directly instead of saving it to an external HTML file.  We also need to set the markdown chunk argument for to `result='asis'` so that Knitr will pass through the HTML from ndtv "as is" without modification.  
 
 The output will appear as blank pane in the RStudio viewer, but works fine when viewed in a browser (Chrome is best/fastest)
 
@@ -88,7 +111,6 @@ render.d3movie(
   output.mode='inline')
 ```
 
-The animation will show the vertices changing color as the "infection" gradually spreads across the network. Clicking on a vertex will give the its ID and infection status.
 
 ## Save HTML+SVG movie output in a file for online embedding ##
 
@@ -113,7 +135,7 @@ Hey, this is a blog post, and below is a movie illustrating my dynamic network.
 <iframe width=500 height=500 src='http://myserver.com/short.stergm.html'></iframe>
 ```
 
-### Advanced embedding (for web deveopers) ###
+### Advanced embedding (for web developers) ###
 If you don't want to use an `iframe`, and are building your own web page from scratch you should include the scripts in your page header and embed the animation in a regular `div`. 
 
 Here is an example template for a web-accessible page.
