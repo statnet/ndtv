@@ -51,8 +51,6 @@ render.animation(test,vertex.col=function(slice){ifelse(slice%v%'status'==1,'red
 
 
 
-# test a bad function arg
-expect_error(render.animation(test,vertex.col=function(peaches){ifelse(peaches%v%'status'==1,'red','blue')}),'unknown argument name')
 
 
 

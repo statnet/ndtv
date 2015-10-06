@@ -27,7 +27,8 @@ timeline,
 proximity.timeline,
 filmstrip,
 timePrism,
-diffusionTimeline
-#effect,
-#effect.edgeAgeColor
+diffusionTimeline,
+effectFun,
+effect.edgeAgeColor,
+effect.vertexAgeColor
 )
