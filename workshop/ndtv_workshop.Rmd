@@ -3,12 +3,12 @@ title: 'Workshop materials for learning ndtv: Network Dynamic Temporal Visualiza
 author: "Skye Bender-deMoll"
 date: "06/19/2015"
 output:
-  pdf_document:
-    toc: yes
   html_document:
     fig_width: 8
     highlight: kate
     theme: cosmo
+    toc: yes
+  pdf_document:
     toc: yes
 ---
 ```{r setup, include=FALSE}
@@ -66,7 +66,7 @@ The print command for `networkDynamic` objects includes some additional info abo
 ### Render a network animation in a plot window
 Or if we wanted to get a quick visual summary of how the structure changes over time, we could render the network as an animation.
 
-```{r,fig.show='hide',message=FALSE,results='hide'}
+```{r,fig.keep='none',message=FALSE,results='hide'}
 render.animation(short.stergm.sim)
 ```
 
@@ -75,6 +75,7 @@ And then play it back in the R plot window as many times as we want
 ani.replay()
 ```
 
+
 ### Render a network animation as an interactive web page
 We can also present a similar animation as an interactive HTML5 animation in a web browser. 
 ```{r,message=FALSE,results='hide'}
@@ -82,6 +83,12 @@ render.d3movie(short.stergm.sim)
 ```
 
 This should bring up a browser window displaying the animation.  In addition to playing and pausing the movie, it is possible to click on vertices and edges to show their ids, double-click to highlight neighbors, and zoom into the network at any point in time. 
+
+### Render a network in markdown document or RStudio
+By changing the output slightly, we can embed directly in an Rmarkdown document or RStudio plot window
+```{r,message=FALSE}
+render.d3movie(short.stergm.sim,output.mode = 'htmlWidget')
+```
 
 
 ### Plot a static "filmstrip" sequence
@@ -92,8 +99,18 @@ An animation is not the only way to display a sequence of views of the network. 
 filmstrip(short.stergm.sim,displaylabels=FALSE)
 ```
 
+### Plot a "timePrism" projection
+If were to select some of the 'small multiple' frames from the movie and stack them up in layers of time, we will have an illustrative 'timePrism' projection of the network. This view includes some time and some relational information
+```{r,message=FALSE}
+compute.animation(short.stergm.sim)
+timePrism(short.stergm.sim,at=c(1,10,20),
+          displaylabels=TRUE,planes = TRUE,
+          label.cex=0.5)
+```
+
+
 ### Plot a timeline
-We can view the dynamics as a timeline by plotting the active spells of edges and vertices.
+If we want to focus solely on the relative durations of events, we can view the dynamics as a timeline by plotting the active spells of edges and vertices.
 ```{r}
 timeline(short.stergm.sim)
 ```
@@ -101,7 +118,7 @@ timeline(short.stergm.sim)
 In this view, only the activity state of the network elements are shown--the structure and network connectivity is not visible. The vertices in this network are always active so they trace out unbroken horizontal lines in the upper portion of the plot, while the edge toggles are drawn in the lower portion.  
 
 ### Plot a proximity timeline
-We are experimenting with a form of timeline or "phase plot". In this view vertices are positioned vertically by their geodesic distance proximity.  This means that changes in network structure deflect the vertices' lines into new positions, attempting to keep closely-tied vertices as neighbors. 
+We are experimenting with a form of timeline or "phase plot". In this view vertices are positioned vertically by their geodesic distance proximity.  This means that changes in network structure deflect the vertices' lines into new positions, attempting to keep closely-tied vertices as neighbors. But the edges themselves are not shown. 
 
 ```{r,message=FALSE}
 proximity.timeline(short.stergm.sim,default.dist=6,
@@ -185,7 +202,7 @@ system('java -version')
 
 Due to CRAN's license restrictions, necessary components of the MDSJ layout (which we will use in a minute) are not distributed with `ndtv`.  Instead, the first time the MDSJ layout is called after installing or updating the `ndtv` package, it is going to ask to download the library.  Lets do that now on a pretend movie to get it out of the way:
 
-```{r,message=FALSE}
+```{r,message=FALSE,results='hide'}
 network.layout.animate.MDSJ(network.initialize(1))
 ```
 
@@ -291,7 +308,7 @@ plot(wheel,displaylabels=TRUE,edge.label=elabels,
 *****
 
 Now lets render the network dynamics as a movie and play it back so that we can visually understand the sequence of edge changes. 
-```{r,fig.show='hide',message=FALSE,results='hide'}
+```{r,fig.keep='none',message=FALSE,results='hide'}
 render.animation(wheel) # compute and render
 ani.replay() # play back in plot window
 ```
@@ -346,14 +363,14 @@ plot(wheelAt8,coord=coordsAt8)
 
 This is essentially what `render.animation()` does internally.  The standard network plotting arguments are accepted by `render.animation` (via `...`) and will be passed to `plot.network()`:
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(wheel,vertex.col='blue',edge.col='gray',
                  main='A network animation')
 ```
 
 `render.animation()` also plots a number of in-between frames for each slice to smoothly transition the vertex positions between successive  points. We can adjust how many "tweening" interpolation frames will be rendered which indirectly impacts the perceived speed of the movie (more tweening means a slower and smoother movie). For no animation smoothing at all, set `tween.frames=1`.
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(wheel,render.par=list(tween.frames=1),
                  vertex.col='blue',edge.col='gray')
 ani.replay()
@@ -361,7 +378,7 @@ ani.replay()
 
 Or bump it up to 30 for a slow-motion replay:
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(wheel,render.par=list(tween.frames=30),
                  vertex.col='blue',edge.col='gray')
 ani.replay()
@@ -381,7 +398,7 @@ In this tutorial we have been only playing back animations in the R plot window.
 * `saveVideo()` saves the animation as a movie file on disk (if the FFmpeg library is installed).
 * `saveGIF()` creates an animated GIF (if ImageMagick's  `convert` is installed)
 * `saveLatex()` creates an animation embedded in a PDF document
-* `render.d3movie()` plays an HTML5 version of the animation in a browser window, or optionally saves it for later embedding. 
+* `render.d3movie()` plays an HTML5 version of the animation in a browser window, Rmarkdown, or optionally saves it for later embedding. 
 
 See the help page for each function for detailed listing of parameters. We will quickly demonstrate some useful options below.
 
@@ -447,7 +464,7 @@ As we saw earlier, `ndtv` includes the `render.d3movie` that, instead of using R
 render.d3movie(wheel,vertex.col='blue', edge.col='gray')
 ```
 
-The `render.d3movie` supports most (but not all) of the same commonly used plot arguments as `render.animation`.  For a list of exactly which arguments, see `?render.d3Movie`.  There are also some additional arguments that can be used to configure HTML styling and interaction properties such as tool-tips. We've provided a tutorial devoted just to the ndtv-d3 features available at http://statnet.org/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html  It demonstrates great features such as embedding animations in Rmarkdown documents (Allaire, et. al. 2015).
+The `render.d3movie` supports most (but not all) of the same commonly used plot arguments as `render.animation`. For a list of exactly which arguments, see `?render.d3Movie`.  There are also some additional arguments that can be used to configure HTML styling and interaction properties such as tool-tips. We've provided a tutorial devoted just to the ndtv-d3 features available at http://statnet.org/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html  It demonstrates great features such as embedding animations in Rmarkdown documents (Allaire, et. al. 2015).
 
 
 
@@ -502,7 +519,7 @@ MDSJ is a very efficient implementation of "SMACOF" stress-majorization Multidim
 
 As noted earlier, the MDSJ library is released under Creative Commons License "by-nc-sa" 3.0.  This means using the algorithm for commercial purposes would be a violation of the license. More information about the MDSJ library and its licensing can be found at http://www.inf.uni-konstanz.de/algo/software/mdsj/.
 
-```{r,message=FALSE}
+```{r,message=FALSE,results='hide'}
 compute.animation(short.stergm.sim,animation.mode='MDSJ')
 saveVideo(render.animation(short.stergm.sim,render.cache='none',
                            main='MDSJ layout'),
@@ -600,7 +617,7 @@ plot(cls33_10_16_96)
 ```
 
 First, we can animate at the fine time scale, viewing the first half-hour of class using instantaneous slices (`aggregate.dur=0`).
-```{r,results='hide',fig.show='hide',message=FALSE}
+```{r,results='hide',fig.keep='none',message=FALSE}
 slice.par<-list(start=0,end=30,interval=2.5, 
                 aggregate.dur=0,rule="latest")
 compute.animation(cls33_10_16_96,
@@ -618,7 +635,7 @@ timeline(cls33_10_16_96,slice.par=slice.par)
 
 The first movie may give us a good picture of the sequence of conversational turn-taking, but it is hard to see larger structures. If we aggregate over a longer time period of 2.5 minutes we start to see the individual acts form into triads and groups. See http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v2.mp4 for a version of the corresponding movie. 
 
-```{r,results='hide',fig.show='hide',message=FALSE}
+```{r,results='hide',fig.keep='none',message=FALSE}
 slice.par<-list(start=0,end=30,interval=2.5, 
                 aggregate.dur=2.5,rule="latest")
 compute.animation(cls33_10_16_96,
@@ -635,7 +652,7 @@ To reveal slower structural patterns we can make the aggregation period even lon
 
 *****
 
-```{r,fig.show='hide', message=FALSE}
+```{r,results='hide',fig.keep='none', message=FALSE}
 slice.par<-list(start=0,end=30,interval=1, 
                 aggregate.dur=5,rule="latest")
 timeline(cls33_10_16_96,slice.par=slice.par)
@@ -659,7 +676,7 @@ Ideally we might want to aggregate the edges in some way, perhaps adding the wei
 Edges are not the only things that can change in networks. In some dynamic network data the vertices may also enter or leave the network (become active or inactive, birth/death).  Lin Freeman's windsurfer social interaction data-set (Almquist and Butts 2011) is a good example of this. In this data there are different people present on the beach on successive days, and there is even a day of missing data.
 
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 data(windsurfers)
 slice.par<-list(start=1,end=31,interval=1, 
                 aggregate.dur=1,rule="latest")
@@ -684,7 +701,7 @@ timeline(windsurfers,plot.edge.spells=FALSE)
 
 Notice the blank period at day 25 where the network data is missing. There is also a lot of periodicity, since many more people go to the beach on weekends. So in this case, lets try a week-long slice by setting `aggregate.dur=7` to try to smooth it out so we can see changes against the aggregate weekly structure. 
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 slice.par<-list(start=0,end=24,interval=1, 
                 aggregate.dur=7,rule="latest")
 windsurfers<-compute.animation(windsurfers,slice.par=slice.par,
@@ -751,7 +768,7 @@ activate.vertex.attribute(wheel,'color','pink',onset=8,terminus=9,v=7)
 
 Finally we render it, giving the names of the dynamic attributes to be used to control the plotting parameters for edge with, vertex size, and vertex color. 
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(wheel,edge.lwd='width',vertex.cex='mySize',
                  vertex.col='color',verbose=FALSE)
 ani.replay()
@@ -783,7 +800,7 @@ The `render.animation` function has the ability to accept the `plot.network` arg
 
 For example, if we wanted to use our previously created `'width'` attribute to control the color of edges along with their width, we could define a function to extract the value of the `'width'` edge attribute from the momentary slice network and map it to the red component of an RGB color.  We can render the network, setting `edge.col` equal to this function. 
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(wheel,edge.lwd=3, 
     edge.col=function(slice){rgb(slice%e%'width'/10,0,0)},
     verbose=FALSE)
@@ -800,7 +817,7 @@ Notice the `slice` function argument and the use of `slice` instead of the origi
 
 We can also define functions based on calculated network measures such as betweenness rather than network attributes: 
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 require(sna) # load library of SNA measures
 wheel%n%'slice.par'<-list(start=1,end=10,interval=1, 
                           aggregate.dur=1,rule='latest')
@@ -819,7 +836,7 @@ Notice that in this example we had to modify the start time using the `slice.par
 
 The main plot commands accept functions as well, so it is possible to do fun things like implement a crude zoom effect by setting `xlim` and `ylim` parameters to be dependent on the time. 
 
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(wheel,
       xlim=function(onset){c(-5/(onset*0.5),5/(onset*0.5))},
       ylim=function(onset){c(-5/(onset*0.5),5/(onset*0.5))},
@@ -827,6 +844,28 @@ render.animation(wheel,
 ani.replay()
 ```
 
+### Pre-written "special effects" functions
+The package also includes some pre-written ``special effects'' functions that can be used for common plotting tasks, such as coloring edges by their age.  For example, we can have an animation where edges start out red and fade to green as they age. 
+
+```{r,fig.keep='none'}
+render.animation(wheel,
+      edge.col=effectFun('edgeAgeColor',fade.dur=5,
+                      start.color='red',end.color='green'),
+      edge.lwd=4,
+      verbose=FALSE)
+ani.replay()
+```
+
+The `effectFun` function looks for functions named `effect.xxx`, substitutes in any matching arguments, and returns a unevaluated function that can be passed into a render as functional plot argument. 
+
+These functions can be used for static plots as well.  For this you can call the effect directly (`effect.edgeAgeColor()` instead of `effectFun('edgeAgeColor')`)
+
+```{r}
+plot(wheel,edge.col=effect.edgeAgeColor(wheel,onset=10,fade.dur=10,
+                      start.color='red',end.color='green'),
+      edge.label=edges.age.at(wheel,at=10),
+      edge.lwd=4)
+```
 
 ## Using and aggregating edge weights
 In the previous examples we have treated the networks we are visualizing as un-weighted. But for some applications it may be useful to incorporate edge weight information in a layout. Even if the original network data does not contain weights, we may wish to perform operations using edge duration information. For example, when we are rendering an aggregate network, should an edge that exists for a single moment be treated the same way as an edge that exists the entire time?  
@@ -997,7 +1036,7 @@ render.par=list(tween.frames=5,show.time=TRUE,
 ```
 
 Then we ask it to build the animation, passing in some of the standard `plot.network` graphics arguments to change the color of the edges and show the labels with a smaller size and blue color. As we are fairly familiar with the output by now, we can suppress it by adding a `verbose=FALSE` argument.
-```{r,fig.show='hide'}
+```{r,fig.keep='none'}
 render.animation(stergm.sim.1,render.par=render.par,
                  edge.col="darkgray",displaylabels=TRUE,
                  label.cex=.6,label.col="blue",verbose=FALSE)
@@ -1095,12 +1134,12 @@ which(network.vertex.names(harry_potter_support)=="Harry James Potter")
 
 When we render out the movie it is going to look like *Harry Potter and the Philosopher's Stone*, right?
 
-```{r,fig.show='hide',results='hide',message=FALSE}
+```{r,fig.keep='none',results='hide',message=FALSE}
 render.animation(harry_potter_support)
 ```
 
 Lets tweak it a bit for some more refinement
-```{r,results='hide',fig.show='hide',message=FALSE}
+```{r,results='hide',fig.keep='none',message=FALSE}
 compute.animation(harry_potter_support,
                   animation.mode='MDSJ',
                   default.dist=2)
@@ -1228,7 +1267,7 @@ windsurfers%n%'slice.par'<-list(start=-31,end=0,interval=1,
 
 Now we will render it out to file, using functional plot arguments to color edges and vertices by their infection status at each time point. 
 
-```{r,fig.show='hide',message=FALSE,results='hide'}
+```{r,fig.keep='none',message=FALSE,results='hide'}
 saveVideo(
   render.animation(windsurfers,
             render.par=list(initial.coords=coords),
@@ -1290,7 +1329,7 @@ transTree<-function(net){
 
 Now lets use the newly-created `transTree()` function to find the transmission tree, and plot it.
 
-```{r}
+```{r, fig.width=7,fig.height=7}
 windTree<-transTree(windsurfers)
 plot(windTree,displaylabels=TRUE)
 ```
@@ -1311,10 +1350,11 @@ Next, compute a hierarchical tree layout of the transmission tree.
 # calculate coords for transmission tree
 treeCoords<-network.layout.animate.Graphviz(windTree,
               layout.par=list(gv.engine='dot',
-                              gv.args='-Granksep=3'))
+                              gv.args='-Granksep=4'))
 treeCoords<-layout.normalize(treeCoords)
 # peek at it
-plot(windTree,coord=treeCoords,displaylabels=TRUE,jitter=FALSE)
+plot(windTree,coord=treeCoords,displaylabels=TRUE,
+           jitter=FALSE,label.pos=1,label.cex=0.7,label.col='blue')
 ```
 
 Now lets assemble a dynamic network on `windAni` frame-by-frame applying the coordinates we saved from the previous layouts of the cumulative and transmission tree networks.
@@ -1433,7 +1473,7 @@ plot(colorNet,edge.lwd=20,
 
 ## Setting background colors and margins
 You may have noticed that the network plots we have seen so far have fairly wide margins which allow extra room for labels and annotations.  It is possible to adjust the margins, and other generic plot commands, by passing in `par` arguments to `render.animation` via `plot.par`.  For example, we can set all of the margins to zero with the `mar` command and change the background to gray with `bg='gray'`.  See `?par` for a list of high-level plot parameters suitable for `plot.par`.
-```{r,fig.show='hide',message=FALSE}
+```{r,fig.keep='none',message=FALSE}
 render.animation(wheel,plot.par=list(bg='gray',mar=c(0,0,0,0)),
                  edge.col='white')
 ```
