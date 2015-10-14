@@ -1,7 +1,7 @@
 
 
 
-diffusionTimeline<-function(x,time.attr,
+transmissionTimeline<-function(x,time.attr,
                           label,
                           displaylabels = !missing(label),
                           label.cex = 0.7,

@@ -3,12 +3,12 @@ title: 'Workshop materials for learning ndtv: Network Dynamic Temporal Visualiza
 author: "Skye Bender-deMoll"
 date: "06/19/2015"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     fig_width: 8
     highlight: kate
     theme: cosmo
-    toc: yes
-  pdf_document:
     toc: yes
 ---
 ```{r setup, include=FALSE}

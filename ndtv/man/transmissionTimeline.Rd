@@ -1,14 +1,14 @@
-\name{diffusionTimeline}
-\alias{diffusionTimeline}
+\name{transmissionTimeline}
+\alias{transmissionTimeline}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-plots network diffusion/transmission tree with generation time vs clock/model time
+plots network diffusion/transmission tree with generation time vs. clock/model time
 }
 \description{
 Plots view of a network with positions determined by the timing and generation depth (previously calculated) in a transmission tree.  The horizontal axis is model time, and the vertical axis is the number of steps from the root of the tree.
 }
 \usage{
-diffusionTimeline(x, time.attr, 
+transmissionTimeline(x, time.attr, 
                      label, 
                      displaylabels = !missing(label), 
                      label.cex = 0.7, 
@@ -80,7 +80,7 @@ x-axis plot label
 }
 }
 \details{
-Many (but not all) of the graphical arguments to \code{\link{plot.network}} can be used and are expanded in the same way.  This does not currently use the \code{\link{plot.network}} code to draw the network as non-square aspect ratios will cause plot distortion
+Many (but not all) of the graphical arguments to \code{\link{plot.network}} can be used and are expanded in the same way.  This does not currently use the \code{\link{plot.network}} code to draw the network as non-square plot aspect ratios would cause distortion of the vertices when drawn.
 }
 \value{
 produces a plot, invisibly returns the coordinates of the plot. 
@@ -105,7 +105,7 @@ infectionTimes <- c(583, 494, 634, 40, 712, 701, 224, 719,
 infTree<-network(el,vertex.attr = list(infectionTimes),
             vertex.attrnames = list('infectionTimes'))
 
-diffusionTimeline(infTree,time.attr='infectionTimes')
+transmissionTimeline(infTree,time.attr='infectionTimes')
 
 
 }
