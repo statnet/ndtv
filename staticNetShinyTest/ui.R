@@ -16,8 +16,8 @@ shinyUI(fluidPage(
     # Show the interactive network plot
     mainPanel(
       h2('ndtv-d3 interactive network plot'),
-      p('Only works when shiny app is displayed in a web browser. Mouse wheel zooms, click for tooltips, drag to pan, double click to highlight neighbors.'),
-      htmlOutput("netPlot")
+      p('Should display interactive vew of static network. Mouse wheel zooms, click for tooltips, drag to pan, double click to highlight neighbors.'),
+      ndtv:::ndtvAnimationWidgetOutput("netPlot")
     )
   )
 ))

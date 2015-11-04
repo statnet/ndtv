@@ -7,7 +7,7 @@ data(emon)  # load datasets to use
 shinyServer(function(input, output) {
   
   
-  output$netPlot <- renderUI({
+  output$netPlot <- ndtv:::renderNdtvAnimationWidget({
     # load the network
     net<-emon[[as.numeric(input$networkSelection)]]
     netName<-names(emon)[as.numeric(input$networkSelection)]
@@ -17,7 +17,7 @@ shinyServer(function(input, output) {
 
     # call the d3Movie render on a static network
     # capturing its output and passing it to the shiny app as HTML
-    outHTML<-capture.output(render.d3movie(net, 
+    render.d3movie(net, 
                  main=paste("Search & Rescue org communication network for",netName),                      
                  #format HTML text for edge tool tips                           
                  vertex.tooltip=paste("<strong>",net%v%'vertex.names',"</strong><br>",
@@ -32,11 +32,10 @@ shinyServer(function(input, output) {
                 edge.tooltip=paste('Frequency:',net%e%'Frequency'),
                 edge.lwd='Frequency',
                 edge.col='#00000055',
-                output.mode = 'inline',  # output directly instead of to file
-                script.type='remoteSrc', # link to .js files instead of including them directly
-                 launchBrowser = FALSE  # don't load in a web browser
-                ))
+                output.mode = 'htmlWidget',  # output directly as htmlwidget instead of to file
+             #   script.type='remoteSrc', # link to .js files instead of including them directly
+                 launchBrowser = FALSE , # don't load in a web browser
+                )
     
-    return(HTML(outHTML))
   })
 })
