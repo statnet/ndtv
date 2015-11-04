@@ -1,0 +1,15 @@
+---
+title: "ndtv-d3_htmlWidget_test"
+author: "skyebend"
+date: "08/26/2015"
+output: html_document
+---
+
+This is a test of emedding an ndtv-d3 html widget in an rmarkdown document
+
+```{r}
+library(ndtv)
+data(short.stergm.sim)
+render.d3movie(short.stergm.sim,output.mode='htmlWidget')
+```
+
