@@ -12,7 +12,10 @@ ndtvAnimationWidget <- function(out,options, width = NULL, height = NULL) {
   # forward options using x
   x = list(
     graphData = out,  # the network object and the rendering position data
-    animationOptions = options  # the control options for ndtv-d3
+    # the control options for ndtv-d3 need to be seperately JSON encoded or they will be mangled 
+    # into a format that ndtv-d3 won't recognize
+    animationOptions = jsonlite::toJSON(options,auto_unbox=TRUE,matrix='rowmajor', na = 'null',null='list')  
+    
   )
   
   # the htmlwidgets package uses non-standard arguments to toJSON command
