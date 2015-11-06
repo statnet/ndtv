@@ -30,5 +30,8 @@ timePrism,
 transmissionTimeline,
 effectFun,
 effect.edgeAgeColor,
-effect.vertexAgeColor
+effect.vertexAgeColor,
+ndtvAnimationWidgetOutput,
+renderNdtvAnimationWidget,
+ndtvAnimationWidget
 )

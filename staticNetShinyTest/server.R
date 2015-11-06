@@ -34,7 +34,7 @@ shinyServer(function(input, output) {
                 edge.col='#00000055',
                 output.mode = 'htmlWidget',  # output directly as htmlwidget instead of to file
              #   script.type='remoteSrc', # link to .js files instead of including them directly
-                 launchBrowser = FALSE , # don't load in a web browser
+                 launchBrowser = FALSE  # don't load in a web browser,
                 )
     
   })
