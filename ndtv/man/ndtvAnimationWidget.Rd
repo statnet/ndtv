@@ -7,7 +7,7 @@
 htmlwidgets wrapper functions for including ndtv-d3 animations in shinyapps
 }
 \description{
-Wrapper functions to provide ndtv-d3 animation as an \code{\link[htmlwidgets]{htmlwidgets}} for use within an RStudio "shiny" web application.  These functions are not normally called by R users directly.  
+Wrapper functions to provide ndtv-d3 animation as an \code{{tmlwidget}for use within an RStudio "shiny" web application.  These functions are not normally called by R users directly.  
 }
 \usage{
 ndtvAnimationWidget(out, options, width = NULL, height = NULL)
@@ -33,7 +33,7 @@ Display eight for the widget. Must be a valid CSS unit (like "100\%", "400px", "
 \item{outputId}{See \code{\link[htmlwidgets]{htmlwidgets::htmlwidgets-shiny}}}
 \item{expr}{An expression that does any necessary network processing and generates an HTML widget (usually via \code{render.d3move}). See \code{\link[htmlwidgets]{htmlwidgets::htmlwidgets-shiny}}}
 \item{env}{The environment in which to evaluate expr. See \code{\link[htmlwidgets]{htmlwidgets::htmlwidgets-shiny}}}
-\item{quoted}{Is expr a quoted expression (with quote())? This is useful if you want to save an expression in a variable. See \code{\link[htmlwidgets]{htmlwidgets::htmlwidgets-shiny}}}
+\item{quoted}{Is expr a quoted expression (with quote())? This is useful if you want to save an expression in a variable. See \code{\link[htmlwidgets]{htmlwidgets-shiny}}}
 
 }
 \details{
@@ -56,5 +56,5 @@ skyebend@uw.edu
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{htmlwidgets}}, \code{\link{render.d3movie}}
+\code{\link[htmlwidgets]{htmlwidgets-package}}, \code{\link{render.d3movie}}
 }
