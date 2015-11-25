@@ -27,7 +27,8 @@ data(short.stergm.sim)
 }
 \details{
 The model used to generate the sim was:
-\code{require(ergm)
+\preformatted{
+require(ergm)
 data("florentine")
 theta.diss <- log(9)
 # fit the model
@@ -37,6 +38,7 @@ stergm.fit.1 <- stergm(flobusiness,
 	targets="formation",
 	offset.coef.diss = theta.diss,
 	estimate = "EGMME"	)
+# simulate from the model	
 stergm.sim.1 <- simulate.stergm(stergm.fit.1,
                     nsim=1, time.slices = 100)
 }
