@@ -18,7 +18,7 @@ shinyUI(fluidPage(
       h2('ndtv-d3 interactive network plot'),
       p('Should display interactive vew of static network. Mouse wheel zooms, click for tooltips, drag to pan, double click to highlight neighbors.'),
       tags$style(HTML(".tooltip {opacity: 1}")), # stop boostrap css from messing up the tooltip in the widget
-      ndtv:::ndtvAnimationWidgetOutput("netPlot")
+      ndtv::ndtvAnimationWidgetOutput("netPlot")
     )
   )
 ))

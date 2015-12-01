@@ -30,11 +30,15 @@ foo <- packageDescription("ndtv")
 options(prompt = " ", continue = " ")
 @
 
-\title{Workshop materials for learning \Sexpr{foo$Package}: \Sexpr{foo$Title} (Package version \Sexpr{foo$Version})}  
+\title{Workshop materials (outdated) for learning \Sexpr{foo$Package}: \Sexpr{foo$Title} (Package version \Sexpr{foo$Version})}  
 \author{Skye Bender-deMoll}
 \maketitle
 
 \tableofcontents
+
+\section{NOTE}
+
+This pdf version of the workship is somewhat outdated. The current version of the workshop is maintained as an HTML file  (webpage) at \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html}
 
 \section{Introduction to workshop}
 
@@ -216,7 +220,7 @@ network.layout.animate.MDSJ(network.initialize(1))
 <<mdsj_actual_download,echo=FALSE>>==
 # the command above will default to not installing MDSJ in a non-interactive session
 # so to make sure it is installed for this sweave build, call it internally
-mdsj.dir <- file.path(path.package("ndtv"), "exec/")
+mdsj.dir <- file.path(path.package("ndtv"), "java/")
 ndtv:::install.mdsj(mdsj.dir)
 @
 This will give a prompt like
@@ -674,7 +678,7 @@ These networks also have a lot of isolates, which tends to scrunch up the rest o
 In this example\footnote{\url{http://statnet.csde.washington.edu/movies/ndtv_vignette/windsurfers_v1.mp4}} the turnover of people on the beach is so great that structure appears to change chaotically, and it is quite hard to see what is going on. Vertices enter and exit frequently and are often not available for observation on successive days. For example, look at vertex 74 in contrast to vertex 1 on the timeline plot.
 
 <<windsurfers2,fig=TRUE>>=
-timeline(windsurfers,plot.edge.spells=FALSE,lwd=3)
+timeline(windsurfers,plot.edge.spells=FALSE,vertex.cex=3)
 @
 
 Notice the blank period at day 25 where the network data is missing. There is also a lot of periodicity, since many more people go to the beach on weekends. So in this case, lets try a week-long slice by setting \verb@aggregate.dur=7@ to try to smooth it out so we can see changes against the aggregate weekly structure. 
