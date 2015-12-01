@@ -1,6 +1,7 @@
 ChangeLog for ndtv
 v0.8
- - fixes to ndtv-d3 htmlwidget (correctly remvoe before reload, fixed encoding of controler options)
+ - fixes to ndtv-d3 htmlwidget (correctly remove svg before reload, fixed encoding of controler options)
+ - inclusion of ndtv-d3 htmlwidget shiny wrapper functions in NAMESPACE
 
 v0.7
  - timeline plot now expands its arguments using plotArgs.network
