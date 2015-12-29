@@ -117,7 +117,7 @@ timePrism<-function(nd,at,
       # plot a plane to keep things seperated
       planeCoords<-cbind(x=c(min(xyz[,'x'])-plane.pad,min(xyz[,'x'])-plane.pad,max(xyz[,'x'])+plane.pad,max(xyz[,'x'])+plane.pad),
                          y=c(min(xyz[,'y'])-plane.pad,max(xyz[,'y'])+plane.pad,max(xyz[,'y'])+plane.pad,min(xyz[,'y'])-plane.pad),
-                         z=rep(t,netSize))
+                         z=rep(t,4))
       planeCoords<-planeCoords[,orientation,drop=FALSE]
       polygon(stuff3d$xyz.convert(planeCoords),col = plane.col,border='gray')
     }

@@ -1,4 +1,6 @@
 ChangeLog for ndtv
+v0.9
+ - fixed warning and extra diagonal line drawn in timePrism plot when planes=TRUE and network had odd number of vertices.
 v0.8
  - fixes to ndtv-d3 htmlwidget (correctly remove svg before reload, fixed encoding of controler options)
  - inclusion of ndtv-d3 htmlwidget shiny wrapper functions in NAMESPACE
