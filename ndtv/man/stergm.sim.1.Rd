@@ -23,7 +23,7 @@ data(short.stergm.sim)
 }
 
 \format{
-  A \code{networkDynamic} object containing the output of 100 steps of the simulation
+  A \code{networkDynamic} object containing the output of the network simulations
 }
 \details{
 The model used to generate the sim was:
