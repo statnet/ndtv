@@ -1,5 +1,6 @@
 ChangeLog for ndtv
 v0.9
+ - fixed ndtv-d3 htmlwidget to correctly use a unique javascript id for the animation so that multiple animations can appear in the same Rmarkdown document
  - fixed warning and extra diagonal line drawn in timePrism plot when planes=TRUE and network had odd number of vertices.
  - updated MDSJ url to reflect changes at hosting server and correct CRAN error
 v0.8
