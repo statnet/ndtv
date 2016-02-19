@@ -13,3 +13,8 @@ data(short.stergm.sim)
 render.d3movie(short.stergm.sim,output.mode='htmlWidget')
 ```
 
+This is a test of embedding a second widget (to make sure that it still works to have two)
+
+```{r}
+render.d3movie(short.stergm.sim,output.mode='htmlWidget',vertex.col='blue')
+```
