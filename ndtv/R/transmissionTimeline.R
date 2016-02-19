@@ -11,6 +11,7 @@ transmissionTimeline<-function(x,time.attr,
                           vertex.lwd=1,
                           vertex.sides = 50,
                           vertex.cex = 1,
+                          jitter=FALSE,
                           edge.col = 'gray',
                           edge.lty = 1,
                           edge.lwd = 1,
@@ -61,7 +62,9 @@ transmissionTimeline<-function(x,time.attr,
     }
   }
   #op <- par(no.readonly = TRUE)
-  
+  if(jitter){
+    coords<-jitter(coords)
+  }
   # set up the plotting window
   plot(coords,pch=NA,xlab=xlab,ylab=ylab,...)
   

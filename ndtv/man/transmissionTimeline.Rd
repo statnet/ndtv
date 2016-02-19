@@ -17,7 +17,8 @@ transmissionTimeline(x, time.attr,
                      vertex.border = 1, 
                      vertex.lwd = 1, 
                      vertex.sides = 50, 
-                     vertex.cex = 1, 
+                     vertex.cex = 1,
+                     jitter=FALSE,
                      edge.col = "gray", 
                      edge.lty = 1, 
                      edge.lwd = 1, 
@@ -28,7 +29,7 @@ transmissionTimeline(x, time.attr,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-an object than can be coearced into a \code{\link{network}}.  The network must be a tree
+an object than can be coerced into a \code{\link{network}}.  The network must be a tree
 }
   \item{time.attr}{
 name of a vertex attribute containing the transmission/infection/diffusion time for each vertex
@@ -60,6 +61,9 @@ number of polygon sides for vertices; may be given as a vector or a vertex attri
   \item{vertex.cex}{
 expansion factor for vertices; may be given as a vector or a vertex attribute name, if vertices are to be of different sizes.
 }
+ \item{jitter}{
+  if TRUE, noise will be added to the coordinates with jitter to make overlapping vertex positions more noticeable
+ }
   \item{edge.col}{
 color for edges; may be given as a vector, adjacency matrix, or edge attribute name, if edges are to be of different colors.
 }
@@ -70,7 +74,7 @@ line type for edge borders; may be given as a vector, adjacency matrix, or edge 
 line width scale for edges;  May be given as a vector or edge attribute name, if edges are to have different line widths.
 }
   \item{xlab}{
-y-xais plot label
+y-axis plot label
 }
   \item{ylab}{
 x-axis plot label
