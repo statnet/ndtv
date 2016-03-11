@@ -117,14 +117,23 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     net <- compute.animation(net,verbose=verbose)
   }
   
+  # only do device stuff checking if not on null device
+  # because a call to par() create a device and break things on servers that
+  # don't have a device (Shiny)
   # make sure background color is not transparent unless set that way explicitly
-  if (par("bg")=="transparent" & is.null(plot.par[['bg']])){
-    plot.par[['bg']]<-'white'
-  }
-  # set high-level plot attributes (bg color, margins, etc)
-  # and cache initial graphics par settings
-  origPar<-par(plot.par) 
-
+  # and copy the devices background color if not set by user
+  
+  if (is.null(plot.par[['bg']])){
+    if (dev.cur()!=1){
+      if(par("bg")=="transparent"){
+        plot.par[['bg']]<-'white'
+      } else {
+        plot.par[['bg']]<-par("bg")
+      }
+    } else {
+      plot.par[['bg']]<-'white'
+    }
+  } 
   
   #figure out what the slicing parameters were
   slice.par <- get.network.attribute(net,"slice.par")
@@ -134,6 +143,8 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   
   # cache plotting arguments 
   plot_params<-list(...)
+  # also append any args included via plot.par
+  plot_params<-c(plot_params,plot.par)
   
   # check network plot commands to give warnings about missing
   nonSupportedPlotArgs=c(
@@ -358,8 +369,6 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     return(ndtvAnimationWidget(out,d3.options))
   }
   
-  # reset the graphics params back
-  par(origPar)
   
 }
 
@@ -483,7 +492,8 @@ cachePlotValues<-function(slice,renderList,plotArgs,onset,terminus,vertices,edge
       # any color-related elements need to be translated to rgba spec for html
       if (arg%in%c('vertex.col','label.col','vertex.border','label.border', 'label.bg','edge.col','edge.label.col','bg')){
         # if the value '0' is present, it needs to be translated to background color
-        dataVals[as.character(dataVals)=="0"]<-par()[['bg']]
+        # trust that this has been set to a sensible default earlier
+        dataVals[as.character(dataVals)=="0"]<-plotArgs[['bg']]
         dataVals<-col2rgbaString(dataVals)
       }
       # copy the data element into the array
