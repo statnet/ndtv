@@ -1,5 +1,5 @@
 ---
-title: 'Workshop materials for learning ndtv: Network Dynamic Temporal Visualization'
+title: "statnet's temporal network tools: networkDynamic, ndtv and tsna"
 author: "Skye Bender-deMoll"
 date: "06/19/2015"
 output:
@@ -11,96 +11,85 @@ output:
   pdf_document:
     toc: yes
 ---
-```{r setup, include=FALSE}
+```{r setup, include=FALSE,cache=FALSE}
 library(knitr)
-knitr::opts_chunk$set(comment='')
+knitr::opts_chunk$set(comment='') #,cache=TRUE)
 library(animation)
+#library(printr)
 ```
 
 # Introduction to workshop
 
-## What is ndtv?
-The Network Dynamic Temporal Visualization (`ndtv`) package provides tools for visualizing changes in network structure and attributes over time.
+This workshop will explore the key features of the open-source R packages that `statnet` suite provides for working with dynamic (longitudinal) network data:
 
-  * Uses network information encoded in `networkDynamic` (Butts et. al. 2012) objects as its input
-  * Outputs animated movies, timelines and other types of dynamic visualizations of evolving relational structures.
-  * The core use-case for development is examining the output of statistical network models (such as those produced by the `tergm` (Krivitsky and Handcock 2015) package in `statnet` (Handcock et. al. 2003b) and simulations of disease spread across networks. 
-  * Easy to do basic things, but lots of ability to customize.
-
-
-## Authors
-
-  * Developed by Skye Bender-deMoll (`skyebend@skyeome.net`) with the statnet http://statnet.org team. 
-  * This work was supported by grant R01HD68395 from the National Institute of Health.
+ * `networkDynamic`  (Butts, et al) extends the `network` package to provide data structures for edge, vertex, and attribute dynamics
+ * `ndtv` (Network Dynamic Temporal Visualization) provides tools for visualizing and animating changing network structure
+ * `tsna` provides basic temporal social network analysis statistics, in part by leveraging algorithms provided by the `ergm`, `relevent` and `sna` packages.
+ * `networkDynamicData` includes several dynamic network data sets shared by multiple authors. 
+ 
+ This work was supported by grant R01HD68395 from the National Institute of Health.
 
 
 ## Workshop prerequisites
 
-  * Familiarity with the R statistical software.  We are not going to cover basics of how to use and install R.
-  * Functioning R installation and basic statnet packages already installed. (Instructions on installing R and statnet are located here https://statnet.org/trac/wiki/Installation.)
+  * Familiarity with the R statistical software.  This tutorial does not cover basics of how to use and install R.
+  * Functioning R installation and basic statnet packages already installed. (Instructions on installing R and statnet are located here https://statnet.org/trac/wiki/Installation.)  RStudio recommended. 
   * Familiarity with general network and SNA concepts
   * Experience with statnet packages and `network` data structures preferred but not necessary. (A tutorial providing "An Introduction to Network Analysis with R and statnet"" is located here: https://statnet.org/trac/wiki/Resources)
   * A working internet connection (we will install some libraries and download data sets)
 
-## A Quick Demo
+# A Quick Demo
 
 Lets get started with a realistic example. We can render a simple network animation in the R plot window (no need to follow along in this part) 
 
 First we load the package and its dependencies.
-```{r,message=FALSE}
+```{r,message=FALSE,cache=FALSE}
 library(ndtv)
 ```
 Now we need some dynamic network data to explore. The package includes an example network data set named `short.stergm.sim` which is the output of a toy STERGM model based on Padgett's Florentine Family Business Ties dataset simulated using the `tergm` package. (Using the tergm package to simulate the model is illustrated in a later example.)  
 
 ```{r}
 data(short.stergm.sim)
-class(short.stergm.sim)
 ```
 
-Notice that the object has a class of both `networkDynamic` and `network`.  All `networkDynamic` objects are still `network` objects, they just include additional special attributes to store time information.  
-```{r}
-print(short.stergm.sim)
-```
-The print command for `networkDynamic` objects includes some additional info about the time range of the network and then the normal output from `print.network`.
+## Render a network animation in a plot window
+If we want to get a quick visual summary of how the structure changes over time, we could render the network as an animation.
 
-### Render a network animation in a plot window
-Or if we wanted to get a quick visual summary of how the structure changes over time, we could render the network as an animation.
-
-```{r,fig.keep='none',message=FALSE,results='hide'}
+```{r,fig.keep='none',message=FALSE,results='hide',cache=TRUE}
 render.animation(short.stergm.sim)
 ```
 
 And then play it back in the R plot window as many times as we want
-```{r,fig.show='hide'}
+```{r,fig.show='hide',cache=TRUE}
 ani.replay()
 ```
 
 
-### Render a network animation as an interactive web page
+## Render a network animation as an interactive web page
 We can also present a similar animation as an interactive HTML5 animation in a web browser. 
-```{r,message=FALSE,results='hide'}
+```{r,message=FALSE,results='hide',cache=FALSE}
 render.d3movie(short.stergm.sim)
 ```
 
 This should bring up a browser window displaying the animation.  In addition to playing and pausing the movie, it is possible to click on vertices and edges to show their ids, double-click to highlight neighbors, and zoom into the network at any point in time. 
 
-### Render a network in markdown document or RStudio
+## Render a network in markdown document or RStudio
 By changing the output slightly, we can embed directly in an Rmarkdown document or RStudio plot window
-```{r,message=FALSE}
+```{r,message=FALSE,cache=FALSE}
 render.d3movie(short.stergm.sim,output.mode = 'htmlWidget')
 ```
 
 
-### Plot a static "filmstrip" sequence
+## Plot a static "filmstrip" sequence
 
 An animation is not the only way to display a sequence of views of the network.  We could also use the `filmstrip()` function that will create a "small multiple" plot using frames of the animation to construct a static visual summary of the network changes.
 
-```{r}
+```{r,cache=TRUE}
 filmstrip(short.stergm.sim,displaylabels=FALSE)
 ```
 
-### Plot a "timePrism" projection
-If were to select some of the 'small multiple' frames from the movie and stack them up in layers of time, we will have an illustrative 'timePrism' projection of the network. This view includes some time and some relational information
+## Plot a "timePrism" projection
+If were to select some of the 'small multiple' frames from the movie and stack them up in layers of time, we will have an illustrative 'timePrism' projection of the network. This view introduces some clustter and distortion, but includes both some time and some relational information
 ```{r,message=FALSE}
 compute.animation(short.stergm.sim)
 timePrism(short.stergm.sim,at=c(1,10,20),
@@ -109,30 +98,30 @@ timePrism(short.stergm.sim,at=c(1,10,20),
 ```
 
 
-### Plot a timeline
-If we want to focus solely on the relative durations of events, we can view the dynamics as a timeline by plotting the active spells of edges and vertices.
+## Plot a timeline
+If we want to focus solely on the relative durations of events, we can view the dynamics as a `timeline` by plotting the active spells of edges and vertices.
 ```{r}
 timeline(short.stergm.sim)
 ```
 
 In this view, only the activity state of the network elements are shown--the structure and network connectivity is not visible. The vertices in this network are always active so they trace out unbroken horizontal lines in the upper portion of the plot, while the edge toggles are drawn in the lower portion.  
 
-### Plot a proximity timeline
-We are experimenting with a form of timeline or "phase plot". In this view vertices are positioned vertically by their geodesic distance proximity.  This means that changes in network structure deflect the vertices' lines into new positions, attempting to keep closely-tied vertices as neighbors. But the edges themselves are not shown. 
+## Plot a proximity timeline
+We are experimenting with a form of timeline or "phase plot". In this view vertices are positioned vertically by their geodesic distance proximity.  This means that changes in network structure deflect the vertices' lines into new positions, attempting to keep closely-tied vertices as neighbors. The edges are not shown at all in this view. 
 
-```{r,message=FALSE}
+```{r,message=FALSE,cache=TRUE}
 proximity.timeline(short.stergm.sim,default.dist=6,
           mode='sammon',labels.at=17,vertex.cex=4)
 ```
 
 Notice how the bundles of vertex lines diverge after time 20, reflecting the split of the large component into two smaller components. 
 
-### Print tabular data
+## Print tabular data
 
 Of course we can always display the edge (or vertex) spells directly in a tabular form using the various utilities in the `networkDynamic` package. 
 
 ```{r}
-as.data.frame(short.stergm.sim)
+head( as.data.frame(short.stergm.sim) )
 ```
 
 *****
@@ -152,108 +141,99 @@ spls[spls$duration==25,]
 
 *****
 
-# The basics
+## Compute some basic temporal stats
 
-## Installing ndtv and its external dependencies
-The `ndtv` (Bender-deMoll 2013) package relies on many other packages to do much of the heavy lifting, especially `animation` (Xie Y 2012) and `networkDynamic` (Butts et. al. 2012). Web animations can be created and viewed on computers with modern web browsers without additional components.  However, `ndtv` does require some non-R external dependencies (FFmpeg or avconv) to save movies as video files, and Java to be able to use some of the better quality layout algorithms. 
+Load up the `tsna` (Temporal Social Network Analysis) library
+```{r,message=FALSE}
+library(tsna)
+```
 
-### Installing ndtv and its R package dependencies
+How many edges form at each timestep for the short stergm sim?  Conveniently, the values are returned as a time series, `plot` already knows how to handle them.
+```{r}
+tEdgeFormation(short.stergm.sim)
+
+plot( tEdgeFormation(short.stergm.sim) )
+```
+
+
+## Compute static graph-level sna measure as a time series
+
+The `tsna` package provodes wrapper functions that make it easy to compute a time series using statistics from the `sna` package or `ergm` terms.  For example, we can use the `gtrans` function to compute transitivity in the network. 
+
+```{r}
+plot( tSnaStats(short.stergm.sim,'gtrans') )
+```
+
+
+## Find temporally reachable paths
+
+We can quickly compute the earliest times a journey from vertex 13 can reach the rest of the network traveling forward along time-respecting paths in the network.  And then plot this path overlayed on the aggregate network.
+
+```{r}
+path<-tPath(short.stergm.sim,v = 13,
+            graph.step.time=1)
+
+plotPaths(short.stergm.sim,
+          path,
+          label.cex=0.5)
+```
+
+
+# The Basics
+
+Now that we've had a quick tour of some of what we will cover in the tutorial, lets get things set up and explain what is going on. 
+
+## Installing the packages 
+
+The `ndtv` (Bender-deMoll 2013) package relies on many other packages to do much of the heavy lifting, especially `animation` (Xie Y 2012) and `networkDynamic` (Butts et. al. 2012) which provides its input objects. Web animations can be created and viewed on computers with modern web browsers without additional components using the built-in `ndtv-d3` l.  However, `ndtv` does require some non-R external dependencies (FFmpeg or avconv) to save movies as video files, and Java to be able to use some of the better quality layout algorithms. These are discussed in a later section.
+
+The core use-case for development is examining the output of statistical network models (such as those produced by the tergm (Krivitsky and Handcock 2015) package in statnet (Handcock et. al. 2003b) and simulations of disease spread across networks. The design philosophy is that it should be easy to do basic things, but lots of ability to customize.
+
 R can automatically install the packages `ndtv` depends on when `ndtv` is installed. So open up your R console, and run the following command:
-```{r,results='hide'}
+```{r,message=FALSE,results='hide'}
 install.packages('ndtv',repos='http://cran.us.r-project.org', 
                  dependencies=TRUE)
 library(ndtv) # also loads animation and networkDynamic
 ```
 
-### Installing FFmpeg for saving animations
-FFmpeg http://www.ffmpg.org  (or Libab https://libav.org/) are cross-platform tools for converting and rendering video content in various formats. It is used as an external library by the `animation` package to save out the animation as a movie file on disk. (see `?saveVideo` for more information.) The install instructions are somewhat different on each platform.  You can also access these instructions using `?install.ffmpeg`
-```{r}
-?install.ffmpeg   # help page for installing ffmpeg
-```
-
-#### Windows FFmpeg instructions
-  * Download the recent "static" build from http://ffmpeg.zeranoe.com/builds/
-  * Downloads are compressed with 7zip, so you may need to first install a 7zip decompression program before you can unpack the installer.
-  * Decompress the package and store contents on your computer (probably in `Program Files`)
-  * Edit your system path variable to include the path to the directory containing `ffmpeg.exe`
-  * Verify that R knows where to find it by typing `Sys.which('ffmpeg')` in the R terminal. You many need to first restart R after the install.
-
-#### Mac FFmpeg instructions
-  * Download most recent build from http://www.evermeet.cx/ffmpeg/
-  * The binary files are compressed with 7zip so may need to install an unarchiving utility: http://wakaba.c3.cx/s/apps/unarchiver.html
-  * Copy ffmpeg to `/usr/local/bin/ffmpeg`
-  * Verify that R knows where to find it by typing `Sys.which('ffmpeg')` in the R terminal. You many need to first restart R after the install.
-  
-#### Linux/Unix FFmpeg instructions
-  * FFmpeg is a standard package on many Linux systems  will be installed instead.. You can check if it is installed with a command like `dpkg -s ffmpeg`. If it is not installed, you should be able to install with your system's package manager. i.e. `sudo apt-get install ffmpeg`.  
-  * Verify that R knows where to find it by typing `Sys.which('ffmpeg')` in the R terminal. You many need to first restart R after the install.
-  **OR**
-  * Ubuntu and Debian systems may use an alternate program named "avconv" which can be installed with `sudo apt-get install libav-tools` or by searching 'libav-tools' in Ubuntu's Software Center.
-  * Verify that R knows where to find it by typing `Sys.which('avconv')` in the R terminal. You many need to first restart R after the install.
-  * The `animation` library should automatically use 'avconv' if it sees it instead of 'ffmpeg'. If it doesn't, you can tell it to by typing `ani.options(ffmpeg='avconv')` in your R session
-
-### Installing Java and MDSJ setup
-To use the MDSJ (Algorithmics Group, University of Konstanz 2009) layout algorithm, you must have Java installed on your system. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
-
-When java is installed correctly the following command should print out the version information:
-```{r}
-system('java -version')
-```
-
-Due to CRAN's license restrictions, necessary components of the MDSJ layout (which we will use in a minute) are not distributed with `ndtv`.  Instead, the first time the MDSJ layout is called after installing or updating the `ndtv` package, it is going to ask to download the library.  Lets do that now on a pretend movie to get it out of the way:
+We will also use the `tsna` package for temporal sna, so let's install and load that now as well.  It will bring along the `sna` and `ergm` packages
 
 ```{r,message=FALSE,results='hide'}
-network.layout.animate.MDSJ(network.initialize(1))
+#install.packages('tsna',repos='http://cran.us.r-project.org', 
+#                 dependencies=TRUE)
+library(tsna)
 ```
 
 
-This will give a prompt like
+## Understanding how networkDynamic works
 
-```
-The MDSJ Java library does not appear to be installed. 
-The ndtv package can use MDSJ to provide a fast 
-accurate layout algorithm. It can be downloaded from 
-http://www.inf.uni-konstanz.de/algo/software/mdsj/
-Do you want to download and install the MDSJ Java library? (y/N):
-```
-
-Responding `y` to the prompt should install the library and print the following message:
-```{r,echo=FALSE}
-# the command above will default to not installing MDSJ in a non-interactive session
-# so to make sure it is installed for this sweave build, call it internally
-mdsj.dir <- file.path(path.package("ndtv"), "java/")
-ndtv:::install.mdsj(mdsj.dir)
-```
-
-And its good to go! (unless you were intending to use the layout for commercial work...)
-
-### Installing Graphviz
-Graphviz is *not* required for `ndtv` to work.  However it does provide several interesting layouts including the hierarchical tree layout used later in one of the advanced examples. Instructions for installing Graphviz can be shown with `?install.graphviz`.
+Lets take quick tour of a `networkDynamic` object and work through some example in more detail to explain what is going on. Please follow along by running these commands in your R terminal. 
 
 
-# Understanding how ndtv works
-Now that we've had a preview of what the package can do, and everything is correctly configured, we can work through some examples in more detail to explain what is going on.
 
-## Constructing and rendering a dynamicNetwork
-
-We are going to build a simple `dynamicNetwork` object "by hand" and then visualize its dynamics. The `networkDynamic()` command provides utilities for constructing dynamic networks from various data formats, see some the later examples. Please follow along by running these commands in your R terminal. 
+We are going to build a simple `networkDynamic` object "by hand" and then peek at its internal structure and visualize its dynamics. Note that the `networkDynamic()` command provides utilities for constructing dynamic networks from real data in various data formats, see some the later examples. 
 
 First, we will create a static network with 10 vertices
 ```{r}
 wheel <- network.initialize(10)
+class(wheel)
 ```
 
-Next we add some edges with activity spells.  The edges' connections are determined by the vector of `tail` and `head` ids, and the start and ending time for each edge is specified by the `onset` and `terminus` vectors.
+Next we add some edges with activity spells.  The edges' connections are determined by the vector of `tail` and `head` vertex ids, and the start and ending time for each edge is specified by the `onset` and `terminus` vectors.
 ```{r}
 add.edges.active(wheel,tail=1:9,head=c(2:9,1),onset=1:9, terminus=11)
 add.edges.active(wheel,tail=10,head=c(1:9),onset=10, terminus=12)
 ```
-Adding active edges to a network has the side effect of converting it to a `dynamicNetwork`. Lets verify it.
+
+Adding active edges to a network has the side effect of converting it to a `networkDynamic`. Lets verify it.
 
 ```{r}
 class(wheel)
 print(wheel)
 ```
+
+Notice that the object now has a class of both `networkDynamic` and `network`.  All `networkDynamic` objects are still `network` objects, they just include additional special attributes to store time information.  The print command for `networkDynamic` objects includes some additional info about the time range of the network and then the normal output from `print.network`.
+
 
 Once again, we can peek at the edge dynamics by transforming a view of the network into a `data.frame`.
 ```{r}
@@ -267,10 +247,16 @@ It is important to remember that `dynamicNetwork` objects are also static `netwo
 plot(wheel)
 ```
 
-If we want to just see the edges active at a specific time point, we could first extract a snapshot view of the network and then plot it. 
+If we want to just see the edges active at a specific time point, we could first extract a snapshot view of the network at a single point in time and then plot it. 
 ```{r}
 plot(network.extract(wheel,at=1))
 ```
+
+But we can also extract a view of the network covering an interval of time.
+```{r}
+plot(network.extract(wheel,onset=1,terminus=5))
+```
+
 
 The `network.extract` function is one of the many tools provided by the `networkDynamic` package for storing and manipulating the time information attached to networks without having to work directly with the low-level data structures. The command `help(package='networkDynamic')` will give a listing of the help pages for all of the functions.   
 
@@ -279,12 +265,15 @@ The `network.extract` function is one of the many tools provided by the `network
 
 *****
 
-The activity for each edge is stored in an attribute named `activity` as a matrix of starting and ending times (which we refer to as "onset" and "terminus"). The help page `?activity.attribute` is a good place to learn more detail about how the `networkDynamic` package represents dynamics. For many tasks, we would use higher-level methods like `get.edgeIDs.active()` but, we can access timing information directly using `get.edge.activity`.
+The activity for each edge is stored in an attribute named `activity` as a two-column matrix of starting and ending times (which we refer to as "onset" and "terminus").  For many tasks, we would use higher-level methods like `get.edgeIDs.active()` but, we can access timing information directly using `get.edge.activity`.
 
-Print the edge activity of edge.id 1
+Print the edge activity of edge ids 1 and 2
 ```{r}
-get.edge.activity(wheel)[[1]]
+get.edge.activity(wheel)[1:2]
 ```
+
+So the `networkDynamic` object is not a big list of matrices for each discrete time point, and it is not even a list of networks. It can comfortably capture networks as multiple waves, but it can also store continuous time networks where each edge has its own timestamp.  The help page `?activity.attribute` is a good place to learn more detail about how the `networkDynamic` package represents dynamics.
+
 
 Since the static plot, doesn't show us which edges are active when, lets annotate it by labeling edges with their onset and termination times so we can check that it constructed the network we told it to.
 
@@ -307,18 +296,66 @@ plot(wheel,displaylabels=TRUE,edge.label=elabels,
 
 *****
 
+
 Now lets render the network dynamics as a movie and play it back so that we can visually understand the sequence of edge changes. 
-```{r,fig.keep='none',message=FALSE,results='hide'}
+```{r,message=FALSE,fig.keep='none'}
 render.animation(wheel) # compute and render
-ani.replay() # play back in plot window
+ani.replay()
 ```
 
-Hopefully, when you ran `ani.replay()` you saw a bunch of labeled nodes moving smoothly around in the R plot window, with edges slowly appearing to link them into a circle. Then a set of "spoke" edges appear to draw a vertex into the center, and finally the rest of the wheel disappears. An example of the movie is located at http://statnet.org/movies/ndtv_vignette/wheel.mp4.
+Hopefully, when you play the movie you see a bunch of labeled nodes moving smoothly around in the R plot window, with edges slowly appearing to link them into a circle. Then a set of "spoke" edges appear to draw a vertex into the center, and finally the rest of the wheel disappears. An example of the animation rendered as a movie is located at http://statnet.org/movies/ndtv_vignette/wheel.mp4.
+
+******
+**Excercise:**  If the three adjacency matrices below represent three timepoints of a network, what would the corresponding timed-edgelist representation be?
+```
+t0:       t1:       t2:
+0 1 0     0 1 0     0 0 0
+0 0 0     0 1 0     0 1 0
+1 0 0     0 0 0     0 1 0
+````
+
+```{r}
+# create a network object from each matrix
+t0<-as.network(matrix(c(0,1,0,
+                        0,0,0,
+                        1,0,0),ncol=3,byrow=TRUE))
+
+t1<-as.network(matrix(c(0,1,0,
+                        0,1,0,
+                        0,0,0),ncol=3,byrow=TRUE))
+
+t2<-as.network(matrix(c(0,0,0,
+                        0,1,0,
+                        0,1,0),ncol=3,byrow=TRUE))
+# convert a list of networks into networkDynamic object
+tnet<-networkDynamic(network.list=list(t0,t1,t2))
+# print the networkDynamic object as a timed edgelist
+as.data.frame(tnet)
+
+```
+
+******
+
+******
+**Excercise:**  Create a `networkDynamic` object from the timed edgelist below. Assume columns are onset, terminus, tail, head.
+
+```
+0	1	3	1
+0	2	1	2
+2	3	3	2
+```
+```{r}
+tel<-matrix(c(0,1,3,1,
+              0,2,1,2,
+              2,3,3,2),ncol=4,byrow=TRUE)
+tnet<-networkDynamic(edge.spells=tel)
+```
+
+******
   
+## Understanding how ndtv works
 
-## Understanding the default animation process
-Simple right? Hopefully most of the complexity was hidden under the hood, but it is still useful to understand what is going on. At its most basic, rendering a movie consists of four key steps:
-
+Creating the animations is simple right? Hopefully most of the complexity was hidden under the hood, but it is still useful to understand what is going on. At its most basic, rendering a movie consists of four key steps:
 
 1. Determining appropriate parameters (time range, aggregation rule, etc)
 2. Computing layout coordinates for each time slice
@@ -331,7 +368,9 @@ The process of positioning the vertices was managed by the `compute.animation()`
 
 Next, `render.animation()` looped through the network and used `plot.network()` to render appropriate slice network for each time step.  It calls the `animation` package function `ani.record()` to cache the frames of the animation. Finally, `ani.replay()` quickly redrew the sequence of cached images in the plot window as an animation.
 
-## Controlling the animation processing steps
+The `render.d3movie()` works along the same lines, but in step three the 'render' it stores at each step is a description of the time slice in a web data language (JSON), and in step four it feeds the data into an web app (the ndtv-d3 player) which it then displays. 
+
+### Controlling the animation processing steps
 
 For more precise control of the processes, we can call each of the steps in sequence and explicitly set the parameters we want for the rendering and layout algorithms. First we will define a `slice.par`, which is a list of named parameters to specify the time range that we want to compute and render.
 
@@ -363,14 +402,14 @@ plot(wheelAt8,coord=coordsAt8)
 
 This is essentially what `render.animation()` does internally.  The standard network plotting arguments are accepted by `render.animation` (via `...`) and will be passed to `plot.network()`:
 
-```{r,fig.keep='none'}
+```{r,fig.keep='none',message=FALSE}
 render.animation(wheel,vertex.col='blue',edge.col='gray',
                  main='A network animation')
 ```
 
 `render.animation()` also plots a number of in-between frames for each slice to smoothly transition the vertex positions between successive  points. We can adjust how many "tweening" interpolation frames will be rendered which indirectly impacts the perceived speed of the movie (more tweening means a slower and smoother movie). For no animation smoothing at all, set `tween.frames=1`.
 
-```{r,fig.keep='none'}
+```{r,fig.keep='none',message=FALSE}
 render.animation(wheel,render.par=list(tween.frames=1),
                  vertex.col='blue',edge.col='gray')
 ani.replay()
@@ -378,11 +417,13 @@ ani.replay()
 
 Or bump it up to 30 for a slow-motion replay:
 
-```{r,fig.keep='none'}
+```{r,fig.keep='none',message=FALSE}
 render.animation(wheel,render.par=list(tween.frames=30),
                  vertex.col='blue',edge.col='gray')
 ani.replay()
 ```
+
+Note that the `render.d3movie` command doesn't have a `tween.frames` argument, because it interpolates the positions in the app. It has an `animationDuration` parameter that can be passed provided and an 'animation speed' control in the app which the use can adjust using the menu on the upper left. 
 
 If you are like me, you probably forget what the various parameters are and what they do.  You can use `?compute.animation` or `?render.animation` to display the appropriate help files. and `?plot.network` to show the list of plotting control arguments.
 
@@ -391,99 +432,6 @@ If you are like me, you probably forget what the various parameters are and what
 
 *****
 
-## Animation Output Formats
-In this tutorial we have been only playing back animations in the R plot window. But what if you want to share your animations with collaborators or post them on the web? Assuming that the external dependencies are correctly installed, we can save out animations in multiple useful formats supported by the `ndtv` and the `animation` package:
-
-* `ani.replay()` plays the animation back in the R plot window. (see `?ani.options` for more parameters)
-* `saveVideo()` saves the animation as a movie file on disk (if the FFmpeg library is installed).
-* `saveGIF()` creates an animated GIF (if ImageMagick's  `convert` is installed)
-* `saveLatex()` creates an animation embedded in a PDF document
-* `render.d3movie()` plays an HTML5 version of the animation in a browser window, Rmarkdown, or optionally saves it for later embedding. 
-
-See the help page for each function for detailed listing of parameters. We will quickly demonstrate some useful options below.
-
-
-
-### Video files
-Since we just rendered the "wheel" example movie, it is already cached and we can capture the output of `ani.replay()` into a movie file. Try out the various output options below.
-
-#### Saving video
-Save out an animation, providing a non-default file name for the video file:
-
-```{r,message=FALSE}
-saveVideo(ani.replay(),video.name="wheel_movie.mp4")
-```
-
-You will probably see a lot output on the console from ffmpeg reporting its status, and then it should open the movie in an appropriate viewer on your machine.
-
-#### Changing video size
-Sometimes we may want to change the pixel dimensions of the movie output to make the plot (and the file size) much larger.
-```{r,message=FALSE}
-saveVideo(ani.replay(),video.name="wheel_movie.mp4",
-          ani.width=800,ani.height=800)
-```
-
-#### Adjusting video quality
-We can increase the video's image quality (and file size) by telling ffmpeg to use a higher bit-rate (less compression) This bit-rate setting seems to mostly impacts jpeg output more than the PNG default.
-```{r,message=FALSE}
-saveVideo(ani.replay(),video.name="wheel_movie.mp4",
-          other.opts="-b 5000k")
-```
-
-#### Rendering video directly to disk
-Because the `ani.record()` and `ani.replay()` functions cache each plot image in memory, they are not very speedy and the rendering process will tend to slow to a crawl down as memory fills up when rendering large networks or long movies.  We can avoid this by saving the output of `render.animation` directly to disk by wrapping it inside the `saveVideo()` call and setting `render.cache='none'`.
-```{r,message=FALSE}
-saveVideo(render.animation(wheel,vertex.col='blue',
-          edge.col='gray',render.cache='none'),
-          video.name="wheel_movie.mp4")
-```
-
-### Animated GIF files
-We can also export an animation as an animated GIF image. GIF animations will be very large files, but are very portable for sharing on the web. To render a GIF file, you must have ImageMagick installed. See `?saveGIF` for more details. 
-
-```{r,message=FALSE}
-saveGIF(render.animation(wheel,vertex.col='blue',
-          edge.col='gray',render.cache='none'),
-         movie.name="wheel_movie.gif")
-```
-
-### Animated PDF/Latex files
-The `animation` package supports including animations inside PDF documents if you have the appropriate Latex utilities installed. However, the animations will only play inside Adobe Acrobat PDF viewers so it is probably less portable than using GIF or video renders.
-
-```{r,message=FALSE}
-saveLatex(render.animation(wheel,vertex.col='blue',
-          edge.col='gray',render.cache='none'))
-```
-
-### HTML5 / SVG video files
-
-As we saw earlier, `ndtv` includes the `render.d3movie` that, instead of using R's plotting functions and the animation library, embeds the animation information into a web page along with "ndtv-d3 player"" as an interactive HTML5 SVG animation for display in a modern web browser.
-
-
-```{r,message=FALSE}
-render.d3movie(wheel,vertex.col='blue', edge.col='gray')
-```
-
-The `render.d3movie` supports most (but not all) of the same commonly used plot arguments as `render.animation`. For a list of exactly which arguments, see `?render.d3Movie`.  There are also some additional arguments that can be used to configure HTML styling and interaction properties such as tool-tips. We've provided a tutorial devoted just to the ndtv-d3 features available at http://statnet.org/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html  It demonstrates great features such as embedding animations in Rmarkdown documents (Allaire, et. al. 2015).
-
-
-
-
-*****
-**Exercise:** Using the list of options from the help page `?ani.options`, locate the option to control the time delay interval of the animation, and use it to render a video where each frame stays on screen for 2 seconds.
-
-```{r,message=FALSE,results='hide'}
-saveVideo(render.animation(wheel,vertex.col='blue',
-          edge.col='gray',render.cache='none',
-          render.par=list(tween.frames=1),
-          ani.options=list(interval=2)),
-         video.name="wheel_movie.mp4")
-```
-
-*****
-
-# Using ndtv Effectively
-Some additional tips, tricks, and helpful information.
 
 ## Animated Layout Algorithms
 First some background about graph layouts.  Producing layouts of dynamic networks is generally a computationally difficult problem. And the definition of what makes a layout "good" is often ambiguous or very specific to the domain of the data being visualized. The ndtv package aims for the following sometimes conflicting animation goals:
@@ -518,6 +466,13 @@ saveVideo(render.animation(short.stergm.sim,render.cache='none',
 MDSJ is a very efficient implementation of "SMACOF" stress-majorization Multidimensional Scaling. The `network.layout.animate.MDSJ` layout gives the best performance of any of the algorithms tested so far -- despite the overhead of writing matrices out to a Java program and reading coordinates back in.  It also produces very smooth layouts with less of the wobbling and flipping which can sometimes occur with Kamada-Kawai. Like Kamada-Kawai, it computes a symmetric geodesic distance matrix from the input network using `layout.distance` (replacing infinite values with `default.dist`), and seeds the initial coordinates for each slice with the results of the previous slice.
 
 As noted earlier, the MDSJ library is released under Creative Commons License "by-nc-sa" 3.0.  This means using the algorithm for commercial purposes would be a violation of the license. More information about the MDSJ library and its licensing can be found at http://www.inf.uni-konstanz.de/algo/software/mdsj/.
+
+```{r,echo=FALSE,message=FALSE}
+# the command below will default to not installing MDSJ in a non-interactive session
+# so to make sure it is installed for this sweave build, call it internally
+mdsj.dir <- file.path(path.package("ndtv"), "java/")
+ndtv:::install.mdsj(mdsj.dir)
+```
 
 ```{r,message=FALSE,results='hide'}
 compute.animation(short.stergm.sim,animation.mode='MDSJ')
@@ -562,14 +517,24 @@ system(paste('xdg-open ',ani.options("outdir"),'/layout_compare.mp4',sep=''))
 
 More detailed information about each of the layouts and their parameters can be found on the help pages, for example `?network.layout.animate.kamadakawai`.
 
+## Understanding how tsna works
 
-## Slicing and aggregating time
+The `tsna` package currently provides four main classes of metrics
 
-The basic network layout algorithms we are using, like most traditional network metrics, don't really know what to do with dynamic networks.  They need to be fed a static set of relationships which can be used to compute a set of distances in a Euclidean space suitable for plotting.  A common way to apply static metrics to a time-varying object is to sample it, taking a sequence static observations at a series of time points and using these to describe the changes over time.  
+* Traditional SNA metrics evaluated repeatedly as time series
+* Statistics describing properties of the network over its entire observation period
+* Metrics based on measuring network distances using forward reachable paths
+* Measures of event sequences
 
-In the case of networks, we often call this this sampling process "extracting" or "slicing" --cutting through the dynamics to obtain a static snapshot.  The processes of determining a set of slicing parameters appropriate for the network phenomena and data-set of interest requires careful thought and experimentation.  As mentioned before, it is somewhat similar to the questions of selecting appropriate bin sizes for histograms.
+The first class of metrics requires some additional detail about how we think about deviding and aggregating time. 
 
-### Slicing panel data
+### Slicing and aggregating time
+
+Most traditional "static" network metrics don't really know what to do with dynamic networks.  They need to be fed a set of relationships describing a single point in time in the network's evolution which can then be used to compute graph metrics.   A common way to apply static metrics to charterize a time-varying object is to sample it at regular intervals, taking a sequence static observations at multiple time points and using these to describe the changes over time.  
+
+In the case of networks, we often call this this sampling process "extracting" or "slicing" --cutting through the dynamics to obtain a static snapshot.  For the network layouts we want a sequence of these snapshots to be converted into series of coordinates in Euclidean space suitable for plotting. For graph- or vertex-level sna indicators we want a time series of numeric values. The processes of determining a set of slicing parameters appropriate for the network phenomena and data-set of interest requires careful thought and experimentation.  As mentioned before, it is somewhat similar to the questions of selecting appropriate bin sizes for histograms.
+
+#### Slicing panel data
 
 In both the `wheel` and `short.stergm.sim` examples, we've been implicitly slicing up time in discrete way, extracting a static network at each unit time step.
 
@@ -591,6 +556,13 @@ network.edgecount(network.extract(short.stergm.sim,onset=0,terminus=1))
 network.edgecount.active(short.stergm.sim,onset=0,terminus=1)
 ```
 
+If we want to do this for each slice, we can use the `edges` statistic from `ergm`
+
+```{r}
+tErgmStats(short.stergm.sim,'edges',start = 0,end=25,time.interval=1)
+```
+
+
 Following the convention `statnet` uses for representing ``discrete-time`` simulation dynamics, the edge spells always have integer lengths and extend the full duration of the slice, so it wouldn't actually matter if we used a shorter `aggregate.dur`. Each slice will still intersect with the same set of edges. 
 
 ```{r}
@@ -600,11 +572,17 @@ timeline(short.stergm.sim,slice.par=list(start=0,end=25,interval=1,
 ```
 
 
-However, even for some data-sets that are collected as panels, the time units many not always be integers, or the slicing parameters might need to be adjusted to the natural time units.  And, as we will see later in the windsurfers example, there are situations where using longer aggregation durations can be helpful even for panel data. 
+However, even for some data-sets that are collected as panels, the time units many not always be integers, or the slicing parameters might need to be adjusted to the natural time units.  For example, if we use `aggregate.dur` to specifiy longer duration bins, some of them will intersect with more edges
 
-### Slicing streaming data
+```{r}
+tErgmStats(short.stergm.sim,'edges',start = 0,end=25,time.interval=2, aggregate.dur=2)
+```
 
-Slicing up a dynamic network created from discrete panels may appear to be fairly straightforward but it is much less clear how to do it when working with continuous time or "streaming" relations where event are recorded as a single time point. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. The `slice.par` parameters make it possible to experiment with various aggregation options. In many situations we have even found it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale (Bender-deMoll and McFarland 2006). 
+And, as we will see later in the windsurfers example, there are situations where using longer aggregation durations can be helpful even for panel data. 
+
+#### Slicing streaming data
+
+Slicing up a dynamic network created from discrete panels may appear to be fairly straightforward but it is much less clear how to do it when working with continuous time or "streaming" relations where event are recorded as a single time point. How often should we slice?  Should the slices measure the state of the network at a specific instant, or aggregate over a longer time period?  The answer probably depends on what the important features to visualize are in your data-set. One of the strengths of these packages is that they make it possible to experiment with various aggregation options. In many situations we have even found it useful to let slices mostly overlap -- increment each one by a small value to help show fluid changes on a moderate timescale instead of the rapid changes happening on a fine timescale (Bender-deMoll and McFarland 2006). 
 
 As an example, lets look at the McFarland (2001) data of streaming classroom interactions and see what happens when we chop it up in various ways. 
 ```{r}
@@ -617,38 +595,51 @@ plot(cls33_10_16_96)
 ```
 
 First, we can animate at the fine time scale, viewing the first half-hour of class using instantaneous slices (`aggregate.dur=0`).
-```{r,results='hide',fig.keep='none',message=FALSE}
+```{r,message=FALSE}
 slice.par<-list(start=0,end=30,interval=2.5, 
                 aggregate.dur=0,rule="latest")
 compute.animation(cls33_10_16_96,
-                slice.par=slice.par,animation.mode='MDSJ')
-render.animation(cls33_10_16_96,
-                 displaylabels=FALSE,vertex.cex=1.5)
-ani.replay()
+                slice.par=slice.par,animation.mode='MDSJ',verbose = FALSE)
+render.d3movie(cls33_10_16_96,output.mode = 'htmlWidget')
 ```
 
-Notice that although the time-aggregated plot shows a fully-connected structure, in the animation most of the vertices are isolates, occasionally linked into brief pairs or stars by speech acts. You can go to http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v1.mp4 to see a version of the movie output. Once again we can get an idea of what is going on by slicing up the network by using the `timeline()` function to plot the `slice.par` parameters against the vertex and edge spells. Although the vertices have spells spanning the entire time period, in this data set the edges are recorded as instantaneous "events" with no durations.  The very thin slices (gray vertical lines) (`aggregate.dur=0`) are not intersecting many edge events (purple numbers) at once so the momentary degrees are mostly low. 
+Notice that although the time-aggregated plot shows a fully-connected structure, in the animation most of the vertices are isolates, occasionally linked into brief pairs or stars by speech acts. You can go to http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v1.mp4 to see a version of the movie output. Once again we can get an idea of what is going on by slicing up the network by using the `timeline()` function to plot the `slice.par` parameters against the vertex and edge spells. Although the vertices have spells spanning the entire time period, in this data set the edges are recorded as instantaneous "events" with no durations.  
+
+```{r}
+timeline(cls33_10_16_96,slice.par=slice.par)
+```
+The very thin slices (gray vertical lines) (`aggregate.dur=0`) are not intersecting many edge events (purple numbers) at once so the momentary degrees are mostly low.  We can use the ergm's `meandeg` term to compute the mean degree at each of the 50 timesteps
+```{r}
+plot(tErgmStats(cls33_10_16_96,'meandeg'),
+     main='Mean degree of cls33, 1 minute aggregation')
+```
+
+
+The first movie may give us a good picture of the sequence of conversational turn-taking, but it is hard to see larger structures. If we aggregate over a longer time period of 2.5 minutes we start to see the individual acts form into triads and groups. See http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v2.mp4 for a version of the corresponding movie. 
+
+```{r,message=FALSE}
+slice.par<-list(start=0,end=30,interval=2.5, 
+                aggregate.dur=2.5,rule="latest")
+compute.animation(cls33_10_16_96,
+                slice.par=slice.par,animation.mode='MDSJ')
+render.d3movie(cls33_10_16_96,
+                 displaylabels=FALSE,vertex.cex=1.5,output.mode='htmlWidget')
+```
 
 ```{r}
 timeline(cls33_10_16_96,slice.par=slice.par)
 ```
 
-The first movie may give us a good picture of the sequence of conversational turn-taking, but it is hard to see larger structures. If we aggregate over a longer time period of 2.5 minutes we start to see the individual acts form into triads and groups. See http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v2.mp4 for a version of the corresponding movie. 
-
-```{r,results='hide',fig.keep='none',message=FALSE}
-slice.par<-list(start=0,end=30,interval=2.5, 
-                aggregate.dur=2.5,rule="latest")
-compute.animation(cls33_10_16_96,
-                slice.par=slice.par,animation.mode='MDSJ')
-render.animation(cls33_10_16_96,
-                 displaylabels=FALSE,vertex.cex=1.5)
-ani.replay()
+```{r}
+plot(tErgmStats(cls33_10_16_96,'meandeg',
+                time.interval = 2.5,aggregate.dur=2.5),
+     main='Mean degree of cls33, 2.5 minute aggregation')
 ```
 
 To reveal slower structural patterns we can make the aggregation period even longer, and let the slices overlap (by making `interval` less than `aggregate.dur`) so that the same edge may appear in sequential slices and the changes will be less dramatic between successive views. See http://statnet.org/movies/ndtv_vignette/cls33_10_16_96v3.mp4 for the corresponding movie.
 
 *****
-**Question:** How would measurements of a network's structural properties (degree, etc.) at each time point likely differ in each of the aggregation scenarios?
+**Question:** How would measurements of a network's structural properties (transitivity, betweenness, etc.) at each time point likely differ in each of the aggregation scenarios?
 
 *****
 
@@ -658,71 +649,393 @@ slice.par<-list(start=0,end=30,interval=1,
 timeline(cls33_10_16_96,slice.par=slice.par)
 compute.animation(cls33_10_16_96,
                 slice.par=slice.par,animation.mode='MDSJ')
-render.animation(cls33_10_16_96,
-                 displaylabels=FALSE,vertex.cex=1.5)
-ani.replay()
+render.d3movie(cls33_10_16_96,
+                 displaylabels=FALSE,vertex.cex=1.5,
+               output.mode = 'htmlWidget')
 ```
 
-Note that when we use a long duration slice, it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? 
-
-Ideally we might want to aggregate the edges in some way, perhaps adding the weights together. Currently edge attributes are not aggregated and the `rule` element of the `slice.par` argument controls which attribute should be returned for an edge when multiple elements are encountered.  Generally `rule='latest'` gives reasonable results, returning the most recent value found within the query spell. 
+```{r}
+plot(tErgmStats(cls33_10_16_96,'meandeg',
+                time.interval = 2.5,aggregate.dur=5),
+     main='Mean degree of cls33, overlapping 5 minute aggregation')
+```
 
 *****
-**Exercise:** Define a slice.par and render an animation of the first 15 minutes of classroom interactions using 5 minute non-overlapping slices 
+**Question:** When we use a long duration slice, for some networks it is quite likely that the edge between a pair of vertices has more than one active period. How should this condition be handled? If the edge has attributes, which ones should be shown? 
+*****
+
+Ideally we might want to aggregate the edges in some way, summing their activity durations or perhaps adding the weights together. Currently edge attributes are not aggregated and the `rule` element of the `slice.par` argument controls wether the `earliest` or `latest` attribute value should be returned for an edge when multiple elements are encountered.  
+
+### The `ergm` and `sna` function wrappers
+
+We've already seen several examples using the `tSnaStats` and `tErgmStats` functions.  These tools use the network statistics capabilities of the `sna` metrics and `ergm` terms  while handling the dirty work of chopping the `networkDynamic` object up into a series of appropriate `network`s (using `collapse.network`), interpreting some of the control parameters (directedness, etc), calculating the metric for each slice, and returnig the results as timeseries (`ts`) object.  Be forwarned, this process is usually neither fast or memory efficient! 
 
 *****
+**Exercise:** Define slicing paramters and compute a time series of graph `triad.census` values the first 20 minutes of classroom interactions using 5 minute non-overlapping slices 
+
+```{r}
+tSnaStats(cls33_10_16_96,'triad.census',
+          start=0,
+          end = 20,
+          time.interval = 5, 
+          aggregate.dur = 5)
+```
+
+*****
+
+### Sequence measures
+
+So far there is only one, `pShiftCount` which provides a wrapper for the implementation of Gibson's (2003) "participation shift" metric, provided by the `relevent` package (Butts, 2008). This measure considers the network to be an ordered sequence of events -- in which the exact timing is not important -- and tallies up instances of two-event exchanges into the thirteen categories Gibson used to classify conversational turn taking. 
+
+For example, two edges in sequence, ‘i’ talks to ‘j’, and then ‘j’ responds to ‘i’, is counted as one type of event, where ‘i’ talks to ‘j’ and then ‘j’ talks to ‘k’ would be another type of event. The set of events Gibson was interested in is certainly not an exhaustive list of potential sequences, but may still be an interesting approach for characterizing dynamic networks.
+
+If we apply the metric to the entire time period of the McFarland classroom speach acts
+
+```{r}
+pShiftCount(cls33_10_16_96)
+```
+
+We see lots of "turn-receiving" alternation (type AB-BA) and a fair amount of "turn-usurping" exchanges -- perhaps indicating time periods when multiple conversations are happening at the same time. 
+
+
+Gibson's typology assumes that edges/ties directed "at the group"" are distinguishable those directed to individuals, and has a strong assumption of sequential non-simultaneous events. Because the networkDynamic object does not explicitly code for 'group' utterences, simultaneous edges originating from a speaker (same onset, terminus, and tail vertex) are assumed to be directed at the group, even if not all group members are reached by the ties.
+
+### Durations and counts of ties
+
+When we have access to longer duration longitudinal network datasets, it begins to be possible to examine networks in terms of temporal charachterizations of edge activity without first chopping them up into bins.  For example, what are the average durations of edge activity?
+
+The `edgeDuration` function provides a convient way to access the information.
+
+```{r}
+edgeDuration(short.stergm.sim)
+```
+By default, it returns a vector of durations corresponding to each edge observed in the network. We can use standard R tools to look at these distributions. 
+
+```{r}
+summary( edgeDuration(short.stergm.sim) )
+hist(    edgeDuration(short.stergm.sim) )
+```
+
+If we are working with event data such as the McFarland classrooms, this function at first appears less useful:
+
+```{r}
+edgeDuration(cls33_10_16_96)
+```
+
+Fortunately, there is an argument appropriate for working networks having zero-duration ties: instead of summing the duration of edges activity spells, we tell it to just count the number of times they are active. 
+
+```{r}
+edgeDuration(cls33_10_16_96,mode='counts')
+```
+
+An important point of detail
+
+```{r}
+hist(edgeDuration(short.stergm.sim))  
+hist(edgeDuration(short.stergm.sim,subject = 'spells')) 
+```
+
+****
+**Question:** What happens to the measured durations as the observation window gets shorter? Why?
+
+```{r,results='hide'}
+summary(edgeDuration(short.stergm.sim))
+summary(edgeDuration(short.stergm.sim,start=0,end=10))
+```
+****
+
+Edge durations can tell us the relative rates at which individual relationships are active, but what if we want to know how active the vertices are across their relationships?  The `tiedDuration` funtion provides a vertex-level aggregation of the amount of time each vertex is "in a relationship".
+
+```{r}
+tiedDuration(short.stergm.sim)
+```
+
+****
+**Question:** What might be an expected relationship between the `tiedDuration` and the `degree` of each vertex in a dynamic network?
+****
+
+
+### Forward path metrics
+In static networks we frequently measure distances using the shortest path geodesic.  In dynamic networks that are models of possible transmission routes, we need to consider the sequence of edge timing when computing allowable 'journeys' through the network. The `tPath` function provides a way to calculate the set of temporally reachable vertices from a given source vertex starting at a specific time. 
+
+```{r}
+path<-tPath(short.stergm.sim,v = 13,
+            graph.step.time=1)
+path
+```
+
+By default, it does this by computing the `earliest forward reachable path`, so it also returns the earliest times each of the vertices becomes reachable in the `$tdist` component of the list, with `Inf` if it was unreachable.  The  `$previous` component gives, for each vertex, the id of the vertex it was reached by.  `$gsteps` gives the number of steps in the earliest forward path journy to reach each vertex. Note that this __is usually not the same thing as the length of the shortest time-respecting path!__ 
+
+We can plot the tPath overlayed on the aggregate network, but this is probably only useful when the aggregate network is not too dense.
+
+```{r}
+plotPaths(short.stergm.sim,
+          path,
+          label.cex=0.5)
+```
+
+The `transmissionTimeline` is an alternate view which is often helpful for debugging and understanding tPaths. It plots the time at which each vertex was reached against the number of steps in the path with lines corresponding to the edges that the path crossed.
+
+```{r}
+transmissionTimeline(path,jitter=TRUE,
+          main='Earliest forward path from vertex 13')
+```
+
+
+
+```{r}
+tReach(short.stergm.sim)
+```
+For a network this small, we can efficiently compute all of the paths.  But for larger networks we might want to just get a sense of the distribution of forward set sizes using the `sample` argument to only compute paths from a subset of seed vertices. 
+
+
+****
+**Question:** Are reachable paths symmetric in an undirected network? If vertex `i` can reach `j`, can we assume that `j` can reach `i`?
+****
+
 
 ## Vertex dynamics
-Edges are not the only things that can change in networks. In some dynamic network data the vertices may also enter or leave the network (become active or inactive, birth/death).  Lin Freeman's windsurfer social interaction data-set (Almquist and Butts 2011) is a good example of this. In this data there are different people present on the beach on successive days, and there is even a day of missing data.
+In some dynamic network data the vertices may also enter or leave the network (become active or inactive, birth/death).  Lin Freeman's windsurfer social interaction data-set (Almquist and Butts 2011) is a good example of this. Vertices enter and exit frequently because different sets of people are present on the beach on successive days. For instance, look at vertex 74 in contrast to vertex 1 on the timeline plot.
 
-
-```{r,fig.keep='none'}
+```{r}
 data(windsurfers)
+timeline(windsurfers,plot.edge.spells=FALSE)
+```
+
+
+```{r,message=FALSE}
+
 slice.par<-list(start=1,end=31,interval=1, 
                 aggregate.dur=1,rule="latest")
 windsurfers<-compute.animation(windsurfers,slice.par=slice.par,
                                default.dist=3,
                                animation.mode='MDSJ',
                                verbose=FALSE)
-render.animation(windsurfers,vertex.col="group1",
+
+render.d3movie(windsurfers,vertex.col="group1",
                  edge.col="darkgray",
                  displaylabels=TRUE,label.cex=.6,
-                 label.col="blue", verbose=FALSE)
-ani.replay()
+                 label.col="blue", verbose=FALSE,
+               main='Windsurfer interactions, 1-day aggregation',
+               output.mode = 'htmlWidget')
+
 ```
 
-These networks also have a lot of isolates, which tends to scrunch up the rest of the components so they are hard to see.  Setting the lower `default.dist` above can help with this. 
+These networks also have a lot of isolates, which tends to scrunch up the rest of the components in the network plot so they are hard to see.  Setting the lower `default.dist` above can help with this. In this example (see http://statnet.org/movies/ndtv_vignette/windsurfers_v1.mp4) the turnover of people on the beach is so rapid that structure appears to change chaotically, and it is quite hard to see what is going on. Notice the blank period at day 25 where the network data is missing.
 
-In this example (see http://statnet.org/movies/ndtv_vignette/windsurfers_v1.mp4) the turnover of people on the beach is so rapid that structure appears to change chaotically, and it is quite hard to see what is going on. Vertices enter and exit frequently and are often not available for observation on successive days. For instance, look at vertex 74 in contrast to vertex 1 on the timeline plot.
+We can still calculate some vertex-level metrics, such as the activity durations for each vertex. 
 
 ```{r}
-timeline(windsurfers,plot.edge.spells=FALSE)
+hist( vertexDuration(windsurfers) )
+hist( vertexDuration(windsurfers, subject='spells') )
 ```
 
-Notice the blank period at day 25 where the network data is missing. There is also a lot of periodicity, since many more people go to the beach on weekends. So in this case, lets try a week-long slice by setting `aggregate.dur=7` to try to smooth it out so we can see changes against the aggregate weekly structure. 
+Not surprisingly, most of the windsurfers spend less than 5 days a month on the beach. 
 
-```{r,fig.keep='none'}
+*****
+**Question:**  What is the difference between calculating the vertex durations with `subject='vertices'` and `subject='spells'`? 
+
+*****
+
+What is happening to the density of the network as vertices enter and exit? Should we be thinking of the vertices as inactive, or unobserved?
+
+```{r}
+# an example of a 'roll-your-own' networkDynamic statistic
+netSizes<-sapply(1:32,function(t){ network.size.active(windsurfers,at=t) })
+plot( 1:32,netSizes ,type='l', 
+      main = 'Number of windsurfers active each day')
+
+plot( tErgmStats(windsurfers,'edges') ,
+      main = 'Number of widsurfer interaction edges active each day')
+
+plot( tSnaStats(windsurfers, 'gden') , 
+      main = 'Graph density of winsurfer interaction edges each day')
+
+```
+
+
+
+There is also a lot of periodicity, since many more people go to the beach on weekends. So in this case, lets try a week-long slice by setting `aggregate.dur=7` to try to smooth it out so we can see changes against the aggregate weekly structure. 
+
+```{r,message=FALSE}
 slice.par<-list(start=0,end=24,interval=1, 
                 aggregate.dur=7,rule="latest")
 windsurfers<-compute.animation(windsurfers,slice.par=slice.par,
                                default.dist=3,
                                animation.mode='MDSJ',
                                verbose=FALSE)
-render.animation(windsurfers,vertex.col="group1",
+render.d3movie(windsurfers,vertex.col="group1",
                  edge.col="darkgray",
                  displaylabels=TRUE,label.cex=.6,
-                 label.col="blue", verbose=FALSE)
-ani.replay()
+                 label.col="blue", verbose=FALSE,
+               main='Windsurfer interactions, 7-day aggregation',
+               output.mode = 'htmlWidget')
 ```
 
-This new rolling--"who interacted this week" network (see http://statnet.org/movies/ndtv_vignette/windsurfers_v2.mp4) is larger and more dense (which is to be expected) and also far more stable. There is still some turnover due to people who don't make it to the beach every week but it is now possible to see some of the sub-groups and the the various bridging individuals. 
+This new rolling--"who interacted this week" network (see http://statnet.org/movies/ndtv_vignette/windsurfers_v2.mp4) is larger and more dense (which is to be expected) and also far more stable. We see new ties forming against a background of pre-existing ties.  There is still some turnover due to people who don't make it to the beach every week but it is now possible to see some of the sub-groups of 'regulars' and the the various bridging individuals.
+
+*****
+**Question:**  Why did we adjust the ending time parameter?
+*****
 
 *****
 **Question:** How would a researcher determine the "correct" aggregation period or data collection interval for a dynamic process? When the "same" network is sampled repeatedly, how can we distinguish sampling noise from network dynamics?
 
 *****
 
-## Animating network attributes
+# Using ndtv Effectively
+Some additional tips, tricks, and helpful information for temporal visualization.
+
+## Animation output formats
+In this tutorial we have been only playing back animations in the R plot window. But what if you want to share your animations with collaborators or post them on the web? Assuming that the external dependencies are correctly installed, we can save out animations in multiple useful formats supported by the `ndtv` and the `animation` package:
+
+* `render.d3movie()` plays an HTML5 vector graphics version of the animation in a browser window, Rmarkdown, or optionally saves it for later embedding.
+* `ani.replay()` plays the animation back in the R plot window. (see `?ani.options` for more parameters)
+* `saveVideo()` saves the animation as a video file on disk (if the FFmpeg library is installed).
+* `saveGIF()` creates an animated GIF (if ImageMagick's  `convert` is installed)
+* `saveLatex()` creates an animation embedded in a PDF document
+
+See the help page for each function for detailed listing of parameters. We will quickly demonstrate some useful options below.
+
+### HTML5 / SVG video files
+
+As we saw earlier, `ndtv` includes the `render.d3movie` that, instead of using R's plotting functions and the animation library, embeds the animation information into a web page along with "ndtv-d3 player" as an interactive HTML5 SVG animation for display in a modern web browser.
+
+
+```{r,message=FALSE}
+render.d3movie(wheel,vertex.col='blue', edge.col='gray')
+```
+
+The `render.d3movie` supports most (but not all) of the same commonly used plot arguments as `render.animation`. For a list of exactly which arguments, see `?render.d3Movie`.  There are also some additional arguments that can be used to configure HTML styling and interaction properties such as tool-tips. We've provided a tutorial devoted just to the ndtv-d3 features available at http://statnet.org/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html  It demonstrates great features such as embedding animations in Rmarkdown documents (Allaire, et. al. 2015) such as this tutorial, and some of the features that may be useful for building Shiny apps. 
+
+
+### Video files
+Since we just rendered the "wheel" example movie, it is already cached and we can capture the output of `ani.replay()` into a movie file. Try out the various output options below.
+
+#### Saving video
+Save out an animation, providing a non-default file name for the video file:
+
+```{r,message=FALSE}
+saveVideo(ani.replay(),video.name="wheel_movie.mp4")
+```
+
+You will probably see a lot output on the console from ffmpeg reporting its status, and then it should open the movie in an appropriate viewer on your machine.
+
+#### Changing video size
+Sometimes we may want to change the pixel dimensions of the movie output to make the plot (and the file size) much larger.
+```{r,message=FALSE}
+saveVideo(ani.replay(),video.name="wheel_movie.mp4",
+          ani.width=800,ani.height=800)
+```
+
+#### Adjusting video quality
+We can increase the video's image quality (and file size) by telling ffmpeg to use a higher bit-rate (less compression) for the video.
+
+```{r,message=FALSE}
+saveVideo(ani.replay(),video.name="wheel_movie.mp4",
+          other.opts="-b:v 5000k")
+```
+
+#### Rendering video directly to disk
+Because the `ani.record()` and `ani.replay()` functions cache each plot image in memory, they are not very speedy and the rendering process will tend to slow to a crawl down as memory fills up when rendering large networks or long movies.  We can avoid this by saving the output of `render.animation` directly to disk by wrapping it inside the `saveVideo()` call and setting `render.cache='none'`.
+```{r,message=FALSE}
+saveVideo(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none'),
+          video.name="wheel_movie.mp4")
+```
+
+### Animated GIF files
+We can also export an animation as an animated GIF image. GIF animations will be very large files, but are very portable for sharing on the web. To render a GIF file, you must have ImageMagick installed. See `?saveGIF` for more details. 
+
+```{r,message=FALSE,results='none'}
+saveGIF(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none'),
+         movie.name="wheel_movie.gif")
+```
+
+### Animated PDF/Latex files
+The `animation` package supports including animations inside PDF documents if you have the appropriate Latex utilities installed. However, the animations will only play inside Adobe Acrobat PDF viewers so it is probably less portable than using GIF or video renders.
+
+```{r,message=FALSE}
+saveLatex(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none'))
+```
+
+
+
+*****
+**Exercise:** Using the list of options from the help page `?ani.options`, locate the option to control the time delay interval of the animation, and use it to render a video where each frame stays on screen for 2 seconds.
+
+```{r,message=FALSE,results='hide'}
+saveVideo(render.animation(wheel,vertex.col='blue',
+          edge.col='gray',render.cache='none',
+          render.par=list(tween.frames=1),
+          ani.options=list(interval=2)),
+         video.name="wheel_movie.mp4")
+```
+
+*****
+
+*****
+**Exercise:** Using the list of options from the help page `?render.d3movie`, locate the option to control the title and background color and load an animation in the web browser with the `d3.options` set so that it will play automatically, with a much faster duration than normal.
+
+```{r,message=FALSE,results='hide'}
+render.d3movie(wheel,vertex.col='blue',
+          main="I'm a wheel!",
+          bg='gray',
+          d3.options=list(animationDuration=100,animateOnLoad=TRUE))
+          
+```
+
+*****
+
+*****
+**Question: What are some tradeoffs between the HTML5 and video aproches to saving and sharing network animations?
+****
+
+### Other static visualizations
+
+Most of the example so far have focused on creating animations, but ndtv supports other types of static visualizations as well. For certain types of tasks a static representation may actually be more effective than an animation, and they are certainly easier to reproduce in print.
+
+#### Proximity timeline of an infection
+
+
+
+```{r}
+data(toy_epi_sim)
+```
+
+```{r,message=FALSE}
+proximity.timeline(toy_epi_sim,
+                   vertex.col = 'ndtvcol',
+                   spline.style='color.attribute',
+                   mode='sammon',
+                   default.dist=25,
+                   chain.direction='reverse')
+```
+
+When using `spline.style='color.attribute'` the plot has to generate lots of spline segments, so rendering to the plot device can be slow. 
+
+#### Time prism
+```{r}
+timePrism(toy_epi_sim)
+```
+
+If it seems more legible to have time move left to right, we can swap the axes around using the `orientation` parameter
+
+```{r} 
+timePrism(toy_epi_sim,
+          orientation=c('z','y','x'),
+          angle=40,
+          spline.v=c(7, 29, 36, 70, 82, 96),  # hilite the infected 
+          spline.col='red',
+          spline.lwd=2,
+          box=FALSE,
+          planes=TRUE,
+          vertex.col='ndtvcol')
+```
+
+## Dynamc network attributes
 Vertices and edges are not the only things that change over time, how do we display dynamic attributes (such as infection status) and changes to structural properties of the network?
 
 ### Controlling plot properties using dynamic attributes (TEAs)
@@ -776,8 +1089,10 @@ ani.replay()
 
 The attribute values for the time points are defined using `network.collapse`, which controls the behavior if multiple values are active for the plot period. 
 
+TODO: example of aggregation and metrics
+
 *****
-**Exercise:** Using the wheel network, create a dynamic vertex attributed named "group".  Define the TEA so that initially most of the vertices will be in group "A"", but over time more and more will be in group "B" 
+**Exercise:** Using the wheel network, create a dynamic vertex attributed named "group".  Define the TEA so that initially most of the vertices will be in group "A", but over time more and more will be in group "B" 
 
 *****
 
@@ -864,10 +1179,10 @@ These functions can be used for static plots as well.  For this you can call the
 plot(wheel,edge.col=effect.edgeAgeColor(wheel,onset=10,fade.dur=10,
                       start.color='red',end.color='green'),
       edge.label=edges.age.at(wheel,at=10),
-      edge.lwd=4)
+      edge.lwd=8)
 ```
 
-## Using and aggregating edge weights
+## Using and aggregating edge weights and counts
 In the previous examples we have treated the networks we are visualizing as un-weighted. But for some applications it may be useful to incorporate edge weight information in a layout. Even if the original network data does not contain weights, we may wish to perform operations using edge duration information. For example, when we are rendering an aggregate network, should an edge that exists for a single moment be treated the same way as an edge that exists the entire time?  
 
 By default, the `collapse.network()` function returns an ordinary static network.  But setting the argument `rm.time.info=FALSE` will cause it to add some attributes with crude summary information about the activity of the edges and vertices over the time period of aggregation.
@@ -964,7 +1279,7 @@ We've briefly mentioned the `default.dist` parameter earlier. Most of the layout
 
 To demonstrate this we will work with a single static slice of the network and call the animation layout directly so we can avoid rendering out the entire movie for each test. 
 
-```{r,results='hide'}
+```{r,results='hide',cache=TRUE}
 data(msm.sim)
 msmAt50<-network.extract(msm.sim,at=50)
 network.size(msmAt50)
@@ -973,21 +1288,21 @@ plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50),vertex.cex=0.5)
 
 In this case, the default distance must have been set to about 31 (square root of 1000). This results in the giant component being well separated from the smaller components and isolates. Although this certainly focuses visual attention nicely on the big component, it squishes up the rest of the network.  We can try setting the value lower.
 
-```{r,results='hide'}
+```{r,results='hide',cache=TRUE}
 plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50,default.dist=10),
      vertex.cex=0.5)
 ```
 
 But then the `default.dist` value was too small to effectively separate the components, resulting in a lot of unnecessary edge crossing. So lets try an intermediate value.
 
-```{r,results='hide'}
+```{r,results='hide',cache=TRUE}
 plot(msmAt50,coord=network.layout.animate.MDSJ(msmAt50,default.dist=18),
      vertex.cex=0.5)
 ```
 
 For this network, `default.dist=18` seems to give a reasonable compromise between spacing and scaling, but it can still lead to some edge overlaps.  We can now compute the overall movie to see how it works at various points in time.   And then peek at four time points to see if the parameter is going to give reasonable values over the time range of the movie. 
 
-```{r,results='hide',message=FALSE}
+```{r,results='hide',message=FALSE,cache=TRUE}
 # calculating for this network size will be slow
 # expect this command to take up to 5 minutes
 compute.animation(msm.sim,animation.mode='MDSJ',default.dist=18)
@@ -996,56 +1311,7 @@ filmstrip(msm.sim,frames=4,displaylabels=FALSE,vertex.cex=0.5)
 
 So it seems like it will work acceptably, but by the end of the movie the giant component will have grown enough to start squishing the rest of the network. 
 
-
-# Advanced examples
-
-## A more complete tergm/stergm example
-This is an expanded version of the demo from the beginning of the tutorial. It illustrates how to run a `tergm` simulation and some additional useful features for working with `tergm` model output. 
-
-Let say we want to construct a basic but plausible statistical model of a dynamic network defined as a STERGM, and we want to see what one possible realization of the network might look like.  Using statnet's `tergm` package, we can  estimate the parameters for an edge formation and dissolution process which produces a network similar to the Florentine business network (`?ergm::flobusiness`) given as input.  First we load up the data.
-
-```{r}
-library(tergm)    # lib for temporal ergm simulations   
-data("florentine") # an example network
-plot(flobusiness,displaylabels=T)
-```
-
-Then we ask `stergm` to fit a model with a random edge probability ("edges") plus a type of clustering defined as a decreasing marginal return on the number of edge-wise shared partners ("gwesp"). We also include a random dissolution process on the edges to keep the density from simply increasing at each time step.  For more background on the modeling process please see the `tergm` workshop materials at http://statnet.org/workshops/SUNBELT/current/tergm/tergm_tutorial.html. 
-
-```{r}
-theta.diss <- log(9)
-stergm.fit.1 <- stergm(flobusiness,
-  formation= ~edges+gwesp(0,fixed=T), 
-  dissolution = ~offset(edges),
-  targets="formation",
-  offset.coef.diss = theta.diss,  
-  estimate = "EGMME"  )
-```
-
-After the model has been estimated, we can take a number of sequential draws from it to see how the network might "evolve" over time, and output these discrete  networks as a single `dynamicNetwork` object. 
-```{r}
-stergm.sim.1 <- simulate.stergm(stergm.fit.1,
-                    nsim=1, time.slices = 25)
-```
-
-Now that we have our dataset, it is time to render the movie. We will specify some render parameters using `render.par`.  The `show.stats` parameter accepts a tergm summary formula to be evaluated, and print the model statistics for each slice on the appropriate frame of the movie. We can specify the formula we used for formation: `~edges+gwesp(0,fixed=T)`
-
-```{r}
-render.par=list(tween.frames=5,show.time=TRUE,
-                show.stats="~edges+gwesp(0,fixed=T)")
-```
-
-Then we ask it to build the animation, passing in some of the standard `plot.network` graphics arguments to change the color of the edges and show the labels with a smaller size and blue color. As we are fairly familiar with the output by now, we can suppress it by adding a `verbose=FALSE` argument.
-```{r,fig.keep='none'}
-render.animation(stergm.sim.1,render.par=render.par,
-                 edge.col="darkgray",displaylabels=TRUE,
-                 label.cex=.6,label.col="blue",verbose=FALSE)
-ani.replay()
-```
-
-  
-Notice that in addition to the labels on the bottom of the plot indicating which time step is being viewed, it also displays the network statistics of interest for the time step. When the `edges` parameter increases, you can see the density on the graph increase and the number of isolates decrease. Eventually the model corrects, and the parameter drifts back down. 
-
+# Importing data and constructing networkDynamic objects
 
 ## Constructing a movie from external data in matrix form
 At this point you might be thinking: "All of this dynamic stuff is well and good, but my data were collected in panels and stored as matrices. Can I still make a network animation?"
@@ -1089,7 +1355,7 @@ hp6 <- read.table(unz(temp_hp.zip, "hpbook6.txt"),
                   sep=" ",stringsAsFactors=FALSE)
 ```
 
-To construct a `dynamicNetwork` object, we will arrange them in a list and then convert it with the `dynamicNetwork()` utility function.
+To construct a `networkDynamic` object, we will arrange them in a list and then convert it with the `networkDynamic()` utility function.
 ```{r}
 hpList<-list(hp1,hp2,hp3,hp4,hp5,hp6)
 # convert adjacency matrices to networks
@@ -1139,18 +1405,19 @@ render.animation(harry_potter_support)
 ```
 
 Lets tweak it a bit for some more refinement
-```{r,results='hide',fig.keep='none',message=FALSE}
+```{r,message=FALSE}
 compute.animation(harry_potter_support,
                   animation.mode='MDSJ',
                   default.dist=2)
-render.animation(harry_potter_support,
+render.d3movie(harry_potter_support,
             render.par=list(tween.frames=20),
             vertex.cex=0.8,label.cex=0.8,label.col='gray',
             # make shape relate to school year
             vertex.sides=harry_potter_support%v%'schoolyear'-1983,
             # color by gender
             vertex.col=ifelse(harry_potter_support%v%'gender'==1,'blue','green'),
-            edge.col="#CCCCCC55"     
+            edge.col="#CCCCCC55",
+            output.mode = 'htmlWidget'
 )
 ```
 
@@ -1160,6 +1427,68 @@ One challenge of constructing movies from matrices is that (as the authors of th
 **Question:** How could dynamic network data (like in the example above) be collected differently to support animations and more flexible analysis of dynamics?
 
 *****
+
+## Importing event or spell data
+
+## Importing pajek .net data
+
+
+# Advanced examples
+
+## A more complete tergm/stergm example
+This is an expanded version of the demo from the beginning of the tutorial. It illustrates how to run a `tergm` simulation and some additional useful features for working with `tergm` model output. 
+
+Let say we want to construct a basic but plausible statistical model of a dynamic network defined as a STERGM, and we want to see what one possible realization of the network might look like.  Using statnet's `tergm` package, we can  estimate the parameters for an edge formation and dissolution process which produces a network similar to the Florentine business network (`?ergm::flobusiness`) given as input.  First we load up the data.
+
+```{r,cache=FALSE}
+require(tergm)    # lib for temporal ergm simulations
+data("florentine") # an example network
+plot(flobusiness,displaylabels=T)
+```
+
+Then we ask `stergm` to fit a model with a random edge probability ("edges") plus a type of clustering defined as a decreasing marginal return on the number of edge-wise shared partners ("gwesp"). We also include a random dissolution process on the edges to keep the density from simply increasing at each time step.  For more background on the modeling process please see the `tergm` workshop materials at http://statnet.org/workshops/SUNBELT/current/tergm/tergm_tutorial.html. 
+
+```{r}
+theta.diss <- log(9)
+stergm.fit.1 <- stergm(flobusiness,
+  formation= ~edges+gwesp(0,fixed=T), 
+  dissolution = ~offset(edges),
+  targets="formation",
+  offset.coef.diss = theta.diss,  
+  estimate = "EGMME"  )
+```
+
+After the model has been estimated, we can take a number of sequential draws from it to see how the network might "evolve" over time, and output these discrete  networks as a single `networkDynamic` object. 
+```{r}
+stergm.sim.example <- simulate.stergm(stergm.fit.1,
+                    nsim=1, time.slices = 25)
+```
+
+Now that we have our dataset, it is time to render the movie. We will specify some render parameters using `render.par`.  The `show.stats` parameter accepts a tergm summary formula to be evaluated, and print the model statistics for each slice on the appropriate frame of the movie. We can specify the formula we used for formation: `~edges+gwesp(0,fixed=T)`
+
+```{r}
+render.par=list(show.time=TRUE,
+                show.stats="~edges+gwesp(0,fixed=T)")
+```
+
+Although not as sophisticated as the diagnostics plots used in ergm, we can calculate the target statistics at each time point to see how they vary
+
+```{r}
+plot( tErgmStats(stergm.sim.example,'edges+gwesp(0,fixed=T)') )
+```
+
+
+Then we ask it to build the animation, passing in some of the standard `plot.network` graphics arguments to change the color of the edges and show the labels with a smaller size and blue color. As we are fairly familiar with the output by now, we can suppress it by adding a `verbose=FALSE` argument.
+```{r,cache=FALSE}
+render.d3movie(stergm.sim.example,render.par=render.par,
+                 edge.col="darkgray",displaylabels=TRUE,
+                 label.cex=.6,label.col="blue",verbose=FALSE,
+                 output.mode = 'htmlWidget')
+```
+
+  
+Notice that in addition to the labels on the bottom of the plot indicating which time step is being viewed, it also displays the network statistics of interest for the time step. When the `edges` parameter increases, you can see the density on the graph increase and the number of isolates decrease. Eventually the model corrects, and the parameter drifts back down. 
+
 
 ## Transmission trees and constructed animations
 
@@ -1423,24 +1752,61 @@ saveVideo(
 
 *****
 
-### Proximity timeline of an infection
 
-Most of the example so far have focused on creating animations, but ndtv supports other types of static visualizations as well.
 
+# Installing ndtv's optional external dependencies
+
+Assuming that you've already got `ndtv` installed, here are some more detailed instructions for installing some of the external system tools that can be used for saving out videos, higher quality layouts, and other layout engines. 
+
+## Installing FFmpeg for saving animations
+FFmpeg http://www.ffmpg.org  (or Libab https://libav.org/) are cross-platform tools for converting and rendering video content in various formats. It is used as an external library by the `animation` package to save out the animation as a movie file on disk. (see `?saveVideo` for more information.) The install instructions are somewhat different on each platform.  You can access these instructions using `?install.ffmpeg`
 ```{r}
-data(toy_epi_sim)
+?install.ffmpeg   # help page for installing ffmpeg
 ```
 
-```{r,message=FALSE}
-proximity.timeline(toy_epi_sim,
-                   vertex.col = 'ndtvcol',
-                   spline.style='color.attribute',
-                   mode='sammon',
-                   default.dist=20,
-                   chain.direction='reverse')
+
+
+## Installing Java and MDSJ setup
+To use the MDSJ (Algorithmics Group, University of Konstanz 2009) layout algorithm, you must have Java installed on your system. If it is not installed, you can download it from http://www.java.com/en/download/index.jsp. On Windows, you may need to edit your "Path" environment variable to make Java executable from the command-line. Oracle provides some instructions for editing the Path: http://www.java.com/en/download/help/path.xml
+
+When java is installed correctly the following command should print out the version information:
+```{r}
+system('java -version')
 ```
 
-When using `spline.style='color.attribute'` the plot has to generate lots of spline segments, so rendering to the plot device can be slow. 
+Due to CRAN's license restrictions, necessary components of the MDSJ layout (which we will use in a minute) are not distributed with `ndtv`.  Instead, the first time the MDSJ layout is called after installing or updating the `ndtv` package, it is going to ask to download the library.  Lets do that now on a pretend movie to get it out of the way:
+
+```{r,message=FALSE,results='hide'}
+network.layout.animate.MDSJ(network.initialize(1))
+```
+
+
+This will give a prompt like
+
+```
+The MDSJ Java library does not appear to be installed. 
+The ndtv package can use MDSJ to provide a fast 
+accurate layout algorithm. It can be downloaded from 
+http://www.inf.uni-konstanz.de/algo/software/mdsj/
+Do you want to download and install the MDSJ Java library? (y/N):
+```
+
+Responding `y` to the prompt should install the library and print the following message:
+```{r,echo=FALSE}
+# the command above will default to not installing MDSJ in a non-interactive session
+# so to make sure it is installed for this sweave build, call it internally
+mdsj.dir <- file.path(path.package("ndtv"), "java/")
+ndtv:::install.mdsj(mdsj.dir)
+```
+
+And its good to go! (unless you were intending to use the layout for commercial work...)
+
+## Installing Graphviz
+Graphviz is *not* required for `ndtv` to work.  However it does provide several interesting layouts including the hierarchical tree layout we used in one of the advanced examples. Platform specific instructions for installing Graphviz can be shown with `?install.graphviz`.
+
+
+
+
 
 # Miscelaneous topics
 ## Compressing video output
@@ -1490,7 +1856,7 @@ As the `msm.sim` example probably demonstrated, rendering animations of large ne
 Here are some suggestions on where to look for help if you run into problems or have questions:
 
 * R's built in documentation feature. Each function has a help page, usually with some examples: i.e. `?render.animation`.  The listing of all the documentation pages can be found with `help(package='ndtv')` or `help(package='networkDynamic')`
-* The ndtv package vignette (includes much of the material from this workshop): `browseVignettes(package='ndtv')`
+* The included package vignettes: `browseVignettes(package='ndtv')`
 * The statnet wiki has various FAQ pages and resources: https://statnet.org/trac/wiki
 * You can always subscribe to the statnet mailing list and post your problem there: https://mailman2.u.washington.edu/mailman/listinfo/statnet_help
 
@@ -1498,13 +1864,13 @@ Here are some suggestions on where to look for help if you run into problems or 
 # Limitations
 Before we create unreasonable expectations, we should be clear that you can't just throw any network into `render.animation` and expect good results.
 
-* Not for "big data". So far we've mostly used it successfully with networks of <1k vertices and several hundred time steps, but that takes a long time to render.
+* This is not a "big data" tool. So far we've mostly used `ndtv` successfully with networks of <1k vertices and several hundred time steps, but that takes a long time to render. 
 * Animations of dense or fully-connected networks may not be useful. 
 * The animation techniques work best when a relatively small number of ties are changing between time slices and vertex turnover rates (births and death) are low. 
 * You may need to think carefully about how to aggregate and smooth the dynamics over time in order to reveal the underlying patterns of interest.  This is analogous to choosing bin-widths for histograms in order to reveal the distributional form of the data.
 * Good results may require considering how the weights and measures of your input data can be translated meaningfully to the implicit "space" you are embedding your data in.
 
-As the `ndtv` package is still very much under development, we would greatly appreciate your suggestions and feedback: `skyebend@skyeome.net`
+As these packages are still very much under development, we would greatly appreciate your suggestions and feedback: `skyebend@skyeome.net`
 
 # Bibliography
 
@@ -1542,11 +1908,16 @@ Butts CT (2008).
 "network: A Package for Managing Relational Data in R". 
 *Journal of Statistical Software*, 24(2). http://www.jstatsoft.org/v24/i02/. 
 
+Carter T. Butts (2008). A Relational Event Framework for Social Action. Sociological
+  Methodology, 38(1), 155--200.
+
 Butts C, Leslie-Cook A, Krivitsky P and Bender-deMoll S (2012).
 *networkDynamic: Dynamic Extensions for Network Objects*.
 R package version 0.8, http://statnet.org.
 
 Emden R. Gansner and Stephen C. North (2000) "An open graph visualization system and its applications to software engineering". *SOFTWARE -- PRACTICE AND EXPERIENCE*, Volume 30, Number 11, pp 1203--1233 http://www.graphiz.org
+
+Gibson, D.R. (2003) 'Participation Shifts: Order and Differentiation in Group Conversation' Social Forces 81 (4): 1335-1380 http://sf.oxfordjournals.org/content/81/4/1335.short
 
 Handcock MS, Hunter DR, Butts CT, Goodreau SM, Morris M (2003b). 
 *statnet: Software tools for the Statistical Modeling of Network Data*. 
@@ -1567,6 +1938,9 @@ R package version 3.2.5-13652-13653.1-2015.04.10-16.29.16, \url{http://CRAN.R-pr
 
 McFarland, Daniel A. (2001) "Student Resistance: How the Formal and Informal Organization of Classrooms Facilitate Everyday Forms of Student Defiance."
 *American Journal of Sociology* **107** (3): 612-78.
+
+Michalec, G.. Bender-deMoll, S.,  Morris, M. (2014) 'ndtv-d3: an HTML5 network animation player for the ndtv package' The statnet project.   https://github.com/statnet/ndtv-d3
+
 
 Xie Y (2012).
 "animation: An R Package for Creating Animations and Demonstrating Statistical Methods."
