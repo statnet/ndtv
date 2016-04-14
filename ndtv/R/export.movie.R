@@ -239,9 +239,9 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
     # TODO: this requires that tergm be loaded! give informative warning if not
     if(render.par$show.time){
       # include the time string in the summary
-      plot_params$xlab <- eval(parse(text=paste("function(slice,onset,terminus){stats<-summary.statistics.network(slice",render.par$show.stats,")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
+      plot_params$xlab <- eval(parse(text=paste("function(slice,onset,terminus){stats<-ergm::summary.statistics.network(slice",render.par$show.stats,")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
     } else {
-      plot_params$xlab <- eval(parse(text=paste("function(slice){stats<-summary.statistics.network(slice",render.par$show.stats,")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+      plot_params$xlab <- eval(parse(text=paste("function(slice){stats<-ergm::summary.statistics.network(slice",render.par$show.stats,")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
     }
   }
   

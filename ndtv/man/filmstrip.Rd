@@ -35,7 +35,11 @@ additional arguments to be passed to \code{\link{plot.network}} via \code{\link{
 }
 }
 \details{
-If the networkDynamic object does not already have animation coordinates, calls \code{\link{compute.animation}} to calculate coordinates for the appropriate number of frames.  The frames argument determines the number of evenly-spaced network slices to be rendered by \code{\link{render.animation}} (with the normal plot recording disabled) as squares on the final plot grid.  The layout of plot grid can be changed via the \code{mfrow} argument. 
+If the \code{\link{networkDynamic}} object does not already have animation coordinates, calls \code{\link{compute.animation}} to calculate coordinates for the appropriate number of frames.  The \code{frames} argument determines the number of evenly-spaced network slices to be rendered by \code{\link{render.animation}} (with the normal plot recording disabled) as images on the final plot grid.  Note that if the layout has coordinates pre-computed by \code{compute.animation}, the slices selected by the \code{frames} argument may not align exactly with the previously compute slices.  Passing in a \code{slice.par} argument will overide \code{frames} to determine exactly which slices will be rendered. 
+
+The layout of plot grid can be changed via the \code{mfrow} argument. 
+
+
 }
 \value{
 Generates plots on the active graphics device.
@@ -55,6 +59,12 @@ See also \code{\link{compute.animation}}, \code{\link{render.animation}}.
 }
 \examples{
 data(stergm.sim.1)
+filmstrip(stergm.sim.1,displaylabels=FALSE)
+# print an overall title for the main plot
+title('stergm.sim.1 at 9 time points')
+
+# adjust margins of individual plots to make more room
+par(mar=c(1,1,1,1))
 filmstrip(stergm.sim.1)
 }
 
