@@ -17,12 +17,18 @@
 #TODO: add ability to specify attributes for weights
 
 proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL, 
-                             onsets=NULL, termini=NULL, default.dist=NULL,
+                             onsets=NULL, termini=NULL, rule='earliest', default.dist=NULL,
                              vertex.col='#55555555',label=network.vertex.names(nd),
                              labels.at=NULL,label.cex=1,vertex.cex=2,
-                             splines=-.2,grid=TRUE,mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
+                             splines=-.2,
+                             render.edges=FALSE,
+                             grid=!render.edges,
+                             edge.col='#00000055',
+                             edge.lwd=4,
+                             mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
                              draw.inactive=NULL, spline.style=c('default','inactive.ghost','inactive.gaps','inactive.ignore','color.attribute'),
-                             chain.direction=c('forward','reverse'),verbose=TRUE,...){
+                             chain.direction=c('forward','reverse'),
+                             verbose=TRUE,...){
   if (!is.networkDynamic(nd)) {
     stop("proximity.timeline requires that the first argument be a networkDynamic object")
   }
@@ -82,7 +88,7 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   if (verbose){
     message('collapsing slice networks ...')
   }
-  slices<-get.networks(nd,retain.all.vertices=TRUE,onsets=onsets,termini=termini,...) 
+  slices<-get.networks(nd,retain.all.vertices=TRUE,onsets=onsets,termini=termini,rule=rule,...) 
   ycoords<-matrix(0,nrow=network.size(nd),ncol=length(slices)+1)
   # set up initial starting coords
   # have to jitter to make sure no coords are the same
@@ -132,6 +138,12 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   
   #---- BEGIN RENDERING PROCESS ----
   
+  # create a new plot
+  plot(NA,NA,xlim=c(onsets[1],termini[length(termini)]),ylim=range(ycoords,na.rm=TRUE),xlab='time',ylab=paste('approx. distance among vertices of',substitute(nd)))
+  
+  
+  # ---- VERTEX RENDERING -----
+  
   # adjust spline style if mode was default and gaps found
   if (spline.style=='default' & hasGaps){
     spline.style<-'inactive.ghost'
@@ -174,8 +186,7 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
     vertex.col<-rep(as.color(vertex.col),length=network.size(nd))
   }
   
-  # create a new plot
-  plot(NA,NA,xlim=c(onsets[1],termini[length(termini)]),ylim=range(ycoords,na.rm=TRUE),xlab='time',ylab=paste('approx. distance among vertices of',substitute(nd)))
+  
   if (verbose){
     message('rendering splines for each vertex ...')
   }
@@ -307,7 +318,7 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
     }
   }
   
-  # do labels if requeted
+  # do vertex labels if requested
   if(!is.null(labels.at)){
     for (t in seq_along(labels.at)){
       # find the closest slice start
@@ -315,6 +326,33 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
       text(rep(labels.at[t],length(label)),ycoord,labels=label,cex=label.cex)
       
       
+    }
+  }
+  
+  # ---- EDGE RENDERING -----
+  
+
+  if(render.edges){
+    if (verbose){
+      message('rendering segments for each edge ...')
+    }
+    # loop over the time periods
+    for (s in seq_along(slices)){
+      # get all of the edges active for that time period from the slice
+      eids<-valid.eids(slices[[s]])
+      edge.col=plotArgs.network(slices[[s]],'edge.col',edge.col,edgetouse =eids)
+      edge.lwd=plotArgs.network(slices[[s]],'edge.lwd',edge.lwd,edgetouse =eids)
+      #eids<- goodIds[is.active(nd,e = goodIds,onset=onsets[s],terminus=termini[s])]
+      for(w in seq_along(eids)){
+        e<-eids[w]
+        # get endpoints
+        i<-slices[[s]]$mel[[e]]$inl
+        j<-slices[[s]]$mel[[e]]$outl
+        # plot a line segment
+        lines(onsets[c(s,s)],ycoords[c(i,j),s],
+              col = edge.col[w],
+              lwd = edge.lwd[w])
+      }
     }
   }
 }

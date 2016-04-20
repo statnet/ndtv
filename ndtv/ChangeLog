@@ -1,4 +1,6 @@
 ChangeLog for ndtv
+v0.10
+ - proximity.timeline now has ability to plot vertical lines corresponding to edges connecting the vertex splines
 v0.9
  - added a jitter parameter to transmission timeline
  - fixed ndtv-d3 htmlwidget to correctly use a unique javascript id for the animation so that multiple animations can appear in the same Rmarkdown document
