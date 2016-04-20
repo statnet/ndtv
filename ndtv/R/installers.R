@@ -5,7 +5,7 @@
 #  open source, and has the attribution requirements (GPL Section 7) at
 #  http://statnet.org/attribution
 #
-#  Copyright 20123-2013 Statnet Commons
+#  Copyright 20123-2016 Statnet Commons
 #######################################################################
 #functions to install, configure, and check various 3rd party components of ndtv
 

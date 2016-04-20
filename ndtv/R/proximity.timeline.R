@@ -5,7 +5,7 @@
 #  open source, and has the attribution requirements (GPL Section 7) at
 #  http://statnet.org/attribution
 #
-#  Copyright 2012-2013 Statnet Commons
+#  Copyright 2012-2016 Statnet Commons
 #######################################################################
 
 #TODO: change structure so that x axis (and params) are based on time rather than slice index

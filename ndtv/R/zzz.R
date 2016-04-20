@@ -4,7 +4,7 @@
 #  open source, and has the attribution requirements (GPL Section 7) in
 #    http://statnetproject.org/attribution
 #
-#  Copyright 2012 the statnet development team
+#  Copyright 2012-2016 the statnet development team
 ######################################################################
 .onAttach <- function(lib, pkg){
   sm <- statnetStartupMessage("ndtv",c("statnet"),FALSE)

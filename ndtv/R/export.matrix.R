@@ -5,7 +5,7 @@
 #  open source, and has the attribution requirements (GPL Section 7) at
 #  http://statnet.org/attribution
 #
-#  Copyright 2012-2013 Statnet Commons
+#  Copyright 2012-2016 Statnet Commons
 #######################################################################
 
 # this function was copied directly from R package MASS version 7.3-16 (GPL 3).  Included here to remove the dependency on MASS

@@ -5,7 +5,7 @@
 #  open source, and has the attribution requirements (GPL Section 7) at
 #  http://statnet.org/attribution
 #
-#  Copyright 2012-2013 Statnet Commons
+#  Copyright 2012-2016 Statnet Commons
 #######################################################################
 #functions to generate and export movies
 #apply a series of network layouts to a networkDynamic object

@@ -5,7 +5,7 @@
 #  open source, and has the attribution requirements (GPL Section 7) at
 #  http://statnet.org/attribution
 #
-#  Copyright 2014 Statnet Commons
+#  Copyright 2014-2016 Statnet Commons
 #######################################################################
 
 ## set ndtv-d3 version number as an option for debugging
