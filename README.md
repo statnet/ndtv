@@ -25,7 +25,7 @@ render.d3movie(short.stergm.sim) # create a HTML5 animation
 
 ## Docs and Examples
 
-The package vignette is at: https://cran.r-project.org/web/packages/ndtv/vignettes/ndtv.pdf
+The package vignette is at: https://github.com/statnet/ndtv/blob/master/ndtv/vignettes/ndtv.pdf
 
 A longer tutorial with more background is at: http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html
 
