@@ -5,6 +5,9 @@ r:
 sudo: false
 cache: packages
 
+before_install:
+ - cd ndtv
+
 notifications:
   email:
     on_success: never
