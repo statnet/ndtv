@@ -5,8 +5,11 @@ r:
 sudo: false
 cache: packages
 
+warnings_are_errors: true
+
 before_install:
  - cd ndtv
+ 
 
 notifications:
   email:
