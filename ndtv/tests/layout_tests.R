@@ -116,7 +116,7 @@ network.layout.animate.Graphviz(tree,layout.par=list(gv.engine='dot'))
 network.layout.animate.Graphviz(tree,layout.par=list(gv.engine='dot',gv.args='-Grankdir=LR'))
 
 # check passing bad gv.args
-expect_error(network.layout.animate.Graphviz(tree,layout.par=list(gv.args='-Xhelloworld'),verbose=FALSE),'Error')
+expect_error(network.layout.animate.Graphviz(tree,layout.par=list(gv.args='-Xhelloworld'),verbose=FALSE),regexp = 'Unable to parse coordinates')
 
 # test passing a weighted network into neato
 wtest<-network.initialize(5)
