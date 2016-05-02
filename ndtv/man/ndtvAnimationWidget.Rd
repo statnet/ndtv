@@ -16,7 +16,7 @@
 htmlwidgets wrapper functions for including ndtv-d3 animations in shinyapps
 }
 \description{
-Wrapper functions to provide ndtv-d3 animation as an \code{htmlwidget}for use within an RStudio "shiny" web application.  These functions are not normally called by R users directly.  
+Wrapper functions to provide ndtv-d3 animation as an \code{htmlwidget}for use within an RStudio "shiny" web application.  These functions are not normally called by R users directly.  For example shiny app template code please see the 'server.R' and 'ui.R' files at \url{https://github.com/statnet/ndtv/tree/master/htmlWidgetShinyTest}
 }
 \usage{
 ndtvAnimationWidget(out, options, width = NULL, height = NULL)
@@ -52,7 +52,6 @@ The ndtv-d3 interactive HTML5 network animation can normally be produced via \co
 
 \code{ndtvAnimationWidget} initializes the widget, usually called automatically inside \code{\link{render.d3movie}} when \code{output.mode='htmlWidget'}.  
 
-TODO: publish the example code and include links
 
 }
 
