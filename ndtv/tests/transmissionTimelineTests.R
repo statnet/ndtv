@@ -25,8 +25,14 @@ transmissionTimeline(v10path,edge.lty=2)
 transmissionTimeline(v10path,xlab='hello',ylab='world',main='diffusion tree timeline plot')
 
 
+
+
 data("toy_epi_sim")
 
 expect_error(transmissionTimeline(toy_epi_sim,time.attr='foo'),regexp = 'is not a vertex attribute of the network')
 # check for appropriate error if input not a tree
 expect_error(transmissionTimeline(toy_epi_sim,time.attr='testatus.active'),regexp = 'network does not appear to be a tree')
+
+# test for case where no transmissions occur and jitter is active
+toy_v50path<-structure(list(tdist = c(Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, 0, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf), previous = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0), gsteps = c(Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, 0, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf,  Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf, Inf ), start = 1, end = Inf, direction = "fwd", type = "earliest.arrive"), .Names = c("tdist",  "previous", "gsteps", "start", "end", "direction", "type"), class = c("tPath",  "list"))
+transmissionTimeline(toy_v50path,jitter=TRUE)

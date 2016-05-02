@@ -71,7 +71,8 @@ transmissionTimeline<-function(x,time.attr,
   }
   #op <- par(no.readonly = TRUE)
   if(jitter){
-    coords<-jitter(coords)
+    # only consider the coordinates with finite values when computing jitter
+    coords[is.finite(coords)]<-jitter(coords[is.finite(coords)])
   }
   # set up the plotting window
   plot(coords,pch=NA,xlab=xlab,ylab=ylab,...)
