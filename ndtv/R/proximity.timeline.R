@@ -8,12 +8,9 @@
 #  Copyright 2012-2016 Statnet Commons
 #######################################################################
 
-#TODO: change structure so that x axis (and params) are based on time rather than slice index
 #TODO: when the network contains isolates, the values for default.dist tend to dominate the network, provide option to not include isolates
-#TODO: compute attributes on a per-slice pasis so that sizes and colors for a vertex can change over time
 #TODO:allow for missing networks and inactive vertices
 #TODO: add ability to specifiy values for labels, colors for labels, etc.
-#TODO: add ability to specify alternate algorithms (isoMDS, sammon, cmdscale)
 #TODO: add ability to specify attributes for weights
 
 proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL, 
@@ -26,6 +23,7 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
                              edge.col='#00000055',
                              edge.lwd=4,
                              mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
+                             coords=NULL,
                              draw.inactive=NULL, spline.style=c('default','inactive.ghost','inactive.gaps','inactive.ignore','color.attribute'),
                              chain.direction=c('forward','reverse'),
                              verbose=TRUE,...){
@@ -88,53 +86,78 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
   if (verbose){
     message('collapsing slice networks ...')
   }
-  slices<-get.networks(nd,retain.all.vertices=TRUE,onsets=onsets,termini=termini,rule=rule,...) 
-  ycoords<-matrix(0,nrow=network.size(nd),ncol=length(slices)+1)
-  # set up initial starting coords
-  # have to jitter to make sure no coords are the same
-  prev_ycoord<-matrix(jitter(cmdscale(layout.distance(slices[[1]],default.dist=default.dist),k=1)),ncol=1)
-  hasGaps<-FALSE # for tracking if there are any empty spells, useful later
-  if (verbose){
-    message('computing vertex positions using 1D ',mode, ' layout ...')
-  }
+  slices<-get.networks(nd,retain.all.vertices=TRUE,onsets=onsets,termini=termini,rule=rule,...)
+  
   # determine which direction the slices should be evaluated
   if (chain.direction=='reverse'){
-   computeSequence<-seq.int(from=length(slices),to=1)
+    computeSequence<-seq.int(from=length(slices),to=1)
   }else{
     computeSequence<-seq_along(slices)
   }
-  for (s in computeSequence){
+  
+  # check if passing in coordinates
+  if (!is.null(coords)){
+    if(!inherits(coords,'matrix') | !is.numeric(coords)){
+      stop("the 'coords' argument must be a numeric matrix with appropriate dimensions")
+    }
+    # check appropriate dimensions
+    if(nrow(coords)!=network.size(nd)){
+      stop("number of rows (",nrow(coords),") in 'coords' cooordinate matrix is not equal to network size")
+    }
+    if(ncol(coords)!=length(slices)){
+      stop("number of columns (",ncol(coords),") in 'coords' cooordinate matrix is not equal to number of time bins (",length(slices),")")
+    }
+    if(verbose){
+      message("using passed coordinate matrix ...")
+    }
+    # copy the coords and repeat last column so that splines will end correctly
+    ycoords<-cbind(coords,coords[,ncol(coords),drop=FALSE])
+  } else {  # coordinates not passed in, so compute them
+    ycoords<-matrix(0,nrow=network.size(nd),ncol=length(slices)+1)
+  
+    # set up initial starting coords
+    # have to jitter to make sure no coords are the same
+    prev_ycoord<-matrix(jitter(cmdscale(layout.distance(slices[[1]],default.dist=default.dist),k=1)),ncol=1)
     if (verbose){
-      message('  computing positions for slice ',s)
+      message('computing vertex positions using 1D ',mode, ' layout ...')
     }
-    slice<-slices[[s]]
-    onset<-onsets[s]
-    terminus<-termini[s]
-    if(network.size(slice)>0 & network.edgecount(slice)>0){
-      mat<-layout.distance(slice,default.dist=default.dist)
-      # use the appropriate function as specified in mode
-      ycoords[,s]<-switch(mode,
-        sammon=MASS::sammon(mat,y=prev_ycoord,k=1,trace=FALSE,tol=1e-9)$points,
-        isoMDS=MASS::isoMDS(mat,y=prev_ycoord,k=1,maxit=500,tol=1e-9,trace=FALSE)$points,
-        #smacofSym=smacof::smacofSym(mat,ndim=1,init=prev_ycoord,metric=TRUE)$conf,
-        cmdscale=cmdscale(mat,k=1),
-        gvNeato=network.layout.animate.Graphviz(net = slice,dist.mat = mat,seed.coords = cbind(0,prev_ycoord),layout.par = list(gv.engine='neato',gv.args='-Gdim=2',gv.len.mode='ndtv.distance.matrix'))[,2],
-        MDSJ=network.layout.animate.MDSJ(net=slice,dist.mat = mat,seed.coords = prev_ycoord,layout.par=list(dimensions=1),verbose=verbose)
-      )       
-      prev_ycoord<-ycoords[,s,drop=FALSE]
-    } else {
-      # I would like to leave out this segment, or draw it dotted
-      # but for now, just copy previous values
-      if (s>1){
-        ycoords[,s]<-ycoords[,s-1]
+
+    for (s in computeSequence){
+      if (verbose){
+        message('  computing positions for slice ',s)
       }
-    }
-    if (network.size.active(nd,onset=onset,terminus=terminus)<network.size(nd)){
-      hasGaps<-TRUE
-    }
-  } # end slice setup loop
-  #copy the last coord to bound the last spline
-  ycoords[,ncol(ycoords)]<-ycoords[,ncol(ycoords)-1]
+      slice<-slices[[s]]
+      onset<-onsets[s]
+      terminus<-termini[s]
+      if(network.size(slice)>0 & network.edgecount(slice)>0){
+        mat<-layout.distance(slice,default.dist=default.dist)
+        # use the appropriate function as specified in mode
+        ycoords[,s]<-switch(mode,
+          sammon=MASS::sammon(mat,y=prev_ycoord,k=1,trace=FALSE,tol=1e-9)$points,
+          isoMDS=MASS::isoMDS(mat,y=prev_ycoord,k=1,maxit=500,tol=1e-9,trace=FALSE)$points,
+          #smacofSym=smacof::smacofSym(mat,ndim=1,init=prev_ycoord,metric=TRUE)$conf,
+          cmdscale=cmdscale(mat,k=1),
+          gvNeato=network.layout.animate.Graphviz(net = slice,dist.mat = mat,seed.coords = cbind(0,prev_ycoord),layout.par = list(gv.engine='neato',gv.args='-Gdim=2',gv.len.mode='ndtv.distance.matrix'))[,2],
+          MDSJ=network.layout.animate.MDSJ(net=slice,dist.mat = mat,seed.coords = prev_ycoord,layout.par=list(dimensions=1),verbose=verbose)
+        )       
+        prev_ycoord<-ycoords[,s,drop=FALSE]
+      } else {
+        # I would like to leave out this segment, or draw it dotted
+        # but for now, just copy previous values
+        if (s>1){
+          ycoords[,s]<-ycoords[,s-1]
+        }
+      }
+    } # end slice setup loop
+    #copy the last coord to bound the last spline
+    ycoords[,ncol(ycoords)]<-ycoords[,ncol(ycoords)-1]
+  }
+  # check if there are any empty vertex spells
+  hasGaps<-any(sapply(computeSequence,function(s){
+    network.size.active(nd,onset=onsets[s],terminus=termini[s])<network.size(nd)
+  }))
+  
+
   
   #---- BEGIN RENDERING PROCESS ----
   
@@ -340,21 +363,27 @@ proximity.timeline<-function(nd,start = NULL, end = NULL, time.increment = NULL,
     for (s in seq_along(slices)){
       # get all of the edges active for that time period from the slice
       eids<-valid.eids(slices[[s]])
-      edge.col=plotArgs.network(slices[[s]],'edge.col',edge.col,edgetouse =eids)
-      edge.lwd=plotArgs.network(slices[[s]],'edge.lwd',edge.lwd,edgetouse =eids)
-      #eids<- goodIds[is.active(nd,e = goodIds,onset=onsets[s],terminus=termini[s])]
-      for(w in seq_along(eids)){
-        e<-eids[w]
-        # get endpoints
-        i<-slices[[s]]$mel[[e]]$inl
-        j<-slices[[s]]$mel[[e]]$outl
-        # plot a line segment
-        lines(onsets[c(s,s)],ycoords[c(i,j),s],
-              col = edge.col[w],
-              lwd = edge.lwd[w])
+      # iff there are any edges to plot...
+      if(length(eids)>0){
+        edge.col=plotArgs.network(slices[[s]],'edge.col',edge.col,edgetouse =eids)
+        edge.lwd=plotArgs.network(slices[[s]],'edge.lwd',edge.lwd,edgetouse =eids)
+        #eids<- goodIds[is.active(nd,e = goodIds,onset=onsets[s],terminus=termini[s])]
+        for(w in seq_along(eids)){
+          e<-eids[w]
+          # get endpoints
+          i<-slices[[s]]$mel[[e]]$inl
+          j<-slices[[s]]$mel[[e]]$outl
+          # plot a line segment
+          lines(onsets[c(s,s)],ycoords[c(i,j),s],
+                col = edge.col[w],
+                lwd = edge.lwd[w])
+        }
       }
     }
   }
+  # invisibly return the y coords for possible later use, triming off the last
+  # column that was added to make the splines work out
+  invisible(ycoords[,1:(ncol(ycoords)-1)])
 }
 
 # convert a 2 column matrix of spells into a list of 2-element vectors

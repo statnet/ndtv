@@ -24,6 +24,7 @@ proximity.timeline(nd,  start = NULL, end = NULL, time.increment = NULL,
   vertex.cex = 2, splines = -0.2, render.edges=FALSE, grid=!render.edges, 
   edge.col='#00000055', edge.lwd=4,
   mode=c('isoMDS','sammon','cmdscale','gvNeato','MDSJ'),
+  coords=NULL,
   draw.inactive=NULL, 
   spline.style=c('default','inactive.ghost','inactive.gaps',
                 'inactive.ignore','color.attribute'),
@@ -63,6 +64,7 @@ either a character color value, a vector of values of length equal to the size o
   \item{grid}{ logical. if \code{TRUE}, vertical lines in the background color will be drawn at the beginning of each time slice to make it easier to determine where on the splines the positions are actually set. Usually this is not used with \code{render.edges}
 }
  \item{mode}{name of MDS algorithm to be used.  Currently one of \code{\link{isoMDS}},\code{\link{sammon}},\code{\link{cmdscale}}}
+ \item{coords}{optional numeric matrix of pre-computed coordinates to be used instead of the algorithm in \code{mode}. The number of matrix rows must be equal to the network size and columns equal to number of time bins implied by other arguments)}
  \item{draw.inactive}{DEPRECATED. see \code{spline.style}}
  \item{spline.style}{options to control how vertices with inactive spells or changing attribute values should be drawn: 
   \itemize{
@@ -95,7 +97,7 @@ For most of the layouts it is necessary to manually adjust the default dist para
 Note for RStudio users: the spline rendering seems to be much slower on RStudio's graphics device than on other graphics devices such as \code{x11()}.
 }
 \value{
-Produces a plot with horizontal splines corresponding the vertices of the network and vertical proximities approximately proportional to geodesic distance.
+Produces a plot with horizontal splines corresponding the vertices of the network and vertical proximities approximately proportional to geodesic distance. Invisibly returns a numeric matrix of coordinates corresponding to computed positions of each vertex at each time bin. This can be passed in via the \code{coords} argument. 
 }
 \references{
 Some inspirational examples here: \url{http://skyeome.net/wordpress/?p=604}
