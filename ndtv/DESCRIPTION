@@ -1,7 +1,7 @@
 Package: ndtv
 Type: Package
 Title: Network Dynamic Temporal Visualizations
-Version: 0.10
+Version: 0.10.0
 Date: 2016-5-6
 Authors@R:c(
 		person("Skye", "Bender-deMoll", role=c("cre","aut"), email="skyebend@uw.edu"),
