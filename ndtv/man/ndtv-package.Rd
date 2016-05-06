@@ -33,7 +33,6 @@ Key features:
   \item Plot network geodesic proximities as a stream graph with \link{proximity.timeline}
 }
 
-
 To view package vignettes and extended examples, see \code{browseVignettes(package='ndtv')}.
 
 For a more indpeth tutorial, see \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html}
@@ -46,6 +45,8 @@ The package includes several example datasets:
 \item \code{\link{stergm.sim.1}}    Very Very Basic stergm simulation output (100 time steps)
 \item \code{\link{toy_epi_sim}}     Toy Epidemic Simulation Output from the EpiModel package
 }
+
+Report bugs at: \url{https://github.com/statnet/ndtv/issues}
 
 }
 \author{

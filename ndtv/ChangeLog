@@ -1,11 +1,23 @@
 ChangeLog for ndtv
 v0.10
+ - corrected test to appropriately match error when Graphviz has bad argument on systems supporting Graphviz
+ - fixed bug when transmissionTimeline tried to plot a transmissionTree where only one vertex was reached and jitter=TRUE
+ - development trunk transfered to github: https://github.com/statnet/ndtv
+ - proximity.timeline invisibly returns its layout coordinates at accepts them as a paramter
  - proximity.timeline now has ability to plot vertical lines corresponding to edges connecting the vertex splines
+ - fixed warnings from proximity.timeline about slice aggregation by setting an aggregation rule by default
+ - plog args passed to render.d3movie via plot.par will be processed
+ - updated htmlWidget docs to include links to Shiny template code on github
+ - internal call to par() in render.d3movie is now conditional on existance of plot device so won't unintentionally open a device in environments that don't support them (i.e. Shiny server) 
+ - modified render.d3movie default background color (vertex.col=0) to be more consistant
+ - modified filmstrip so that it will reset plot.par back to its original values when done
+ 
 v0.9
  - added a jitter parameter to transmission timeline
  - fixed ndtv-d3 htmlwidget to correctly use a unique javascript id for the animation so that multiple animations can appear in the same Rmarkdown document
  - fixed warning and extra diagonal line drawn in timePrism plot when planes=TRUE and network had odd number of vertices.
  - updated MDSJ url to reflect changes at hosting server and correct CRAN error
+ 
 v0.8
  - fixes to ndtv-d3 htmlwidget (correctly remove svg before reload, fixed encoding of controler options)
  - inclusion of ndtv-d3 htmlwidget shiny wrapper functions in NAMESPACE
@@ -21,6 +33,7 @@ v0.7
  - when rendering a static network with render.d3movie, the layout computation can now be disabled by passing in a 'coord' argument.
  - fixed rendering and layout.normalize to be more tolerant of NA in coordinate matrices
  - various CRAN-requested tweaks and documentation fixes  
+ 
 v0.6
  - proximity.timeline has deprecated draw.inactive argument in favor of spline.style
  - proximity.timeline has additional args and features, and supports coloring vertex lines with vertex.col argument (slow)
@@ -32,6 +45,7 @@ v0.6
  - java source (MDSJ) and .class files now stored in /java and /inst/java instead of /exec subdirectory
  - MDSJ layouts now support 1D layouts and disabling output with verbose = FALSE
  - updates to Graphviz layout and export.dot to be able pass through additional parameters. Now supports including edge weights
+ 
 v0.5
  - render.animation now caches and restores original plotting 'par()' params
  - added parameter to render.animation for passing in initial default coordiantes
@@ -39,6 +53,7 @@ v0.5
  - added layout.normalize function for rescaling coordinates to (-1,1)
  - added support for using external Graphviz (http://www.graphviz.org) layouts if installed
  - added filmstrip function to create static small multiple plots of frames from a network animation
+ 
 v0.4
  - added ability to specify plot.network as functions to be evaluated at each network time point
  - added weight.attr and weight.dist arguments to compute.animation, making it possible to use numeric edge attributes to specifiy desired distances/similarities in network layouts
