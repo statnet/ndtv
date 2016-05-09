@@ -13,7 +13,7 @@ function(net,filename)
   
   # list of optional vertex attributes and the Pajek codes for them
 vattr.dict <- list(color="ic")  # add others...
-eattr.dict <- list(color="c")  # add others...
+eattr.dict <- list(color="c",width='w')  # add others...
 # cribbed code from write.table
   file <- file(filename,"wb")
   on.exit(close(file))
@@ -76,7 +76,7 @@ eattr.dict <- list(color="c")  # add others...
   }
 
   # now do the optional attributes
-  if (!is.na(optattrs))
+  if (any(!is.na(optattrs)))
     for (oan in optattrs)
       if (!is.na(oan)) {
         #cat("trying attr: ",oan,"\n")
@@ -104,7 +104,7 @@ eattr.dict <- list(color="c")  # add others...
     # make list of possible optional attributes
     optattrs <- Eattrs[!Eattrs %in% c("weight")]
     # and restrict to the ones that have Pajek names on the list
-    optattrs <- optattrs[match(names(vattr.dict),optattrs)]
+    optattrs <- optattrs[match(names(eattr.dict),optattrs)]
 
     columns <- as.matrix.network(net,matrix.type="edgelist")
 
@@ -112,7 +112,7 @@ eattr.dict <- list(color="c")  # add others...
       columns <- cbind(columns,get.edge.attribute(net$mel,"weight"))
 
     # now do the optional attributes
-    if (!is.na(optattrs))
+    if (any(!is.na(optattrs)))
       for (oan in optattrs)
         if (!is.na(oan)) {
           #cat("trying attr: ",oan,"\n")
