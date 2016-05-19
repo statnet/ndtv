@@ -1,7 +1,12 @@
 # ndtv: Network Dynamic Temporal Visualizations
-<img align="right" src="https://statnet.csde.washington.edu/trac/raw-attachment/wiki/ndtvInstallation/short.stergm.gif"> The R package ndtv renders dynamic network data from [networkDynamic objects](https://cran.r-project.org/web/packages/networkDynamic/index.html networkDynamic) as movies, interactive HTML5 animations, or other static representations of changing relational structures and attributes. 
+
+
+<img align="right" src="https://statnet.csde.washington.edu/trac/raw-attachment/wiki/ndtvInstallation/short.stergm.gif"> 
+The R package ndtv renders dynamic network data from [networkDynamic objects](https://cran.r-project.org/web/packages/networkDynamic/index.html networkDynamic) as movies, interactive HTML5 animations, or other static representations of changing relational structures and attributes. 
 
 by Skye Bender-deMoll, Martina Morris, and the http://statnet.org team.  This work was supported by grant R01HD68395 from the National Institute of Health
+
+<img src='https://travis-ci.org/statnet/ndtv.svg?branch=master'> <img src='http://cranlogs.r-pkg.org/badges/ndtv'>
 
 ## Install
 
