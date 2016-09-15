@@ -95,7 +95,7 @@ network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,see
   } else {
     # something must be wrong, so print the output (unless it would already have been printed)
     if (!verbose){print(output)}
-    error=stop("Unable to parse coordinates returned MDSJ java code")
+    error=stop("Error: Unable to parse coordinates returned MDSJ java code")
   }
   return(coords)
 }
@@ -183,7 +183,7 @@ network.layout.animate.Graphviz <-function(net, dist.mat=NULL, default.dist=NULL
     coords <- parseCoordsFromGraphvizPlain(output)
   } else {
     if (!verbose){print(output)}
-    stop("Unable to parse coordinates returned from Graphviz")
+    stop("Error: Unable to parse coordinates returned from Graphviz")
   }
   return(coords)
 }
