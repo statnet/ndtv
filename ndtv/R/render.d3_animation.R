@@ -297,8 +297,11 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     plot_args<-list(coord=coords[activev,,drop=FALSE])
     plot_args<-c(plot_args,evald_params)
     # call the plotting function with appropriate args
-    render<-cachePlotValues(slice,render,plot_args,onset=starts[s],terminus=ends[s],
+    # but don't evaluate if network size is zero
+    if (network.size(slice) > 0){
+      render<-cachePlotValues(slice,render,plot_args,onset=starts[s],terminus=ends[s],
                             vertices=which(activev),edges=activeE)
+    }
     # check if user has passed in extra plotting commands that need to be rendered
     if (!is.null(render.par[['extraPlotCmds']])){
       warning("extraPlotCmds not supported by d3 render")

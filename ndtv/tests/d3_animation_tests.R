@@ -89,3 +89,9 @@ testStatic<-network.initialize(4)
 testStatic[1,2:3]<-1
 render.d3movie(testStatic,coord=matrix(1:8,ncol=2))
 
+# test rendering network of size zero (issue #24)
+test<-network.initialize(0)
+activate.vertices(test)
+activate.vertex.attribute(test,'foo',1,onset=0,terminus=1)
+render.d3movie(test,vertex.cex='foo')
+
