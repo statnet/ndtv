@@ -1,4 +1,6 @@
 ChangeLog for ndtv
+v0.11
+ - corrections to render.d3movie to avoid errors in frames when no edges are active and vis properties are mapped to edge attributes.
 v0.10
  - corrected test to appropriately match error when Graphviz has bad argument on systems supporting Graphviz
  - fixed bug when transmissionTimeline tried to plot a transmissionTree where only one vertex was reached and jitter=TRUE
