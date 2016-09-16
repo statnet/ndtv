@@ -491,7 +491,12 @@ cachePlotValues<-function(slice,renderList,plotArgs,onset,terminus,vertices,edge
     if(arg != 'x'){ #skip the network object
       dataVals<-plotArgs[[arg]]
       # expand any network attributes as plot.network.default would
-      dataVals<-plotArgs.network(x=slice,argName=arg,argValue=dataVals)
+      # but don't do it if it is an edge-related attribute and there are no edges
+      if(network.edgecount(slice) == 0 && arg%in%c('edge.col','edge.lty','edge.lwd','edge.label','edge.label.cex','edge.label.col','edge.len','edge.curve','edge.steps','loop.steps')){
+        # don't expand, because plotArgs.network will give error because it can not distingusih between no edges existing and no attribute existing
+      } else {
+        dataVals<-plotArgs.network(x=slice,argName=arg,argValue=dataVals)
+      }
       # any color-related elements need to be translated to rgba spec for html
       if (arg%in%c('vertex.col','label.col','vertex.border','label.border', 'label.bg','edge.col','edge.label.col','bg')){
         # if the value '0' is present, it needs to be translated to background color
