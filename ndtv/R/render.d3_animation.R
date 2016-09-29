@@ -297,8 +297,11 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     plot_args<-list(coord=coords[activev,,drop=FALSE])
     plot_args<-c(plot_args,evald_params)
     # call the plotting function with appropriate args
-    render<-cachePlotValues(slice,render,plot_args,onset=starts[s],terminus=ends[s],
+    # but don't evaluate if network size is zero
+    if (network.size(slice) > 0){
+      render<-cachePlotValues(slice,render,plot_args,onset=starts[s],terminus=ends[s],
                             vertices=which(activev),edges=activeE)
+    }
     # check if user has passed in extra plotting commands that need to be rendered
     if (!is.null(render.par[['extraPlotCmds']])){
       warning("extraPlotCmds not supported by d3 render")
@@ -488,7 +491,12 @@ cachePlotValues<-function(slice,renderList,plotArgs,onset,terminus,vertices,edge
     if(arg != 'x'){ #skip the network object
       dataVals<-plotArgs[[arg]]
       # expand any network attributes as plot.network.default would
-      dataVals<-plotArgs.network(x=slice,argName=arg,argValue=dataVals)
+      # but don't do it if it is an edge-related attribute and there are no edges
+      if(network.edgecount(slice) == 0 && arg%in%c('edge.col','edge.lty','edge.lwd','edge.label','edge.label.cex','edge.label.col','edge.len','edge.curve','edge.steps','loop.steps')){
+        # don't expand, because plotArgs.network will give error because it can not distingusih between no edges existing and no attribute existing
+      } else {
+        dataVals<-plotArgs.network(x=slice,argName=arg,argValue=dataVals)
+      }
       # any color-related elements need to be translated to rgba spec for html
       if (arg%in%c('vertex.col','label.col','vertex.border','label.border', 'label.bg','edge.col','edge.label.col','bg')){
         # if the value '0' is present, it needs to be translated to background color

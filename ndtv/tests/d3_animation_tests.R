@@ -10,6 +10,7 @@
 
 # tests for d3 animation functionality
 library(ndtv)
+require(testthat)
 
 # flip this to true if you actually want it to open a gajillion browser windows
 showInBrowser=FALSE
@@ -88,4 +89,26 @@ render.d3movie(testStatic)
 testStatic<-network.initialize(4)
 testStatic[1,2:3]<-1
 render.d3movie(testStatic,coord=matrix(1:8,ncol=2))
+
+# test rendering network of size zero (issue #24)
+test<-network.initialize(0)
+activate.vertices(test)
+activate.vertex.attribute(test,'foo',1,onset=0,terminus=1)
+render.d3movie(test,vertex.cex='foo')
+
+# test rendering of edge attribute for network with edge not active # 25
+test<-network.initialize(2)
+add.edges.active(test,1,2,onset=0,terminus=2)
+activate.edge.attribute(test,'weight',1, onset=0,terminus=2)
+compute.animation(test,slice.par = list(start=3,end=4,interval=1,aggregate.dur=1,rule='earliest'))
+render.d3movie(test,edge.lwd='weight')
+
+# test rendering of edge attribute for network with attribute not active
+# (should give error because do 'default' attribute is defined)
+test<-network.initialize(2)
+add.edges.active(test,1,2,onset=0,terminus=2)
+activate.edge.attribute(test,'weight',1, onset=1,terminus=2)
+expect_error( render.d3movie(test,edge.lwd='weight'),regexp = 'had illegal missing values for')
+
+
 
