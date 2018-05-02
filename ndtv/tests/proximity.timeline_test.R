@@ -11,15 +11,19 @@ data(McFarland_cls33_10_16_96)
 proximity.timeline(cls33_10_16_96,onsets=seq(0,45,5),termini=seq(2.5,47.5,5),vertex.cex=(cls33_10_16_96%v%'type'=='instructor')*4+1,labels.at=45)
 
 # test algorithm types
+test_that("algorithms work",{
 # isoMDS is default, so already tested
 proximity.timeline(cls33_10_16_96,onsets=seq(0,45,5),termini=seq(2.5,47.5,5),mode='sammon')
 proximity.timeline(cls33_10_16_96,onsets=seq(0,45,5),termini=seq(2.5,47.5,5),mode='cmdscale')
 proximity.timeline(cls33_10_16_96,onsets=seq(0,45,5),termini=seq(2.5,47.5,5),mode='gvNeato')
-# only check MDSJ if allready installed
+# only check MDSJ if allready installed (and not on CRAN)
+skip_on_cran()
 has.mdsj<-ndtv:::check.mdsj(ask=FALSE)
 if(!is.null(has.mdsj)){
 proximity.timeline(cls33_10_16_96,onsets=seq(0,45,5),termini=seq(2.5,47.5,5),mode='MDSJ')
 }
+
+})
 
 # test grid option and verbose options
 proximity.timeline(cls33_10_16_96,onsets=seq(0,10,5),termini=seq(2.5,12.5,5),grid=FALSE,verbose=FALSE)

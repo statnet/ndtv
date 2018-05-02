@@ -153,8 +153,9 @@ expect_equal(ncol(coords),2)
 }
 
 # ------------- MDSJ tests -------
-
+test_that("MDSJ algorithms",{
 # these need to be optionally enabled because they won't run if java and mdsj library not installed
+skip_on_cran()
 if (!is.null(ndtv:::check.mdsj()) ){
   wtest<-network.initialize(5)
   add.edges.active(wtest,tail = 1,head=2,onset=0,terminus=10)
@@ -176,6 +177,8 @@ expect_equal(dim(dim2mat),c(10,2))
 dim1mat<-network.layout.animate.MDSJ(test,layout.par=list(dimensions=1))
 expect_equal(dim(dim1mat),c(10,1))
 }
+})
+
 
 
 
