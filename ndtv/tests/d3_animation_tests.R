@@ -110,5 +110,12 @@ add.edges.active(test,1,2,onset=0,terminus=2)
 activate.edge.attribute(test,'weight',1, onset=1,terminus=2)
 expect_error( render.d3movie(test,edge.lwd='weight'),regexp = 'had illegal missing values for')
 
+#errors on empty slice with vertex.cex specified
+#https://github.com/statnet/ndtv/issues/24
+test<-network.initialize(2)
+add.edges.active(test,1,2,onset=0,terminus=1)
+activate.edge.attribute(test,'edge.col','blue',onset = 0,terminus=1)
+render.d3movie(test,edge.col='edge.col')
+
 
 

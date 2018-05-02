@@ -494,6 +494,7 @@ cachePlotValues<-function(slice,renderList,plotArgs,onset,terminus,vertices,edge
       # but don't do it if it is an edge-related attribute and there are no edges
       if(network.edgecount(slice) == 0 && arg%in%c('edge.col','edge.lty','edge.lwd','edge.label','edge.label.cex','edge.label.col','edge.len','edge.curve','edge.steps','loop.steps')){
         # don't expand, because plotArgs.network will give error because it can not distingusih between no edges existing and no attribute existing
+        dataVals<-NULL
       } else {
         dataVals<-plotArgs.network(x=slice,argName=arg,argValue=dataVals)
       }
