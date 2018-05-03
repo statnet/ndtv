@@ -25,16 +25,17 @@ This function doesn't actually install Graphviz, it just points to these docs wh
 
 \subsection{Installing on Windows}{
   \itemize{
-    \item download the "current stable release" installer from \url{http://www.graphviz.org/Download_windows.php}
+    \item download the "current stable release" installer from \url{https://graphviz.gitlab.io/_pages/Download/Download_windows.html}
     \item run the installer
     \item Edit your system path variable to include the path to the directory containing the graphviz .exe files.
   }
 }
 
 \subsection{Installing on a Mac}{
+It seems that there is no longer a .pkg for the mac, but it can be installed easily via homebrew
 \itemize{
-\item download the most recent "current stable release" .pkg file for your system from \url{http://www.graphviz.org/Download_macos.php}
-\item double click the package to run the installer or, if you are working from the OSX command line, run something like \code{sudo installer -pkg graphviz-2.34.0.pkg -target /}
+\item install the brew package manager from \url{https://brew.sh/}
+\item from the Terminal, run \code{brew install graphviz}
 }
 }
 
