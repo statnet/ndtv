@@ -97,8 +97,8 @@ check.graphviz <-function(){
 }
 
 install.graphviz <-function(){
-  message("Please visit the Graphviz website and install the libraries on your machine: http://www.graphviz.org/Download.php  See ?install.graphviz for more information")
-  browseURL("http://www.graphviz.org/Download.php")
+  message("Please visit the Graphviz website and install the libraries on your machine: https://www.graphviz.org/download  See ?install.graphviz for more information")
+  browseURL("https://www.graphviz.org/download")
 }
 
 check.ffmpeg <- function(){

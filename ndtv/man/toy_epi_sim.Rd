@@ -58,7 +58,7 @@ toy_epi_sim <- color_tea(toy_epi_sim)
 }
 \references{
 Samuel Jenness, Steven M. Goodreau and Martina Morris (2015). EpiModel: Mathematical Modeling of Infectious
-  Disease. R package version 1.1.4. \url{http://CRAN.R-project.org/package=EpiModel}
+  Disease. R package version 1.1.4. \url{https://CRAN.R-project.org/package=EpiModel}
   
 Statnet EpiModel Tutorial \url{http://www.epimodel.org/}  
 }
