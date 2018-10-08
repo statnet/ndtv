@@ -2,6 +2,7 @@ ChangeLog for ndtv
 v0.12
  - correction requested by CRAN to not install optional 3rd-party Java library when testing
  - corrections to docs for new Graphviz urls and install methods
+ - corrections to vignette to avoid installing MDSJ
 v0.11
  - corrections to render.d3movie to avoid errors in frames when no edges are active and vis properties are mapped to edge attributes.
 v0.10

@@ -123,19 +123,12 @@ stergm.sim.1 <- simulate.stergm(stergm.fit.1,
 @
 
 \subsection{Animation Setup}
-Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. We can also ask it to use the MDSJ layout (assuming MDSJ and Java are installed).
-<<mdsj_actual_download,echo=FALSE>>==
-# the command below will default to not installing MDSJ in a non-interactive session
-# so to make sure it is installed for this sweave build, call it internally
-mdsj.dir <- file.path(path.package("ndtv"), "java/")
-ndtv:::install.mdsj(mdsj.dir)
-@
+Since this isn't a terribly exciting simulation, lets only calculate coordinates for part of the simulated time period by using the \verb@start@ and \verb@end@ parameters of \verb@slice.par@ to specify a time range. 
 
 <<calc_params,eval=TRUE, results=hide>>=
 slice.par<-list(start=75,end=100,interval=1, 
                 aggregate.dur=1,rule="latest")
-compute.animation(stergm.sim.1,slice.par=slice.par,
-                                animation.mode='MDSJ')
+compute.animation(stergm.sim.1,slice.par=slice.par)
 @
 
 \subsection{Playing an animation in R plot window}
