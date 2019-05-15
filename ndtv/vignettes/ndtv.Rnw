@@ -118,7 +118,7 @@ stergm.fit.1 <- stergm(flobusiness,
 
 Now we can simulate 100 discrete time steps from the model and save them as a \verb@dynamicNetwork@ object.
 <<test_sim,eval=TRUE, results=hide>>=
-stergm.sim.1 <- simulate.stergm(stergm.fit.1,
+stergm.sim.1 <- simulate(stergm.fit.1,
                     nsim=1, time.slices = 100)
 @
 

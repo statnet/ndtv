@@ -39,7 +39,7 @@ stergm.fit.1 <- stergm(flobusiness,
 	offset.coef.diss = theta.diss,
 	estimate = "EGMME"	)
 # simulate from the model	
-stergm.sim.1 <- simulate.stergm(stergm.fit.1,
+stergm.sim.1 <- simulate(stergm.fit.1,
                     nsim=1, time.slices = 100)
 }
 
