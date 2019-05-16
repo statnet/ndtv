@@ -7,6 +7,14 @@ cache: packages
 
 warnings_are_errors: true
 
+addons:
+  apt:
+     update: true
+     sources:
+      - sourceline: 'ppa:opencpu/imagemagick'
+     packages:
+      - libmagick++-dev
+
 before_install:
  - cd ndtv
  
