@@ -26,9 +26,10 @@ network.layout.animate.kamadakawai <-function(net, dist.mat=NULL, default.dist=N
 
 # MDSJ java library is from http://www.inf.uni-konstanz.de/algo/software/mdsj/ 
 # License info: Creative Commons by-nc-sa http://www.inf.uni-konstanz.de/algo/software/mdsj/#license
-# Auther christian.pich@gmx.de is OK with including in this GPL package. He wrote:
+# Author christian.pich@gmx.de is OK with including in this GPL package. He wrote:
 # If your package is non-commercial, I see no problem in including MDSJ in your implementation.
-# Please feel free to contact me regarding technical MDS issues 
+# Please feel free to contact me regarding technical MDS issues
+# As uni-konstanz.de has taken down the MDSJ site, temporarily hosting at https://github.com/skyebend/mdsj
 
 network.layout.animate.MDSJ <-function(net, dist.mat=NULL, default.dist=NULL,seed.coords=NULL, layout.par=list(max_iter=50,dimensions=2),verbose=TRUE){
   # check that mdsj library can be located

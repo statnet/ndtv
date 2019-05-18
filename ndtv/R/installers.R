@@ -32,7 +32,7 @@ check.mdsj <-function(ask=TRUE){
     mdsj.path <- file.path(path.package('ndtv'),'java/mdsj.jar')
     mdsj.dir <- file.path(path.package('ndtv'),'java/')
     if(!file.exists(mdsj.path)){
-      message("The MDSJ Java library does not appear to be installed. The ndtv package can use MDSJ to provide a fast accurate layout algorithm. It can be downloaded from http://algo.uni-konstanz.de/software/mdsj/")
+      message("The MDSJ Java library does not appear to be installed. The ndtv package can use MDSJ to provide a fast accurate layout algorithm. As the original hosting site is offline, it can temporarily be downloaded from https://github.com/skyebend/mdsj")
       # ask user if the want to download
       #  how will this work during automated test?
       # "In non-interactive use the result is as if the response was RETURN and the value is ""."
@@ -72,7 +72,9 @@ install.mdsj <-function(install.path){
    stop('Unable to install MDSJ because the package path ',install.path,'does not appear to have write permissions')
  }
  # download file
- mdsjURL<-'http://algo.uni-konstanz.de/software/mdsj/mdsj.jar'
+ # mdsjURL<-'http://algo.uni-konstanz.de/software/mdsj/mdsj.jar' 
+ # original site offline, skye temporarily hosting on github while C. pich sets up new site
+ mdsjURL<-'https://github.com/skyebend/mdsj/raw/master/mdsj.jar'
  message('installing MDSJ to directory ',install.path)
  download.file(url=mdsjURL,destfile=file.path(install.path,'mdsj.jar'),mode='wb')
  if (file.exists(file.path(install.path,'mdsj.jar'))){
