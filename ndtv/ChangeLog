@@ -1,4 +1,7 @@
 ChangeLog for ndtv
+v0.13
+ - refactor tergm calls for compatibility with new api
+ - MDSJ download pointed to temporary git repo while http://algo.uni-konstanz.de site offline
 v0.12
  - correction requested by CRAN to not install optional 3rd-party Java library when testing
  - corrections to docs for new Graphviz urls and install methods
