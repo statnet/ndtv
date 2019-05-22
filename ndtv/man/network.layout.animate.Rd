@@ -60,7 +60,7 @@ See \code{\link{network.layout.kamadakawai}} for more details about the implemen
 
 \strong{MDSJ}
 
-The MDSJ layout uses the MDSJ Java library written by Christian Pich, Algorithmics Group, Department of Computer & Information Science, University of Konstanz, Germany \url{http://algo.uni-konstanz.de/software/mdsj/}, 2009. The library does Multidimensional Scaling (MDS) of the distance matrix using SMACOF optimization.  Because MDSJ is released under a creative commons by-nc-sa license it is not distributed with the ndtv package, but an installer is included.
+The MDSJ layout uses the MDSJ Java library written by Christian Pich, Algorithmics Group, Department of Computer & Information Science, University of Konstanz, Germany \code{http://algo.uni-konstanz.de/software/mdsj/} (original url), 2009. The library does Multidimensional Scaling (MDS) of the distance matrix using SMACOF optimization.  Because MDSJ is released under a creative commons by-nc-sa license it is not distributed with the ndtv package, but an installer is included.
 
 When the MDSJ layout is called it checks for working Java installation, and then checks if MDSJ is installed. If not, it prompts the user and (optionally) downloads and installs MDSJ. If MDSJ is not installed, it falls back to calling the KamadaKawai layout instead.  
 
@@ -85,7 +85,7 @@ The Graphviz layout normally ignores the values in \code{dist.mat}, but for comp
 A two-column by n-vertex matrix of coordinates. 
 }
 \references{
-Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at \url{http://algo.uni-konstanz.de/software/mdsj/}. University of Konstanz, 2009.
+Algorithmics Group. MDSJ: Java Library for Multidimensional Scaling (Version 0.2). Available at \code{http://algo.uni-konstanz.de/software/mdsj/}. University of Konstanz, 2009.
 
 Kamada, T. and Kawai, S. (1989). An Algorithm for Drawing General Undirected Graphs. Information Processing Letters, 31(1):7-15.
 
