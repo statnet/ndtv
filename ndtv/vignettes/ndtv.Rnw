@@ -656,10 +656,10 @@ Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).
 \newblock \emph{Journal of Statistical Software}, 24(3). \url{http://www.jstatsoft.org/v24/i03/}. 
 
 
-
-<<echo=False, results=tex, include=TRUE>>=
- packageAsBibitem('tergm')
-@
+\bibitem[Krivitsky, et al (2021)]{tergm}
+Krivitsky P, Handcock M (2021). 
+\newblock tergm: Fit, Simulate and Diagnose Models for Network Evolution Based on Exponential-Family Random Graph Models.
+\newblock The Statnet Project (\url{https://statnet.org}). R package version 4.0.1, \url{https://CRAN.R-project.org/package=tergm}.
 
 
 \bibitem[McFarland (2001)]{mcfarland}
