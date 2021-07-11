@@ -35,7 +35,7 @@ Key features:
 
 To view package vignettes and extended examples, see \code{browseVignettes(package='ndtv')}.
 
-For a more indpeth tutorial, see \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv_workshop.html}
+For a more indepth tutorial, see \url{http://statnet.org/Workshops/ndtv_workshop.html}
 
 The package includes several example datasets:
 
@@ -57,14 +57,14 @@ Maintainer: Skye <skyebend@uw.edu>
 \references{
 Bender-deMoll, S., Morris, M. and Moody, J. (2008) Prototype Packages for Managing and Animating Longitudinal Network Data: dynamicnetwork and rSoNIA \emph{Journal of Statistical Software} 24:7.
 
-Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).  ergm: A Package to Fit, Simulate and Diagnose Exponential-Family Models for Networks.  \emph{Journal of Statistical Software}, 24(3). \url{http://www.jstatsoft.org/v24/i03/}. 
+Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).  ergm: A Package to Fit, Simulate and Diagnose Exponential-Family Models for Networks.  \emph{Journal of Statistical Software}, 24(3). \url{https://www.jstatsoft.org/v24/i03/}. 
 
 
-Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Journal of Statistical Software}, 24(2). \url{http://www.jstatsoft.org/v24/i02/}. 
+Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Journal of Statistical Software}, 24(2). \url{https://www.jstatsoft.org/v24/i02/}. 
 
-Carter T. Butts, Ayn Leslie-Cook, Pavel N. Krivitsky and Skye Bender-deMoll (2015). networkDynamic: Dynamic Extensions for Network Objects. R package version 0.7. \url{http://statnet.org}
+Carter T. Butts, Ayn Leslie-Cook, Pavel N. Krivitsky and Skye Bender-deMoll (2015). networkDynamic: Dynamic Extensions for Network Objects. R package version 0.7. \url{https://statnet.org}
 
-Skye Bender-deMoll and McFarland, Daniel A. (2006)  The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{http://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
+Skye Bender-deMoll and McFarland, Daniel A. (2006)  The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{https://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
 }
 
 

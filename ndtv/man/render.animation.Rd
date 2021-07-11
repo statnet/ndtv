@@ -103,7 +103,7 @@ If the background color is transparent and not explicitly set, it will be reset 
 \value{
 A sequence of plots will be generated on the active plot device. If \code{render.cache='plot.list'} the recorded plots are stored as a list in \code{.ani.env$.images}. }
 \references{
-Skye Bender-deMoll and McFarland, Daniel A. (2006) The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{http://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
+Skye Bender-deMoll and McFarland, Daniel A. (2006) The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{https://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
 }
 \author{
 Skye Bender-deMoll, and the statnet team. 

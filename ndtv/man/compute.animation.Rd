@@ -93,11 +93,11 @@ Bender-deMoll, S., Morris, M. and Moody, J. (2008) Prototype Packages for Managi
 
 Krivitsky P and Handcock M (2012).
 \emph{Fit, Simulate and Diagnose Models for Network Evoluation based on Exponential-Family Random Graph Models}.
-Version 3.0-999.  Project home page at \url{http://www.statnet.org}, \url{CRAN.R-project.org/package=tergm}.
+Version 3.0-999.  Project home page at \url{http://statnet.org}, \url{CRAN.R-project.org/package=tergm}.
 
-Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Journal of Statistical Software}, 24(2). \url{http://www.jstatsoft.org/v24/i02/}. 
+Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Journal of Statistical Software}, 24(2). \url{https://www.jstatsoft.org/v24/i02/}. 
 
-Skye Bender-deMoll and McFarland, Daniel A. (2006)  The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{http://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
+Skye Bender-deMoll and McFarland, Daniel A. (2006)  The Art and Science of Dynamic Network Visualization. \emph{Journal of Social Structure. Volume 7, Number 2} \url{https://www.cmu.edu/joss/content/articles/volume7/deMollMcFarland/}
 }
 \author{
 Skye Bender-deMoll, and the statnet team.

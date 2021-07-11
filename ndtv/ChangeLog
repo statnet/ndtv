@@ -1,6 +1,7 @@
 ChangeLog for ndtv
 v0.13.1
  - update to package citation for tergm that was breaking vignette build after tergm 4.0 update
+ - documentation URL corrections
 v0.13
  - refactor tergm calls for compatibility with new api
  - MDSJ download pointed to temporary git repo while http://algo.uni-konstanz.de site offline

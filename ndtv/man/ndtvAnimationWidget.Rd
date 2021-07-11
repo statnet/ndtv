@@ -46,7 +46,7 @@ Display eight for the widget. Must be a valid CSS unit (like "100\%", "400px", "
 
 }
 \details{
-The ndtv-d3 interactive HTML5 network animation can normally be produced via \code{render.d3movie(...,output.mode='htmlWidget')}. These functions are wrappers to make it possible to embed the animations as part of a 'Shiny' (\url{http://shiny.rstudio.com/}) web application.  
+The ndtv-d3 interactive HTML5 network animation can normally be produced via \code{render.d3movie(...,output.mode='htmlWidget')}. These functions are wrappers to make it possible to embed the animations as part of a 'Shiny' (\url{https://shiny.rstudio.com/}) web application.  
 
 \code{renderNdtvAnimationWidget} should be used as the wraper for the \code{render.d3movie} call within the app's \code{server.R} file and \code{ndtvAnimationWidgetOutput} is the corresponding ui component to include  in the \code{ui.R} file. See \code{\link[htmlwidgets]{htmlwidgets-shiny}}
 

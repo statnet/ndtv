@@ -575,7 +575,7 @@ The \verb@animation@ package provides several neat tools for storing animations 
 Please see \verb@?animation@ and each function's help files for more details. With the exception of \verb@ani.replay()@ each of these requires the presence of some external library software which may need to be installed on your system as described in Dependencies (section \ref{sec:dependencies}).  
 
 \subsection{render.d3movie}
-The \verb@render.d3movie@ can save out a network animation an interactive HTML5 SVG to display in a web browser. Animations are generated using a process nearly identical to \verb@render.animation@. However, instead of using R's plotting functions and the animation library, the relevant information is cached and written into a JSON-formatted file, embedded into a web page along with ndtv-d3 player, and displayed in a web browser.  Details and additional examples are included in the ndtv-d3 vignette, availible at: \url{http://statnet.csde.washington.edu/workshops/SUNBELT/current/ndtv/ndtv-d3_vignette.html}
+The \verb@render.d3movie@ can save out a network animation an interactive HTML5 SVG to display in a web browser. Animations are generated using a process nearly identical to \verb@render.animation@. However, instead of using R's plotting functions and the animation library, the relevant information is cached and written into a JSON-formatted file, embedded into a web page along with ndtv-d3 player, and displayed in a web browser.  Details and additional examples are included in the ndtv-d3 vignette, availible at: \url{http://statnet.org/Workshops/ndtv-d3_vignette.html}
 
 \section{Limitations}
 \subsection{Size limits}

@@ -25,7 +25,7 @@ This function doesn't actually install Graphviz, it just points to these docs wh
 
 \subsection{Installing on Windows}{
   \itemize{
-    \item download the "current stable release" installer from \url{https://graphviz.gitlab.io/_pages/Download/Download_windows.html}
+    \item download the "current stable release" installer from \url{https://graphviz.org/download/}
     \item run the installer
     \item Edit your system path variable to include the path to the directory containing the graphviz .exe files.
   }
