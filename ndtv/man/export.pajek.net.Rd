@@ -47,6 +47,9 @@ This is a very minimal implementation, mostly used for testing layout algorithms
 data('toy_epi_sim')
 toy_epi_sim\%v\%'color'<-'blue'
 export.pajek.net(toy_epi_sim,filename='toy_epi_sim.net')
+
+# clean up file afterwards (just for testing)
+file.remove('toy_epi_sim.net')
 }
 
 

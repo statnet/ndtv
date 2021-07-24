@@ -55,6 +55,9 @@ This is still a partial implementation focusing on edges, edge wights, and node 
  net[1,] <-1
  net[2,3] <-2
  export.dot(net,file="testNet.dot")
+ 
+ # clean up file afterwords (just for testing)
+ file.remove("testNet.dot")
 }
 
 \keyword{ IO }
