@@ -100,7 +100,12 @@ check.graphviz <-function(){
 
 install.graphviz <-function(){
   message("Please visit the Graphviz website and install the libraries on your machine: https://www.graphviz.org/download  See ?install.graphviz for more information")
-  browseURL("https://www.graphviz.org/download")
+  # only launch browser if in intractive mode
+  if(!interactive()){
+    message('browser launching disabled because R is not in interactive mode')
+  } else {
+    browseURL("https://www.graphviz.org/download")
+  }
 }
 
 check.ffmpeg <- function(){
@@ -120,12 +125,22 @@ check.ffmpeg <- function(){
 install.ffmpeg <-function(){
   if (.Platform$OS.type == "windows"){
     message("To export movies, please install ffmpeg for windows from http://ffmpeg.zeranoe.com/builds/\n type ?install.ffmpeg for more detailed instructions")
-    browseURL("http://ffmpeg.zeranoe.com/builds/")
+    # only launch browser if in intractive mode
+    if(!interactive()){
+      message('browser launching disabled because R is not in interactive mode')
+    } else {
+      browseURL("http://ffmpeg.zeranoe.com/builds/")
+    }
     
   } else if (.Platform$OS.type == "unix") {
     message("To export movies, please install ffmpeg using your system's package manager.\n Type ?install.ffmpeg for more detailed instructions.")
   } else {
     message("To determine if ffmpeg can be installed on your system, please visit http://ffmpeg.org")
-    browseURL("http://ffmpeg.org")
+    # only launch browser if in intractive mode
+    if(!interactive()){
+      message('browser launching disabled because R is not in interactive mode')
+    } else {
+      browseURL("http://ffmpeg.org")
+    }
   }
 }
