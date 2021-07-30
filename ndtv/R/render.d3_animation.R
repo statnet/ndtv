@@ -337,20 +337,25 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
     # try to construct an appropriate local url for the file
     # in order to load it into the browser
     if (launchBrowser){
-    if(file.exists(filename)){
-        # filename may be relative, so expand to full path for url
-        animationUrl<-normalizePath(filename)
-        #if we are on windows, need to conver the local file backslashes to forward slashes
-        if (.Platform[['file.sep']]=='\\'){
-          animationUrl<-gsub('\\\\','/',animationUrl)
-        }
-        animationUrl<-paste('file://',animationUrl,sep='')
-        if (verbose){
-          message('opening local URL ',animationUrl,' in web browser')
-        }
-        browseURL(animationUrl)
-      } else if (verbose){
-        message('unable to generate correct local URL for animation HTML to launch in web browser')
+      # only launch browser if in intractive mode
+      if(!interactive()){
+        message('browser launching disabled because R is not in interactive mode')
+      } else {
+        if(file.exists(filename)){
+            # filename may be relative, so expand to full path for url
+            animationUrl<-normalizePath(filename)
+            #if we are on windows, need to conver the local file backslashes to forward slashes
+            if (.Platform[['file.sep']]=='\\'){
+              animationUrl<-gsub('\\\\','/',animationUrl)
+            }
+            animationUrl<-paste('file://',animationUrl,sep='')
+            if (verbose){
+              message('opening local URL ',animationUrl,' in web browser')
+            }
+            browseURL(animationUrl)
+          } else if (verbose){
+            message('unable to generate correct local URL for animation HTML to launch in web browser')
+          }
       }
     }
   } else if(output.mode=='inline'){

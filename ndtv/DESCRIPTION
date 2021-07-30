@@ -2,7 +2,7 @@ Package: ndtv
 Type: Package
 Title: Network Dynamic Temporal Visualizations
 Version: 0.13.1
-Date: 2021-07-11
+Date: 2021-07-29
 Authors@R:c(
 		person("Skye", "Bender-deMoll", role=c("cre","aut"), email="skyebend@uw.edu"),
     person("Martina", "Morris", role=c("ctb"), email="morrism@u.washington.edu"))
@@ -12,4 +12,3 @@ Suggests:tergm (>= 3.6), tsna, testthat, knitr, htmlwidgets, scatterplot3d
 Description: Renders dynamic network data from 'networkDynamic' objects as movies, interactive animations, or other representations of changing relational structures and attributes.
 License: GPL-3 + file LICENSE
 URL: https://github.com/statnet/ndtv
-VignetteBuilder: knitr
