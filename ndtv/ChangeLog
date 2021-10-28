@@ -1,4 +1,6 @@
 ChangeLog for ndtv
+v0.13.2
+ - comment tests that were failing on CRAN after testthat changes
 v0.13.1
  - update to package citation for tergm that was breaking vignette build after tergm 4.0 update
  - documentation URL corrections
