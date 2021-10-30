@@ -622,7 +622,7 @@ Bender-deMoll, S., Morris, M. and Moody, J. (2008)
 \bibitem[Butts(2008)]{network}
 Butts CT (2008). 
 \newblock network: A Package for Managing Relational Data in R. 
-\newblock \emph{Journal of Statistical Software}, 24(2). \url{http://www.jstatsoft.org/v24/i02/}. 
+\newblock \emph{Journal of Statistical Software}, 24(2). \url{https://doi.org/10.18637/jss.v024.i02}.
 
 
 <<echo=False, results=tex, include=TRUE>>=
@@ -633,7 +633,7 @@ Butts CT (2008).
 de Leeuw J and Mair P (2009).
 ``Multidimensional Scaling Using Majorization: SMACOF in R.''
 \emph{Journal of Statistical Software}, \textbf{31}(3), pp. 1--30.
-\url{http://www.jstatsoft.org/v31/i03/}
+\url{https://doi.org/10.18637/jss.v031.i03}
 
 <<echo=FALSE, results=tex, include=TRUE>>=
  packageAsBibitem('ndtv')
@@ -653,7 +653,7 @@ Handcock MS, Hunter DR, Butts CT, Goodreau SM, Morris M (2003b).
 \bibitem[Hunter et al.(2008b)]{ergm}
 Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b). 
 \newblock ergm: A Package to Fit, Simulate and Diagnose Exponential-Family Models for Networks. 
-\newblock \emph{Journal of Statistical Software}, 24(3). \url{http://www.jstatsoft.org/v24/i03/}. 
+\newblock \emph{Journal of Statistical Software}, 24(3). \url{https://doi.org/10.18637/jss.v024.i03}. 
 
 
 \bibitem[Krivitsky, et al (2021)]{tergm}
@@ -676,7 +676,7 @@ Newcomb T. (1961)
 Xie Y (2013).
 ``animation: An R Package for Creating Animations and Demonstrating Statistical Methods.''
 \emph{Journal of Statistical Software}, \textbf{53}(1), pp. 1--27.
-\url{http://www.jstatsoft.org/v53/i01/}.
+\url{https://doi.org/10.18637/jss.v053.i01}.
 
 
 \end{thebibliography}

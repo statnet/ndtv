@@ -57,10 +57,10 @@ Maintainer: Skye <skyebend@uw.edu>
 \references{
 Bender-deMoll, S., Morris, M. and Moody, J. (2008) Prototype Packages for Managing and Animating Longitudinal Network Data: dynamicnetwork and rSoNIA \emph{Journal of Statistical Software} 24:7.
 
-Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).  ergm: A Package to Fit, Simulate and Diagnose Exponential-Family Models for Networks.  \emph{Journal of Statistical Software}, 24(3). \url{https://www.jstatsoft.org/v24/i03/}. 
+Hunter DR, Handcock MS, Butts CT, Goodreau SM, Morris M (2008b).  ergm: A Package to Fit, Simulate and Diagnose Exponential-Family Models for Networks.  \emph{Journal of Statistical Software}, 24(3). \url{https://doi.org/10.18637/jss.v024.i03}. 
 
 
-Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Journal of Statistical Software}, 24(2). \url{https://www.jstatsoft.org/v24/i02/}. 
+Butts CT (2008). network: A Package for Managing Relational Data in R.  \emph{Journal of Statistical Software}, 24(2). \url{https://doi.org/10.18637/jss.v024.i02}. 
 
 Carter T. Butts, Ayn Leslie-Cook, Pavel N. Krivitsky and Skye Bender-deMoll (2015). networkDynamic: Dynamic Extensions for Network Objects. R package version 0.7. \url{https://statnet.org}
 
