@@ -86,7 +86,7 @@ Of course, using defaults doesn't give much control of what should be rendered a
 \section{A tergm simulation example}
 Lets look at a more realistic example using output from the simulation of a crude dynamic model. This uses the statnet \verb@tergm@ package to estimate the parameters for an edge formation and dissolution process which produces a network similar to the Florentine business network (\verb@?ergm::flobusiness@) given as input.  Once the model has been estimated, we can take a number of sequential draws from it to see how the network might ``evolve'' over time.  When we generate the movie, we can include the model statistics on screen to see how they are influenced by edge additions and deletions.  This example also assumes you have some of the external libraries working (Java and FFmpeg) so you run into problems, try skipping to Dependencies (section \ref{sec:dependencies}) and come back.
 
-If you are not interested in running the model, you can just load a corresponding example data object with \verb@data(stergm.sim.1)@.
+Note that while the \verb@tergm@ package is not required to use ndtv, it is required for many of the examples in this vignette. If you are not interested in running the model, you can just load a corresponding example data object with \verb@data(stergm.sim.1)@.
 
 \subsection{Data Setup}
 
@@ -99,27 +99,43 @@ require(tergm)    # dynamic ergm simulations
 
 Load in the original Florentine business network.
 <<label=loading_data,fig=TRUE>>=
-data("florentine") # an example network
-plot(flobusiness,displaylabels=TRUE)
+if (require('ergm')){ # this example only works if ergm installed
+  
+  data("florentine", package='ergm') # an example network
+  plot(flobusiness,displaylabels=TRUE)
+  
+}
 @
 
 
 Define basic \verb@stergm@ model with formation and dissolution parameters.
 <<test_model,eval=TRUE,results=hide>>=
-theta.diss <- log(9)
-stergm.fit.1 <- stergm(flobusiness,
-  formation= ~edges+gwesp(0,fixed=TRUE), 
-  dissolution = ~offset(edges),
-	targets="formation",
-  offset.coef.diss = theta.diss,	
-  estimate = "EGMME"	)
+if (require('tergm')){  # this example only works if tergm installed
+  
+  theta.diss <- log(9)
+  stergm.fit.1 <- stergm(flobusiness,
+    formation= ~edges+gwesp(0,fixed=TRUE), 
+    dissolution = ~offset(edges),
+	  targets="formation",
+    offset.coef.diss = theta.diss,	
+    estimate = "EGMME"	)
+  
+}
 @
 (time passes, lots simulation status output hidden)
 
 Now we can simulate 100 discrete time steps from the model and save them as a \verb@dynamicNetwork@ object.
 <<test_sim,eval=TRUE, results=hide>>=
-stergm.sim.1 <- simulate(stergm.fit.1,
+if (require('tergm')){  # this example only works if tergm installed
+  
+  stergm.sim.1 <- simulate(stergm.fit.1,
                     nsim=1, time.slices = 100)
+  
+} else { # tergm is not installed, but we can use pre-generated example output
+  
+  data(stergm.sim.1)
+  
+}
 @
 
 \subsection{Animation Setup}

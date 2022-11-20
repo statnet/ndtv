@@ -195,11 +195,13 @@ render.d3movie <- function(net, filename=tempfile(fileext = '.html'),
   if(!is.null(render.par[['show.stats']]) && render.par[['show.stats']]!=FALSE){
     # evaluate a eqn string giving the stats formual
     # TODO: this requires that tergm be loaded! give informative warning if not
-    if(render.par[['show.time']]){
-      # include the time string in the summary
-      plot_params[['xlab']] <- eval(parse(text=paste("function(slice,onset,terminus){stats<-summary_formula(slice",render.par[['show.stats']],")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
-    } else {
-      plot_params[['xlab']] <- eval(parse(text=paste("function(slice){stats<-summary_formula(slice",render.par[['show.stats']],")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+    if (requireNamespace('tergm', quietly = TRUE)){
+      if(render.par[['show.time']]){
+        # include the time string in the summary
+        plot_params[['xlab']] <- eval(parse(text=paste("function(slice,onset,terminus){stats<-summary_formula(slice",render.par[['show.stats']],")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
+      } else {
+        plot_params[['xlab']] <- eval(parse(text=paste("function(slice){stats<-summary_formula(slice",render.par[['show.stats']],")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+      }
     }
   }
   

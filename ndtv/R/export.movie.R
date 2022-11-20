@@ -235,13 +235,15 @@ render.animation <- function(net, render.par=list(tween.frames=10,show.time=TRUE
   # but if show stats, use that instead 
   # TODO: deprecate show.stats in favor of passing in directly for evaluation?
   if(!is.null(render.par$show.stats) && render.par$show.stats!=FALSE){
-    # evaluate a eqn string giving the stats formual
-    # TODO: this requires that tergm be loaded! give informative warning if not
-    if(render.par$show.time){
-      # include the time string in the summary
-      plot_params$xlab <- eval(parse(text=paste("function(slice,onset,terminus){stats<-ergm::summary_formula(slice",render.par$show.stats,")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
-    } else {
-      plot_params$xlab <- eval(parse(text=paste("function(slice){stats<-ergm::summary_formula(slice",render.par$show.stats,")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+    # evaluate a eqn string giving the stats formula
+    # TODO: requires that tergm be loaded! give informative warning if not
+    if (requireNamespace('tergm', quietly = TRUE)){
+      if(render.par$show.time){
+        # include the time string in the summary
+        plot_params$xlab <- eval(parse(text=paste("function(slice,onset,terminus){stats<-ergm::summary_formula(slice",render.par$show.stats,")\n return(paste('t=',onset,'-',terminus,' ',paste(rbind(names(stats),stats),collapse=':'),sep='')) }",sep='')))
+      } else {
+        plot_params$xlab <- eval(parse(text=paste("function(slice){stats<-ergm::summary_formula(slice",render.par$show.stats,")\n return(paste(rbind(names(stats),stats),collapse=':')) }",sep='')))
+      }
     }
   }
   
