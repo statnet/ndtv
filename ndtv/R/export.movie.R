@@ -18,14 +18,14 @@ compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",
    
   #figure out what layouts we will be using
   layout.fun <- try(match.fun(paste("network.layout.animate.", animation.mode, sep = "")), silent = TRUE)
-  if (class(layout.fun) == "try-error"){
+  if (inherits(layout.fun,"try-error")){
       stop(paste("Error in compute.animation: no network animation layout function for animation.mode ", animation.mode))
   }
   
   # figure out what recentering we will be using
   centering.mode='center' # haven't added argument yet
   center.fun <- try(match.fun(paste("layout.", centering.mode, sep = "")), silent = TRUE)
-  if (class(layout.fun) == "try-error"){
+  if (inherits(layout.fun, "try-error")){
     stop(paste("Error in compute.animation: no layout centering function for centering.mode ", centering.mode))
   }
   # figure out the range we will be centering in
