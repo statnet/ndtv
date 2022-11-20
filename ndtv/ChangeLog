@@ -1,4 +1,7 @@
 ChangeLog for ndtv
+v0.13.3
+ - clean up vignette use of suggested packages in examples ( ergm, tergm)
+ - corrected class checking flagged in note
 v0.13.2
  - comment tests that were failing on CRAN after testthat changes
 v0.13.1

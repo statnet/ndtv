@@ -126,12 +126,12 @@ if (require('tergm')){  # this example only works if tergm installed
 
 Now we can simulate 100 discrete time steps from the model and save them as a \verb@dynamicNetwork@ object.
 <<test_sim,eval=TRUE, results=hide>>=
-if (require('tergm')){  # this example only works if tergm installed
+if (require('tergm')){  # this example only if tergm installed
   
   stergm.sim.1 <- simulate(stergm.fit.1,
                     nsim=1, time.slices = 100)
   
-} else { # tergm is not installed, but we can use pre-generated example output
+} else { # if no tergm, we can use pre-generated example output
   
   data(stergm.sim.1)
   
