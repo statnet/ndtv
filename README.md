@@ -43,3 +43,8 @@ To cite package ‘ndtv’ in publications use:
   Skye Bender-deMoll (2016). ndtv: Network Dynamic Temporal Visualizations. R package version
   0.10. http://statnet.org
 
+
+## Code of Conduct
+
+Please note that the ndtv project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+
