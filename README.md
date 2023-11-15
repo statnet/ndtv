@@ -6,7 +6,7 @@ The R package ndtv renders dynamic network data from [networkDynamic objects](ht
 
 by Skye Bender-deMoll, Martina Morris, and the http://statnet.org team.  This work was supported by grant R01HD68395 from the National Institute of Health
 
-<img src='https://travis-ci.org/statnet/ndtv.svg?branch=master'> <img src='http://cranlogs.r-pkg.org/badges/ndtv'>
+<img src='http://cranlogs.r-pkg.org/badges/ndtv'>
 
 ## Install
 
@@ -31,7 +31,7 @@ render.d3movie(short.stergm.sim) # create a HTML5 animation
 
 The package vignette is at: https://github.com/statnet/ndtv/blob/master/ndtv/vignettes/ndtv.pdf
 
-A longer tutorial with more background is at: http://statnet.org/Workshops/ndtv_workshop.html
+A longer tutorial with more background is at: https://statnet.org/workshop-ndtv/
 
 ## Citation and License
 
