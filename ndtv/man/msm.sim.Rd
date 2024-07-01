@@ -15,7 +15,7 @@
 A 1000 vertex networkDynamic object that contains the output of 10 timesteps of a discrete stergm simulation of a basic sex contact network model. The model has two vertex types ('races') with different contact preferencs expressed with a \code{nodematch} parameter.   The output network object is included as an example because re-running the model can take a while.
 }
 \usage{data(msm.sim)}
-\format{a \code{\link{networkDynamic} object}}
+\format{a \code{\link[networkDynamic]{networkDynamic} object}}
 \details{
 The model was built with the following stergm:
 \preformatted{

@@ -105,7 +105,7 @@ The MDSJ algorithm can only be used for non-comercial projects as it is availabl
 
 
 \seealso{
-See Also \code{\link{network.layout.kamadakawai}},\code{\link{layout.distance}},\code{\link{compute.animation}}
+See Also \code{\link[network]{network.layout.kamadakawai}},\code{\link{layout.distance}},\code{\link{compute.animation}}
 }
 
 
