@@ -35,7 +35,7 @@ Key features:
 
 To view package vignettes and extended examples, see \code{browseVignettes(package='ndtv')}.
 
-For a more indepth tutorial, see \url{https://statnet.org/Workshops/ndtv_workshop.html}
+For a more indepth tutorial, see \url{https://statnet.org/workshop-ndtv/ndtv_workshop.html}
 
 The package includes several example datasets:
 

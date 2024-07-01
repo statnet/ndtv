@@ -40,12 +40,12 @@ The file name of the HTML or JSON file to be generated. Must end the proper file
 }
   \item{render.par}{
 Named list of parameters to specify the behavior of the animation.
-  \itemize{
-  \item \code{tween.frames} the number of interpolated frames to generate between each calculated network layout (default 10). 
-  \item \code{show.time} If \code{TRUE}, labels the plot with onset and terminus time for each slice. 
-  \item \code{show.stats} \code{NULL}, or a string containing a formula to be passed to summary.stergm to display the network statistics for the current slice on the plot. e.g. \code{"~edges+gwesp(0,fixed=TRUE)"}
-  \item \code{extraPlotCmds} NULL, or additional plot commands to draw on each frame of the animation. 
-  \item \code{initial.coords} default initial coords to be assigned to vertices. Can be a two-column numeric coordinate matrix, or a numeric values to be formed into a matrix.
+  \describe{
+  \item{\code{tween.frames}}{the number of interpolated frames to generate between each calculated network layout (default 10).}
+  \item{\code{show.time}}{If \code{TRUE}, labels the plot with onset and terminus time for each slice.}
+  \item{\code{show.stats}}{\code{NULL}, or a string containing a formula to be passed to summary.stergm to display the network statistics for the current slice on the plot. e.g. \code{"~edges+gwesp(0,fixed=TRUE)"}}
+  \item{\code{extraPlotCmds}}{\code{NULL}, or additional plot commands to draw on each frame of the animation.}
+  \item{\code{initial.coords}}{default initial coords to be assigned to vertices. Can be a two-column numeric coordinate matrix, or a numeric values to be formed into a matrix.}
   }
 }
   \item{plot.par}{
@@ -100,7 +100,7 @@ Another advantage of \code{ndtv-d3} is that it does not require installing syste
 The coordinates for vertex postitions are read from the \code{animation.x} and \code{animation.y} TEA attributes, normally created using \code{\link{compute.animation}}
 
 The list of currently supported \code{\link{plot}},\code{\link{plot.network}} and \code{\link{par}} elements is
-\itemize{
+\describe{
       \item{\code{xlab}}{: label caption below the render, on the xaxis}
       \item{\code{main}}{: main headline above the render}
       \item{\code{displaylabels}}{: should vertex labels be displayed?}
@@ -122,22 +122,22 @@ The list of currently supported \code{\link{plot}},\code{\link{plot.network}} an
 All of the above properties can be defined as dynamic (TEA) attributes. Noteably, curved edges, edge labels, and label positioning are not yet implemented and will be ignored. The \code{main} and \code{xlab} params will not be positioned exactly as they are in \code{\link{plot}}
 
 There are a few special plot parameters that are only supported by \code{render.d3move}:
-\itemize{
+\describe{
 \item{\code{vertex.tooltip}}{ arbitrary text or html to be displayed when a vertex is clicked (default is the vertex id)}
 \item{\code{edge.tooltip}}{ arbitrary text or html to be displayed when an edge is clicked (default is the edge id)}
-\item{\code{vertex.css.class} properties for adding arbitrary class attributes for use in CSS styling of vertices}
-\item{\code{edge.css.class} properties for adding arbitrary class attributes for use in CSS styling of edges}
-\item{\code{vertex.label.css.class} properties for adding arbitrary class attributes for use in CSS styling of vertex labels}
+\item{\code{vertex.css.class}}{properties for adding arbitrary class attributes for use in CSS styling of vertices}
+\item{\code{edge.css.class}}{properties for adding arbitrary class attributes for use in CSS styling of edges}
+\item{\code{vertex.label.css.class}}{properties for adding arbitrary class attributes for use in CSS styling of vertex labels}
 }
 
 ndtv-d3 has its own configuration properties passed in via the \code{d3.options} argument list, shown below with their default properties. Values which are set to \code{NULL} or omitted will be set to the ndtv-d3 player defaults.  
 
-\itemize{
+\describe{
    \item{\code{animationDuration=800}}{ Duration (milliseconds) of each animation step during play or step actions}
    \item{\code{enterExitAnimationFactor=0}}{ Fraction (0-1) of total step animation time that edge enter/exit animations should take}
    \item{\code{nodeSizeFactor=0.01}}{ Sets default node (vertex) size, as a fraction of viewport size. }
    \item{\code{playControls=TRUE}}{ Show the player controls (play, pause, step, etc)}
-   \item{\code{animateOnLoad=FALSE}} If true, animation will start playing as soon as page loads. 
+   \item{\code{animateOnLoad=FALSE}}{ If true, animation will start playing as soon as page loads.}
    \item{\code{slider=TRUE}}{ Show the time slider control}
    \item{\code{margin=list(x=20,y=10)}}{ SVG margins - may be overridden when setting fixed aspect ratio }
    \item{\code{debugFrameInfo=FALSE}}{Show the slice timing info in corner}
@@ -164,7 +164,7 @@ This is a very preliminary draft implementation. The animations preform poorly i
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-See also the ndtv-d3 vignette \url{https://statnet.org/Workshops/ndtv-d3_vignette.html}, \code{\link{render.animation}}, \code{\link{compute.animation}}.
+See also the ndtv-d3 vignette \url{https://cran.r-project.org/package=ndtv/vignettes/ndtv.pdf}, ndtv workshop \url{https://statnet.org/workshop-ndtv/ndtv_workshop.html}, \code{\link{render.animation}}, \code{\link{compute.animation}}.
 }
 \examples{
 # render an interactive SVG animation of short.stergm.sim and open it in a browser

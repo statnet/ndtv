@@ -97,7 +97,7 @@ function(x,file="",coords=NULL,all.dyads=FALSE,vert.attrs=NULL,edge.attrs=NULL){
 # edge 4 2 4 3.8737 4.8486 3.9221 4.6895 3.9862 4.4787 4.0414 4.2973 solid black
 # stop
 
-# documented here: http://www.graphviz.org/content/output-formats#dplain
+# documented here: https://www.graphviz.org/content/output-formats#dplain
 
 # this function parses the output above and returns a two-column coordinate matrix
 parseCoordsFromGraphvizPlain<-function(text,dim=2){

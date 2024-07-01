@@ -13,7 +13,7 @@
 Export a network file as a Pajek .net formatted text file.
 }
 \description{
-A basic tool for exporting a network as a Pajek \url{http://pajek.imfm.si/doku.php?id=pajek} .net format text file.  Does not yet encode attributes, layout information or timing info.
+A basic tool for exporting a network as a Pajek \url{http://mrvar.fdv.uni-lj.si/pajek/} .net format \url{http://pajek.imfm.si/doku.php?id=pajek} text file.  Does not yet encode attributes, layout information or timing info.
 }
 \usage{
 export.pajek.net(net, filename)
