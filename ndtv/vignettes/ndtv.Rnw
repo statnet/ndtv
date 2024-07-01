@@ -3,7 +3,8 @@
 \usepackage{natbib} %for easy biblo
 \usepackage{hyperref} %for url links
 \usepackage{comment}
-\usepackage{color} 
+\usepackage{color}
+\usepackage{Rd}
 
 %\VignetteIndexEntry{Using ndtv}
 %\VignettePackage{ndtv} 
