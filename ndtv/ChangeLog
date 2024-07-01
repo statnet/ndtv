@@ -68,7 +68,7 @@ v0.5
  - added parameter to render.animation for passing in initial default coordiantes
  - useAttribute layout now defaults to look for attributes named 'x' and 'y' if not specified. 
  - added layout.normalize function for rescaling coordinates to (-1,1)
- - added support for using external Graphviz (http://www.graphviz.org) layouts if installed
+ - added support for using external Graphviz (https://www.graphviz.org) layouts if installed
  - added filmstrip function to create static small multiple plots of frames from a network animation
  
 v0.4

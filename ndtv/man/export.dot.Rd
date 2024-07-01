@@ -13,7 +13,7 @@
 Export a network file as Graphviz .dot formatted text file. 
 }
 \description{
-A crude exporter for saving out a network in the Graphviz .dot format. \url{http://graphviz.org/content/dot-language}
+A crude exporter for saving out a network in the Graphviz .dot format. \url{https://graphviz.org/content/dot-language}
 }
 \usage{
 export.dot(x, file = "", coords = NULL, all.dyads = FALSE, 
@@ -33,13 +33,13 @@ export.dot(x, file = "", coords = NULL, all.dyads = FALSE,
   \item{edge.attrs}{optional character vector listing the names of any edge attributes of the network that should be included as attributes of edges in the Graphviz dot file. (e.g. 'weight','penwidth')}
 }
 \details{
-A crude exporter for saving out a network in the Graphviz .dot format. \url{http://graphviz.org/content/dot-language}
+A crude exporter for saving out a network in the Graphviz .dot format. \url{https://graphviz.org/content/dot-language}
 }
 \value{
-Returns nothing but creates a file in .dot format: \url{http://graphviz.org/content/dot-language}
+Returns nothing but creates a file in .dot format: \url{https://graphviz.org/content/dot-language}
 }
 \references{
-\url{http://graphviz.org/content/dot-language}
+\url{https://graphviz.org/content/dot-language}
 }
 \author{
 Skye Bender-deMoll
