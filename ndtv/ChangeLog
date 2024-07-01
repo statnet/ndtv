@@ -1,5 +1,8 @@
 ChangeLog for ndtv
 v0.13.3
+ - updating rd documentation issues flagged by cran
+ - updating flagged bad links
+v0.13.3
  - clean up vignette use of suggested packages in examples ( ergm, tergm)
  - corrected class checking flagged in note
 v0.13.2
