@@ -40,11 +40,11 @@ optional list of parameters to control rendering of network. See \code{\link{ren
     boolean,(defaults to FALSE) verbose argument to be passed to \code{\link{compute.animation}}\code{\link{render.animation}}/
   }
   \item{\dots}{
-additional arguments to be passed to \code{\link{plot.network}} via \code{\link{render.animation}}
+additional arguments to be passed to \code{\link[network]{plot.network}} via \code{\link{render.animation}}
 }
 }
 \details{
-If the \code{\link{networkDynamic}} object does not already have animation coordinates, calls \code{\link{compute.animation}} to calculate coordinates for the appropriate number of frames.  The \code{frames} argument determines the number of evenly-spaced network slices to be rendered by \code{\link{render.animation}} (with the normal plot recording disabled) as images on the final plot grid.  Note that if the layout has coordinates pre-computed by \code{compute.animation}, the slices selected by the \code{frames} argument may not align exactly with the previously compute slices.  Passing in a \code{slice.par} argument will overide \code{frames} to determine exactly which slices will be rendered. 
+If the \code{\link[networkDynamic]{networkDynamic}} object does not already have animation coordinates, calls \code{\link{compute.animation}} to calculate coordinates for the appropriate number of frames.  The \code{frames} argument determines the number of evenly-spaced network slices to be rendered by \code{\link{render.animation}} (with the normal plot recording disabled) as images on the final plot grid.  Note that if the layout has coordinates pre-computed by \code{compute.animation}, the slices selected by the \code{frames} argument may not align exactly with the previously compute slices.  Passing in a \code{slice.par} argument will overide \code{frames} to determine exactly which slices will be rendered. 
 
 The layout of plot grid can be changed via the \code{mfrow} argument. 
 

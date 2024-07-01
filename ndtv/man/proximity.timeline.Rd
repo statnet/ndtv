@@ -14,7 +14,7 @@
 Plot a chart of a networkDynamic object in which vertices trace out paths in time, positioned vertically so that their proximity corresponds to their relative geodesic distance at the sampled time points. 
 }
 \description{
-This a DRAFT version of the function, parameters are likely to change. Creates a 'phase plot' chart of vertex geodesic distance proximities overtime time, with the ability to size and color the lines corresponding to each vertex with arguments similar to \code{\link{plot.network}}
+This a DRAFT version of the function, parameters are likely to change. Creates a 'phase plot' chart of vertex geodesic distance proximities overtime time, with the ability to size and color the lines corresponding to each vertex with arguments similar to \code{\link[network]{plot.network}}
 }
 \usage{
 proximity.timeline(nd,  start = NULL, end = NULL, time.increment = NULL,
@@ -41,7 +41,7 @@ a \code{networkDynamic} object to be plotted.
   \item{time.increment}{optional numeric value to increment network sampling to be passed to \code{link{get.networks}}}
   \item{onsets}{optional numeric vector of sampling onset time points to be passed to \code{link{get.networks}}}
   \item{termini}{optional numeric vector of sampling terminus time points to be passed to \code{link{get.networks}}}
-  \item{rule}{attribute aggregation rule (default \code{'earliest'}) to be passed to \code{\link{network.collapse}}} 
+  \item{rule}{attribute aggregation rule (default \code{'earliest'}) to be passed to \code{\link[networkDynamic]{network.collapse}}} 
   \item{default.dist}{numeric default distance parameter to space apart isolates and disconnected components. Usually defaults to square root of network size (see \code{\link{layout.distance}})
 }
   \item{vertex.col}{
@@ -63,7 +63,7 @@ either a character color value, a vector of values of length equal to the size o
 \item{edge.lwd}{numeric line width value or edge attribute name to be used for the width of the edge lines if \code{render.edges=TRUE}}
   \item{grid}{ logical. if \code{TRUE}, vertical lines in the background color will be drawn at the beginning of each time slice to make it easier to determine where on the splines the positions are actually set. Usually this is not used with \code{render.edges}
 }
- \item{mode}{name of MDS algorithm to be used.  Currently one of \code{\link{isoMDS}},\code{\link{sammon}},\code{\link{cmdscale}}}
+ \item{mode}{name of MDS algorithm to be used.  Currently one of \code{\link[MASS]{isoMDS}},\code{\link[MASS]{sammon}},\code{\link[stats]{cmdscale}}}
  \item{coords}{optional numeric matrix of pre-computed coordinates to be used instead of the algorithm in \code{mode}. The number of matrix rows must be equal to the network size and columns equal to number of time bins implied by other arguments)}
  \item{draw.inactive}{DEPRECATED. see \code{spline.style}}
  \item{spline.style}{options to control how vertices with inactive spells or changing attribute values should be drawn: 
@@ -77,7 +77,7 @@ either a character color value, a vector of values of length equal to the size o
  \item{chain.direction}{value of \code{'forward'} means that the slice layouts should be computed in temporal order, with each layout initialized with the coordinates from the previous. A value of \code{'reverse'} causes layouts to be computed in reverse temporal order (for some layouts, this will cause less spline crossing as vertices will tend to be closer to their final state).  }
  \item{verbose}{logical, default is TRUE, in which case status messages about the computations are printed to the console, at some speed cost}
   \item{\dots}{
-arguments to be passed to \code{\link{network.collapse}} (via \code{\link{get.networks}}) to control how the network should be aggregated during slicing}
+arguments to be passed to \code{\link{network.collapse}} (via \code{\link[networkDynamic]{get.networks}}) to control how the network should be aggregated during slicing}
 }
 \details{
 The passed network dynamic object is sliced up into a series of networks. It loops over the networks, converting each to a distance matrix based on geodesic path distance with \code{layout.distance}. The distances are fed into an MDS algorithm (specified by \code{mode}) that lays them out \strong{in one dimension}: essentially trying to position them along a vertical line. The sequence of 1D layouts are arranged along a timeline, and a spline is drawn for each vertex connecting its positions at each time point.  The idea is that closely-linked clusters form bands of lines that move together through the plot.  

@@ -33,7 +33,7 @@ render.d3movie(net, filename=tempfile(fileext = '.html'),
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{net}{
-The network (usally \code{\link{networkDynamic}}) object to be rendered, usually containing pre-computed vertex positions as dynamic attributes cached by \code{\link{compute.animation}}
+The network (usally \code{\link[networkDynamic]{networkDynamic}}) object to be rendered, usually containing pre-computed vertex positions as dynamic attributes cached by \code{\link{compute.animation}}
 }
   \item{filename}{
 The file name of the HTML or JSON file to be generated. Must end the proper file extension ('.json' for JSON '.html' for HTML) for correct browser display.
@@ -76,12 +76,12 @@ character string, one of \code{'HTML'},\code{'JSON'} or \code{'inline'}.  The fi
 If \code{TRUE}, update text will be printed to the console to report the status of the rendering process.
 }
   \item{\dots}{
- Other parameters to control network rendering. See \code{\link{plot.network.default}}. Most parameters can be set to TEA attribute names, or specified as a function to be evaluated at each timestep.  NOT ALL PLOT PARAMS ARE IMPLEMENTED YET}
+ Other parameters to control network rendering. See \code{\link[network]{plot.network.default}}. Most parameters can be set to TEA attribute names, or specified as a function to be evaluated at each timestep.  NOT ALL PLOT PARAMS ARE IMPLEMENTED YET}
 }
 \details{
 Animations are generated using a process nearly identical to \code{\link{render.animation}}. However, instead of using R's plotting functions and the \code{animation} library, the relevant information is cached and written into a JSON-formatted file, embedded into a web page along with \code{ndtv-d3} player, and displayed in a web browser as an interactive HTML5 SVG animation.
 
-The \code{ndtv-d3} player app is not a fully-featured R plot device.  It only attempts to emulate the elements of plot normally used by \code{\link{plot.network}} and it understands the graphic elements and a somewhat higher level so that it will be able to handle interaction with edge and vertex objects.
+The \code{ndtv-d3} player app is not a fully-featured R plot device.  It only attempts to emulate the elements of plot normally used by \code{\link[network]{plot.network}} and it understands the graphic elements and a somewhat higher level so that it will be able to handle interaction with edge and vertex objects.
 
 However,  \code{ndtv-d3} includes several nice features to support exploring the network: 
 \itemize{
@@ -92,14 +92,14 @@ However,  \code{ndtv-d3} includes several nice features to support exploring the
 \item{double-click on a vertex to highlight all of the connected edges and vertices}
 }
 
-If passed a static network, by default only a single slice will be rendered and the time slider and controllers will be disabled. For consistency with \code{\link{plot.network}} the static mode also supports passing in a matrix of coordinates via \code{coord} argument which will prevent the default call to \code{compute.animation}.
+If passed a static network, by default only a single slice will be rendered and the time slider and controllers will be disabled. For consistency with \code{\link[network]{plot.network}} the static mode also supports passing in a matrix of coordinates via \code{coord} argument which will prevent the default call to \code{compute.animation}.
 
 Another advantage of \code{ndtv-d3} is that it does not require installing system libraries such as \code{ffmpeg} to render out the movie. 
 
 
 The coordinates for vertex postitions are read from the \code{animation.x} and \code{animation.y} TEA attributes, normally created using \code{\link{compute.animation}}
 
-The list of currently supported \code{\link{plot}},\code{\link{plot.network}} and \code{\link{par}} elements is
+The list of currently supported \code{\link{plot}},\code{\link[network]{plot.network}} and \code{\link{par}} elements is
 \describe{
       \item{\code{xlab}}{: label caption below the render, on the xaxis}
       \item{\code{main}}{: main headline above the render}

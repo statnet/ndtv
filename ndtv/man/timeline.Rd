@@ -67,7 +67,7 @@ character vector of vertex labels or vertex attribute name. Default is \code{net
   numeric scaling factor, vector of numeric scaling factors or attribute name.  Translated width of line (\code{lwd}) corresponding to each vertex. 
   }
   \item{edge.lwd}{
-    numeric scale factor, numeric vector, or character edge attribute name providing a numeric value for the width of the lines corresponding to each edge.  Note that this does not behave exactly as \code{edge.lwd} in \code{\link{plot.network}} as it does not perform scaling based on attribute values. 
+    numeric scale factor, numeric vector, or character edge attribute name providing a numeric value for the width of the lines corresponding to each edge.  Note that this does not behave exactly as \code{edge.lwd} in \code{\link[network]{plot.network}} as it does not perform scaling based on attribute values. 
   }
   \item{cex}{
   text size scaling for both vertex and edge labels (see \code{\link{plot.default}})
@@ -97,7 +97,7 @@ additional arguments to be passed to plot subroutines.  See \code{\link{plot.def
 \details{
 When the \code{v} argument is included, edges involving vertices not in \code{v} are excluded (but the reverse is not true for the \code{e} argument).  If \code{xlim} range is provided and the spells corresponding to a vertex or an edge lie entirely outside its bounds they will not be shown. 
 
-Many of the arguments correspond to arguments in \code{\link{plot.network}} but are translated to the timeline plot context.  For example, \code{vertex.cex} actually controls the \code{lwd} (line width) of the lines corresponding to vertex spells.  The arguments are expanded using \code{\link{plotArgs.network}} so that they should give the expansion behavior and attribute look up as \code{\link{plot.network}}
+Many of the arguments correspond to arguments in \code{\link[network]{plot.network}} but are translated to the timeline plot context.  For example, \code{vertex.cex} actually controls the \code{lwd} (line width) of the lines corresponding to vertex spells.  The arguments are expanded using \code{\link[network]{plotArgs.network}} so that they should give the expansion behavior and attribute look up as \code{\link[network]{plot.network}}
 
 Additional plotting arguments can be passed in to modify drawing.  For example, \code{lty} for line style. Vertices and edges that are never active are not included on the plot.
 }
@@ -115,7 +115,7 @@ not fully implemented, would be nice to be able to pass network attribute names 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-See also \code{\link{plot.network}}.
+See also \code{\link[network]{plot.network}}.
 }
 \examples{
   data(stergm.sim.1)
