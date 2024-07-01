@@ -13,7 +13,7 @@
 Export a network file as a Pajek .net formatted text file.
 }
 \description{
-A basic tool for exporting a network as a Pajek \url{http://mrvar.fdv.uni-lj.si/pajek/} .net format \url{http://pajek.imfm.si/doku.php?id=pajek} text file.  Does not yet encode attributes, layout information or timing info.
+A basic tool for exporting a network as a Pajek \url{http://mrvar.fdv.uni-lj.si/pajek/} .net format \url{http://mrvar.fdv.uni-lj.si/pajek/DrawEPS.htm} text file.  Does not yet encode attributes, layout information or timing info.
 }
 \usage{
 export.pajek.net(net, filename)
@@ -32,7 +32,7 @@ export.pajek.net(net, filename)
 A file is written out containing the vertex and edge data.
 }
 \references{
-Pajek software: \url{http://pajek.imfm.si/doku.php?id=pajek}
+Pajek software: \url{http://mrvar.fdv.uni-lj.si/pajek/}
 
 Pajek file format documentation: \url{http://vlado.fmf.uni-lj.si/pub/networks/pajek/svganim/1.10.7.1/PajekToSvgAnim.pdf}
 }
