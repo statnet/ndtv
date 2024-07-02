@@ -93,7 +93,7 @@ x-axis plot label
 }
 }
 \details{
-Many (but not all) of the graphical arguments to \code{\link{plot.network}} can be used and are expanded in the same way.  This does not currently use the \code{\link{plot.network}} code to draw the network as non-square plot aspect ratios would cause distortion of the vertices when drawn.
+Many (but not all) of the graphical arguments to \code{\link[network]{plot.network}} can be used and are expanded in the same way.  This does not currently use the \code{\link[network]{plot.network}} code to draw the network as non-square plot aspect ratios would cause distortion of the vertices when drawn.
 }
 \value{
 produces a plot, invisibly returns the coordinates of the plot. 
@@ -105,7 +105,7 @@ skyebend@uw.edu
 
 
 \seealso{
-\code{\link{plot.network}}, \code{\link{proximity.timeline}}
+\code{\link[network]{plot.network}}, \code{\link{proximity.timeline}}
 }
 \examples{
 # an edgelist describing an infection tree
