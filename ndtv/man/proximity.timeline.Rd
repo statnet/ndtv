@@ -77,7 +77,7 @@ either a character color value, a vector of values of length equal to the size o
  \item{chain.direction}{value of \code{'forward'} means that the slice layouts should be computed in temporal order, with each layout initialized with the coordinates from the previous. A value of \code{'reverse'} causes layouts to be computed in reverse temporal order (for some layouts, this will cause less spline crossing as vertices will tend to be closer to their final state).  }
  \item{verbose}{logical, default is TRUE, in which case status messages about the computations are printed to the console, at some speed cost}
   \item{\dots}{
-arguments to be passed to \code{\link{network.collapse}} (via \code{\link[networkDynamic]{get.networks}}) to control how the network should be aggregated during slicing}
+arguments to be passed to \code{\link[networkDynamic]{network.collapse}} (via \code{\link[networkDynamic]{get.networks}}) to control how the network should be aggregated during slicing}
 }
 \details{
 The passed network dynamic object is sliced up into a series of networks. It loops over the networks, converting each to a distance matrix based on geodesic path distance with \code{layout.distance}. The distances are fed into an MDS algorithm (specified by \code{mode}) that lays them out \strong{in one dimension}: essentially trying to position them along a vertical line. The sequence of 1D layouts are arranged along a timeline, and a spline is drawn for each vertex connecting its positions at each time point.  The idea is that closely-linked clusters form bands of lines that move together through the plot.  

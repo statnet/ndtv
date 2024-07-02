@@ -56,7 +56,7 @@ Usually if the dist.mat is not included, one will be calculated using the \code{
 \strong{KamadaKawai}
 
 The KamadaKawai option provides resonably good dynamically stable layouts. It computes a symmetric geodesic distance matrix from the input network (replacing infinite values with \code{default.dist}, and seeds the initial coordinates for each slice with the results of the previous slice in an attempt to find solutions that are as close as possible to the previous positions.  However, it performs poorly on large networks and is not as stable as MDSJ. 
-See \code{\link{network.layout.kamadakawai}} for more details about the implementation and parameters
+See \code{\link[network]{network.layout.kamadakawai}} for more details about the implementation and parameters
 
 \strong{MDSJ}
 

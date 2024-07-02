@@ -38,7 +38,7 @@ transmissionTimeline(x, time.attr,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-an object than can be coerced into a \code{\link{network}}.  The network must be a tree
+an object than can be coerced into a \code{\link[network]{network}}.  The network must be a tree
 }
   \item{time.attr}{
 name of a vertex attribute containing the transmission/infection/diffusion time for each vertex
