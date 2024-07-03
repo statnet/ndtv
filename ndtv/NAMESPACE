@@ -8,7 +8,9 @@ importFrom("graphics", "lines", "par", "plot", "rect", "text",
 importFrom("stats", "cmdscale", "runif")
 importFrom("utils", "browseURL", "download.file", "packageDescription",
              "write.table")
-
+importFrom("tsna", "as.network.tPath")
+importFrom("htmlwidgets","createWidget")
+importFrom("scatterplot3d", "scatterplot3d")
 
 export(
 render.animation,
