@@ -1,5 +1,6 @@
 ChangeLog for ndtv
 v0.13.3
+ -fixed noSuggests error by moving Suggested packages needed for vignettes (tsna, htmlwidgets, scatterplot3d) to Imports and adding used functions to NAMESPACE
  - updating rd documentation issues flagged by cran
  - updating flagged bad links
 v0.13.3
