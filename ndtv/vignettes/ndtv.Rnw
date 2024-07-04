@@ -7,7 +7,8 @@
 \usepackage{Rd}
 
 %\VignetteIndexEntry{Using ndtv}
-%\VignettePackage{ndtv} 
+%\VignettePackage{ndtv}
+%\VignetteDepends{ergm,tergm}
 
 \begin{document}
 
@@ -105,6 +106,8 @@ if (require('ergm')){ # this example only works if ergm installed
   data("florentine", package='ergm') # an example network
   plot(flobusiness,displaylabels=TRUE)
   
+} else {
+  plot(0,0,main='plot skipped because ergm not installed')
 }
 @
 
@@ -121,6 +124,8 @@ if (require('tergm')){  # this example only works if tergm installed
     offset.coef.diss = theta.diss,	
     estimate = "EGMME"	)
   
+} else {
+  print('example skipped because tergm not installed')
 }
 @
 (time passes, lots simulation status output hidden)
