@@ -422,7 +422,7 @@ renderD3ScriptIncludes<-function(filename,ndtvD3BaseUrl,scriptType='embedded'){
       <!-- minimized d3.js library -->
       <script src='http://d3js.org/d3.v3.min.js' charset='utf-8'></script>
       <!-- minimized jquery js library -->
-      <script src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
+      <script src='https://ajax.googleapis.com/ajax/libs/jquery/4.0.0/jquery.min.js'></script>
       <!-- d3.slider.js library -->
       <script src='http://statnet.github.io/ndtv-d3/src/lib/d3.slider.js'></script>
       <!-- ndtv-d3 js code -->
