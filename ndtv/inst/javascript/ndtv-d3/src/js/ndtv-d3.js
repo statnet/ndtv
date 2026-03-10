@@ -707,7 +707,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     var ratio = (hlen - offset) / hlen;
 
     //If the ratio is invalid, just use the original coordinates
-    if ($.isNumeric(ratio)) { 
+    if (Number.isFinite(ratio)) {
       return [
         pointA[0] + (xlen * ratio),
         pointA[1] + (ylen * ratio)
