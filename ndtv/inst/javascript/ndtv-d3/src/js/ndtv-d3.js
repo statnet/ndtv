@@ -167,10 +167,10 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
   n3.prototype.SVGSetup = function(domTarget) {
     var n3 = this;
 
-    $(domTarget).resize(function(n) { 
+    $(domTarget.node()).on('resize', function(n) {
       n3.resizeGraph(n);
     });
-    $(window).resize(function(n) { 
+    $(window).on('resize', function(n) {
       n3.resizeGraph(n);
     });
  
