@@ -1,4 +1,4 @@
-ndtv-d3 is a d3-based HTML5 network animation player for the ndtv package (http://cran.r-project.org/web/packages/ndtv/index.html)
+ndtv-d3 is a d3-based HTML5 network animation player for the ndtv package (http://cran.r-project.org/package=ndtv)
 
 The ndtv-d3 library was created by Greg Michalec and Skye Bender-deMoll for the statnet project http://statnet.org funded by NICHD grant R01HD068395.
 
