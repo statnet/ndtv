@@ -167,10 +167,10 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
   n3.prototype.SVGSetup = function(domTarget) {
     var n3 = this;
 
-    $(domTarget).resize(function(n) { 
+    $(domTarget.node()).on('resize', function(n) {
       n3.resizeGraph(n);
     });
-    $(window).resize(function(n) { 
+    $(window).on('resize', function(n) {
       n3.resizeGraph(n);
     });
  
@@ -561,7 +561,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
             } else if (property == 'label' && sliceRenderData.graph.displaylabels) {
               value = id;
             }
-            if (value && $.type(value) === 'string' && value.match('rgba')) {
+            if (value && typeof value === 'string' && value.match('rgba')) {
               var rgba = value.match(/^rgba\((.*), ?(.*)\)$/);
               if (rgba) {
                 value = "rgb("+rgba[1]+")";
@@ -707,7 +707,7 @@ Greg Michalec, Skye Bender-deMoll, Martina Morris (2014) 'ndtv-d3: an HTML5 netw
     var ratio = (hlen - offset) / hlen;
 
     //If the ratio is invalid, just use the original coordinates
-    if ($.isNumeric(ratio)) { 
+    if (Number.isFinite(ratio)) {
       return [
         pointA[0] + (xlen * ratio),
         pointA[1] + (ylen * ratio)
